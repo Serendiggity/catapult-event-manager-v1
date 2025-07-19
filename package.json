@@ -14,7 +14,8 @@
     "build:shared": "cd packages/shared && npm run build",
     "build:server": "npm run build:shared && cd packages/server && npm run build",
     "build:client": "npm run build:shared && cd packages/client && npm run build",
-    "start:server": "cd packages/server && npm start"
+    "start:server": "cd packages/server && npm start",
+    "start": "npm run start:server"
   },
   "keywords": [],
   "author": "",

@@ -19,9 +19,8 @@ services:
     rootDir: .
 
   # Static Site for React Frontend
-  - type: web
+  - type: static
     name: catapult-event-manager-client
-    runtime: static
     buildCommand: npm install && npm run build:client
     staticPublishPath: ./packages/client/dist
     routes:

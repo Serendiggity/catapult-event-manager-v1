@@ -1,0 +1,31 @@
+# Task ID: 8
+# Title: Build Dashboard Analytics
+# Status: pending
+# Dependencies: 1, 2, 3, 4, 5, 6, 7
+# Priority: low
+# Description: Create a dashboard showing key metrics such as contacts needing review, events, and campaign status.
+# Details:
+Design a dashboard UI with relevant analytics widgets. Fetch and display metrics like 'Needs Review' count, event statistics, and campaign progress. Use color-coded badges for statuses.
+
+# Test Strategy:
+Test dashboard data accuracy and UI responsiveness. Verify that status badges and metrics update in real-time.
+
+# Subtasks:
+## 1. Design Dashboard UI [pending]
+### Dependencies: None
+### Description: Create a visually clear and user-friendly dashboard interface that organizes key metrics such as contacts needing review, events, and campaign status using effective layout, color coding, and typography.
+### Details:
+Apply dashboard design principles including establishing a clear visual hierarchy, grouping related data into thematic sections, and using color-coded badges for status indicators. Ensure the design is responsive and accessible across devices.
+
+## 2. Fetch and Display Metrics [pending]
+### Dependencies: 8.1
+### Description: Implement backend and frontend logic to retrieve key metrics from the database and display them accurately on the dashboard UI.
+### Details:
+Connect to the database to fetch metrics such as 'Needs Review' count, event statistics, and campaign progress. Display these metrics in the designed UI components with real-time data binding where applicable.
+
+## 3. Implement Real-Time Updates [pending]
+### Dependencies: 8.2
+### Description: Enable the dashboard to update metrics and status badges in real-time without requiring manual refreshes.
+### Details:
+Use technologies such as WebSockets or server-sent events to push updates to the dashboard UI as data changes occur. Test that the UI reflects changes promptly and maintains responsiveness.
+

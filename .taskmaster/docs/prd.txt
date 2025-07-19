@@ -1,0 +1,106 @@
+Of course. Here is a properly structured Product Requirements Document based on your template and a detailed, phased task list for building the project with a focus on quality and speed.
+
+prd.txt
+# Overview
+
+The Business Card Lead Manager is a single-user web application designed to solve the inefficiencies of manual lead capture at networking events. It's for solo professionals who need to quickly digitize business cards, organize contacts, and streamline email follow-ups. The core value is turning a tedious manual process into an efficient, semi-automated workflow by leveraging OCR for data extraction and AI for personalized communication, with a final output ready for use in standard email clients.
+
+# Core Features
+
+Event Management: Users can create, update, and delete events to associate with contacts. Each event serves as a container for leads gathered at a specific occasion. This is important for organizing contacts contextually.
+
+OCR-Powered Contact Creation: Users upload business card images, and the system uses Tesseract.js to automatically extract contact information. This eliminates manual data entry. The system assigns a confidence score and routes low-confidence scans for manual review, ensuring data accuracy.
+
+Lead Organization: Users can create "Lead Groups" to segment contacts for targeted follow-ups. This is key for managing different types of leads from various events.
+
+AI Email Campaign Generation: Users can define email templates with variables. The system uses the OpenAI API to generate personalized email drafts for an entire lead group. This automates the time-consuming task of writing follow-up emails.
+
+CSV Export: The application's primary output is a CSV file formatted for Gmail Mail Merge, allowing the user to send the AI-generated emails using their existing email client. This avoids the complexity of direct email integration for the MVP.
+
+# User Experience
+
+User Persona: A solo salesperson or consultant who is technically proficient but time-poor. They value efficiency and need a tool that "just works" without a steep learning curve.
+
+Key User Flow:
+
+Create an "Event".
+
+Go to the "Scan Card" page and upload images of business cards collected at that event.
+
+Check the "Dashboard" to see how many contacts are "Needing Review".
+
+Correct any low-confidence OCR scans in the "Review Modal".
+
+Group verified contacts into a "Lead Group".
+
+Create an "Email Campaign" by selecting the group and a template.
+
+Generate AI drafts and export the results as a CSV for Gmail.
+
+UI/UX Considerations: The UI will be clean and minimal, built with shadcn/ui components. Statuses will be clearly indicated with color-coded badges (e.g., 🟡 Needs Review). All interactive elements will have clear loading and error states.
+
+# Technical Architecture
+
+System Components: A three-part monorepo: a React/Vite frontend (client), an Express backend (server), and a shared TypeScript package for types.
+
+Data Models: A PostgreSQL database managed by Supabase with Drizzle ORM. Key tables include events, contacts, lead_groups, email_campaigns, and activity_logs.
+
+APIs and Integrations:
+
+Internal: A REST API built with Express to connect the client and server.
+
+External: Supabase (Database and Storage), OpenAI (AI Email Generation), Tesseract.js (OCR).
+
+Infrastructure Requirements:
+
+Frontend & Backend: Hosted on Render as two separate services.
+
+Database & Storage: Provided by Supabase.
+
+# Development Roadmap
+
+MVP Scope:
+
+Foundation: A fully configured monorepo with a live database schema and a CI/CD pipeline to Render.
+
+Phase 1 (Events): Full CRUD functionality for events, both on the backend and frontend. The app should be usable for creating and viewing events.
+
+Phase 2 (Contacts & OCR): The core workflow of uploading a business card, processing it with OCR, and saving it as a contact with the correct status. This includes the manual review UI.
+
+Phase 3 (Campaigns & Export): The final part of the user journey: grouping contacts, generating AI emails, and exporting the CSV file.
+
+Phase 4 (Dashboard & Polish): Build the dashboard analytics and conduct a final review of the UI for consistency and usability.
+
+Future Enhancements:
+
+Background processing for bulk OCR jobs.
+
+Direct Gmail API integration to create drafts automatically.
+
+Multi-user support with authentication.
+
+A mobile-native version for in-the-field scanning.
+
+# Logical Dependency Chain
+
+Foundation First: The database schema must be finalized and migrated first, as all features depend on it. A basic server and client must be deployed to Render to establish the CI/CD loop.
+
+Events -> Contacts: Events must be built before Contacts, as every contact is associated with an event. This provides the necessary UI context for uploading business cards.
+
+Contacts -> Groups -> Campaigns: The workflow follows a logical funnel. You need contacts before you can group them, and you need groups before you can generate a campaign for them. This dictates the development order.
+
+Dashboard Last: The dashboard is purely analytical and should be built last, as it depends on data being generated by all other features.
+
+# Risks and Mitigations
+
+Technical Challenge (OCR Accuracy): Tesseract.js can be unreliable.
+
+Mitigation: The core feature of a manual "Review Queue" for low-confidence scans is the primary mitigation. This turns an unreliable automated process into a reliable semi-automated one.
+
+Scope Creep: Adding features like direct email sending or multi-user support before the MVP is complete.
+
+Mitigation: Strictly adhere to the "Out of Scope" section of this PRD. The goal is a functional end-to-end flow culminating in a CSV export.
+
+AI Quality: AI-generated emails might be generic or nonsensical.
+
+Mitigation: The workflow doesn't send emails directly. By exporting to CSV, the user has a final chance to review and edit the drafts in their own email client before sending.

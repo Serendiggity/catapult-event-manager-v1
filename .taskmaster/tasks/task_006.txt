@@ -1,0 +1,37 @@
+# Task ID: 6
+# Title: Implement AI Email Campaign Generation
+# Status: pending
+# Dependencies: 1, 2, 3, 4, 5
+# Priority: medium
+# Description: Allow users to define email templates, select a lead group, and generate personalized email drafts using the OpenAI API.
+# Details:
+Create email_campaigns table and API endpoints. Build UI for template creation with variables. Integrate OpenAI API to generate personalized drafts for all contacts in a selected group. Save drafts to the database.
+
+# Test Strategy:
+Test template creation, variable substitution, and AI draft generation. Verify that drafts are personalized and saved correctly.
+
+# Subtasks:
+## 1. Create Email Campaigns Table [pending]
+### Dependencies: None
+### Description: Design and implement the email_campaigns table in the database to store email templates and campaign details.
+### Details:
+Use SQL to create the table with necessary fields such as template_id, campaign_name, and template_content.
+
+## 2. Build UI for Template Creation [pending]
+### Dependencies: 6.1
+### Description: Develop a user interface for creating and managing email templates with variable placeholders.
+### Details:
+Use React to build a template editor with input fields for variables and a preview feature.
+
+## 3. Integrate OpenAI API for Draft Generation [pending]
+### Dependencies: 6.1, 6.2
+### Description: Implement API calls to OpenAI to generate personalized email drafts based on user-defined templates and contact data.
+### Details:
+Use Express to create API endpoints that interact with OpenAI's API for draft generation.
+
+## 4. Test Draft Generation and Database Integration [pending]
+### Dependencies: 6.1, 6.2, 6.3
+### Description: Conduct thorough testing of the template creation, variable substitution, and AI draft generation features.
+### Details:
+Verify that drafts are correctly personalized and saved to the database, and ensure UI functionality.
+

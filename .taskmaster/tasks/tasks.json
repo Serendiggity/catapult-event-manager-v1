@@ -1,0 +1,546 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Monorepo and CI/CD Pipeline",
+        "description": "Initialize a monorepo with React/Vite frontend, Express backend, and shared TypeScript package. Configure CI/CD to deploy frontend and backend as separate services on Render.",
+        "details": "Create a new monorepo using a tool like Turborepo or Nx. Set up three packages: client (React/Vite), server (Express), and shared (TypeScript types). Configure GitHub Actions or similar CI/CD to build, test, and deploy the client and server to Render. Ensure environment variables are managed securely.",
+        "testStrategy": "Verify monorepo structure, build scripts, and deployment pipelines with automated tests. Confirm successful deployment to Render staging environment.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Setup Monorepo Structure",
+            "description": "Create a monorepo with Turborepo or Nx, including client (React/Vite), server (Express), and shared (TypeScript) packages.",
+            "dependencies": [],
+            "details": "Use Turborepo or Nx to manage dependencies and build processes. Create directories for client, server, and shared packages.\n<info added on 2025-07-19T04:07:25.738Z>\nSuccessfully set up the monorepo structure using npm workspaces, creating three packages: @catapult-event-manager/client (React/Vite), @catapult-event-manager/server (Express/TypeScript), and @catapult-event-manager/shared (TypeScript types). Configured TypeScript for all packages with composite project references. Verified that all packages build successfully and are properly linked. This setup ensures modularity and efficient dependency management across client, server, and shared codebases.\n</info added on 2025-07-19T04:07:25.738Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure CI/CD Pipeline",
+            "description": "Set up a CI/CD pipeline using GitHub Actions to build, test, and deploy client and server to Render.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create GitHub Actions workflows for building, testing, and deploying both client and server packages to Render.\n<info added on 2025-07-19T04:12:04.838Z>\nSuccessfully implemented GitHub Actions CI/CD pipelines for the monorepo. Created ci.yml to run automated testing and building for both client and server packages on Node.js 18.x and 20.x, with proper build order and artifact uploads. Created deploy.yml to trigger automatic deployments to Render on pushes to the main/master branch, utilizing the Render API for seamless service updates. Added render.yaml configuration for Render blueprint deployment, ensuring both client and server are deployed as separate services. Workflows are scoped to relevant package directories, enabling independent builds and deployments for each service within the monorepo.\n</info added on 2025-07-19T04:12:04.838Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set Up Environment Variables",
+            "description": "Manage environment variables securely for both client and server deployments.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use environment files or secrets management tools to securely handle environment variables for client and server deployments.\n<info added on 2025-07-19T04:14:32.433Z>\nCreated comprehensive environment setup documentation and templates including .env.example files for both client and server packages. Added a detailed ENVIRONMENT_SETUP.md guide with step-by-step instructions for configuring GitHub secrets and Render environment variables. Updated .gitignore to exclude all environment files to prevent accidental commits. The manual setup steps outlined are: 1) Create a Render account and obtain the API key, 2) Create client and server services in Render, 3) Add GitHub repository secrets such as RENDER_API_KEY and service IDs, 4) Configure environment variables securely in the Render dashboard for each service. This ensures secure and consistent environment variable management across deployments.\n</info added on 2025-07-19T04:14:32.433Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Deploy to Render",
+            "description": "Deploy the client and server as separate services on Render.",
+            "dependencies": [
+              3
+            ],
+            "details": "Configure Render to host both client and server services, ensuring proper routing and service discovery.",
+            "status": "in-progress",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Design and Deploy PostgreSQL Database Schema",
+        "description": "Define and deploy the PostgreSQL database schema using Supabase, including tables for events, contacts, lead_groups, email_campaigns, and activity_logs.",
+        "details": "Use Drizzle ORM to define schema models in TypeScript. Create migrations for events, contacts, lead_groups, email_campaigns, and activity_logs tables. Deploy schema to Supabase. Ensure foreign keys and constraints match the logical dependency chain (e.g., contacts reference events).",
+        "testStrategy": "Validate schema with integration tests, checking CRUD operations for each table. Confirm relationships and constraints are enforced.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Schema Models",
+            "description": "Use Drizzle ORM to define schema models in TypeScript for events, contacts, lead_groups, email_campaigns, and activity_logs tables.",
+            "dependencies": [],
+            "details": "Ensure foreign keys and constraints match the logical dependency chain.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create Migrations",
+            "description": "Create migrations for the defined schema models using Supabase migration tools.",
+            "dependencies": [
+              1
+            ],
+            "details": "Run commands like `pnpm --filter web supabase migration new support-schema` to create new migration files.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Deploy Schema to Supabase",
+            "description": "Deploy the schema to Supabase and validate its integrity.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use integration tests to check CRUD operations for each table and confirm relationships and constraints are enforced.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implement Event Management CRUD",
+        "description": "Build full CRUD functionality for events on both backend (Express) and frontend (React).",
+        "details": "Create REST API endpoints in Express for event creation, reading, updating, and deletion. Build corresponding React components using shadcn/ui for a clean, minimal UI. Connect frontend to backend API. Implement loading and error states.",
+        "testStrategy": "Test all CRUD operations via API and UI. Verify data consistency between frontend and backend. Check for proper error handling and user feedback.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Backend API Endpoints",
+            "description": "Implement REST API endpoints in Express for event creation, reading, updating, and deletion.",
+            "dependencies": [],
+            "details": "Use Express to create endpoints for CRUD operations on events, aligning with HTTP methods POST, GET, PUT/PATCH, and DELETE.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Build Frontend Components",
+            "description": "Develop React components for event management using shadcn/ui for a clean UI.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create React components that interact with the backend API for displaying, creating, updating, and deleting events.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Connect Frontend to Backend",
+            "description": "Integrate React components with the Express API to enable data exchange.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Use fetch API or a library like Axios to make HTTP requests from React to the Express backend.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Error Handling and Loading States",
+            "description": "Add error handling and loading states to both frontend and backend.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Implement try-catch blocks in Express for backend errors and use React state management for frontend loading and error states.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Develop Contact Creation with OCR Integration",
+        "description": "Implement business card image upload, OCR processing with Tesseract.js, and contact creation with manual review for low-confidence scans.",
+        "details": "Create an upload interface in React. On the backend, use Tesseract.js to extract contact info from images, assign a confidence score, and save to the contacts table. Expose a 'Needs Review' queue in the UI. Build a review modal for manual correction of low-confidence scans.",
+        "testStrategy": "Test OCR accuracy with varied business card images. Validate that low-confidence scans are flagged and manually correctable. Ensure data integrity after manual review.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Upload Interface",
+            "description": "Design and implement a user-friendly interface in React for uploading business card images.",
+            "dependencies": [],
+            "details": "Use React components to create an upload form with file input and submit button.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Integrate OCR Processing with Tesseract.js",
+            "description": "Implement OCR processing using Tesseract.js to extract contact information from uploaded images.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Tesseract.js to recognize text in images and assign a confidence score to the extracted data.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Manual Review Queue",
+            "description": "Develop a UI component to display a 'Needs Review' queue for low-confidence scans.",
+            "dependencies": [
+              2
+            ],
+            "details": "Expose a queue in the UI where users can view and manually correct low-confidence scans.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Build Review Modal",
+            "description": "Create a modal for manual correction of low-confidence scans.",
+            "dependencies": [
+              3
+            ],
+            "details": "Design a modal that allows users to edit and save corrected contact information.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test OCR Accuracy and Manual Review Workflow",
+            "description": "Test the OCR accuracy with varied business card images and validate the manual review process.",
+            "dependencies": [
+              4
+            ],
+            "details": "Conduct thorough testing to ensure OCR accuracy and data integrity after manual review.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Build Lead Group Management",
+        "description": "Enable users to create, view, and manage lead groups for segmenting contacts.",
+        "details": "Add lead_groups table and API endpoints. Build UI for creating, viewing, and editing lead groups. Allow users to add/remove contacts from groups. Ensure groups are associated with events.",
+        "testStrategy": "Test group creation, contact assignment, and group deletion. Verify that groups are correctly associated with events and contacts.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add lead_groups Table to Database",
+            "description": "Create a new table in the database to store lead groups.",
+            "dependencies": [],
+            "details": "Design the schema for the lead_groups table, including columns for group name, description, and associated events. Execute SQL commands to create the table.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop API Endpoints for Lead Group Management",
+            "description": "Create REST API endpoints for creating, reading, updating, and deleting lead groups.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement API endpoints using Express to handle CRUD operations for lead groups. Ensure proper error handling and validation.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Build UI for Lead Group Management",
+            "description": "Design and implement a user interface for creating, viewing, and editing lead groups.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use React to build components for lead group management. Allow users to add or remove contacts from groups and associate groups with events.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Implement AI Email Campaign Generation",
+        "description": "Allow users to define email templates, select a lead group, and generate personalized email drafts using the OpenAI API.",
+        "details": "Create email_campaigns table and API endpoints. Build UI for template creation with variables. Integrate OpenAI API to generate personalized drafts for all contacts in a selected group. Save drafts to the database.",
+        "testStrategy": "Test template creation, variable substitution, and AI draft generation. Verify that drafts are personalized and saved correctly.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Email Campaigns Table",
+            "description": "Design and implement the email_campaigns table in the database to store email templates and campaign details.",
+            "dependencies": [],
+            "details": "Use SQL to create the table with necessary fields such as template_id, campaign_name, and template_content.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Build UI for Template Creation",
+            "description": "Develop a user interface for creating and managing email templates with variable placeholders.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use React to build a template editor with input fields for variables and a preview feature.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate OpenAI API for Draft Generation",
+            "description": "Implement API calls to OpenAI to generate personalized email drafts based on user-defined templates and contact data.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Use Express to create API endpoints that interact with OpenAI's API for draft generation.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Test Draft Generation and Database Integration",
+            "description": "Conduct thorough testing of the template creation, variable substitution, and AI draft generation features.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Verify that drafts are correctly personalized and saved to the database, and ensure UI functionality.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Develop CSV Export for Gmail Mail Merge",
+        "description": "Implement CSV export functionality for AI-generated email drafts, formatted for Gmail Mail Merge.",
+        "details": "Add an export endpoint in the backend that generates a CSV file from email_campaigns and contacts data, formatted for Gmail Mail Merge. Provide a download button in the UI.",
+        "testStrategy": "Test CSV generation and download. Verify that the CSV is correctly formatted for Gmail Mail Merge and contains all necessary fields.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design CSV Export Endpoint",
+            "description": "Create a backend API endpoint that retrieves email_campaigns and contacts data, formats it according to Gmail Mail Merge requirements, and returns a downloadable CSV file.",
+            "dependencies": [],
+            "details": "Implement an Express route that queries the database for the relevant campaign and contact data. Transform the data into a CSV format where each column corresponds to a merge field (e.g., First Name, Last Name, Email). Ensure the CSV header row matches Gmail Mail Merge expectations. Return the CSV as a file download response.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Build CSV Download UI Component",
+            "description": "Develop a frontend component that allows users to trigger the CSV export and download the generated file.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a React button or link that calls the export endpoint. Handle the file download in the browser, providing user feedback during the process. Ensure the UI is integrated with the existing campaign management interface.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Build Dashboard Analytics",
+        "description": "Create a dashboard showing key metrics such as contacts needing review, events, and campaign status.",
+        "details": "Design a dashboard UI with relevant analytics widgets. Fetch and display metrics like 'Needs Review' count, event statistics, and campaign progress. Use color-coded badges for statuses.",
+        "testStrategy": "Test dashboard data accuracy and UI responsiveness. Verify that status badges and metrics update in real-time.",
+        "priority": "low",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Dashboard UI",
+            "description": "Create a visually clear and user-friendly dashboard interface that organizes key metrics such as contacts needing review, events, and campaign status using effective layout, color coding, and typography.",
+            "dependencies": [],
+            "details": "Apply dashboard design principles including establishing a clear visual hierarchy, grouping related data into thematic sections, and using color-coded badges for status indicators. Ensure the design is responsive and accessible across devices.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Fetch and Display Metrics",
+            "description": "Implement backend and frontend logic to retrieve key metrics from the database and display them accurately on the dashboard UI.",
+            "dependencies": [
+              1
+            ],
+            "details": "Connect to the database to fetch metrics such as 'Needs Review' count, event statistics, and campaign progress. Display these metrics in the designed UI components with real-time data binding where applicable.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Real-Time Updates",
+            "description": "Enable the dashboard to update metrics and status badges in real-time without requiring manual refreshes.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use technologies such as WebSockets or server-sent events to push updates to the dashboard UI as data changes occur. Test that the UI reflects changes promptly and maintains responsiveness.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Polish UI/UX and Implement Loading/Error States",
+        "description": "Conduct a final UI/UX review, ensuring consistency, accessibility, and clear loading/error feedback across all components.",
+        "details": "Audit all UI components for consistency with shadcn/ui. Implement uniform loading spinners and error messages. Ensure all interactive elements have clear feedback. Test on different devices and browsers.",
+        "testStrategy": "Perform cross-browser and device testing. Verify that loading and error states are clear and consistent. Check for accessibility compliance.",
+        "priority": "low",
+        "dependencies": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Audit UI Components for Consistency and Accessibility",
+            "description": "Review all existing UI components to ensure they follow the shadcn/ui design system for visual consistency and accessibility standards.",
+            "dependencies": [],
+            "details": "Check each component's styling, structure, and ARIA attributes. Verify keyboard navigation and screen reader compatibility based on Radix UI primitives used by shadcn/ui.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Uniform Loading Spinners Across Components",
+            "description": "Add consistent loading spinner components to all asynchronous UI elements to provide clear feedback during data fetching or processing.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use or customize shadcn/ui spinner components or create a reusable spinner component styled with Tailwind CSS. Integrate spinners in places like CRUD operations, AI email generation, and OCR processing.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Clear and Consistent Error Feedback",
+            "description": "Ensure all interactive components display uniform and accessible error messages when operations fail or invalid input is detected.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create or standardize error message components using shadcn/ui styles. Include ARIA roles and attributes for accessibility. Apply error feedback in forms, API calls, and manual review modals.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Test Cross-Browser and Device Compatibility",
+            "description": "Perform thorough testing of all UI components, loading spinners, and error feedback on multiple browsers and devices to ensure consistent behavior and appearance.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Test on major browsers (Chrome, Firefox, Safari, Edge) and various devices (desktop, tablet, mobile). Verify accessibility compliance and responsiveness. Document any issues and fixes.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Documentation and Handoff",
+        "description": "Prepare comprehensive documentation for developers, including setup instructions, API specs, and user guides.",
+        "details": "Write READMEs for each package, API documentation (e.g., Swagger/OpenAPI), and a user guide for end-users. Include deployment instructions and troubleshooting tips.",
+        "testStrategy": "Review documentation for accuracy and completeness. Have a new team member follow the docs to set up and run the project.",
+        "priority": "low",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create API Documentation",
+            "description": "Develop OpenAPI/Swagger documentation for all API endpoints, including setup instructions and examples for request and response formats.",
+            "dependencies": [],
+            "details": "Use tools like Swagger Inspector to generate OpenAPI definitions and SwaggerHub for hosting and editing the documentation.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Write User Guides and READMEs",
+            "description": "Prepare user guides for end-users and README files for each package in the monorepo, including deployment instructions and troubleshooting tips.",
+            "dependencies": [
+              1
+            ],
+            "details": "Ensure that the guides cover all necessary steps for setting up and using the application, and that READMEs provide clear instructions for developers.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-19T03:43:11.109Z",
+      "updated": "2025-07-19T04:15:21.345Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2025-07-19T03:43:59.222Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Setup Monorepo and CI/CD Pipeline",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Create monorepo structure, configure CI/CD pipeline, set up environment variables, and deploy to Render.",
+			"reasoning": "This task involves setting up a monorepo with multiple packages and configuring a CI/CD pipeline, which requires understanding of build tools and deployment platforms."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Design and Deploy PostgreSQL Database Schema",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Define schema models, create migrations, and deploy to Supabase.",
+			"reasoning": "Designing a database schema involves understanding data relationships and constraints, which can be complex but is a well-defined process."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Implement Event Management CRUD",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Create backend API endpoints, build frontend components, connect frontend to backend, and implement error handling.",
+			"reasoning": "Implementing CRUD operations requires understanding of both backend and frontend technologies, but the pattern is well-established."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Develop Contact Creation with OCR Integration",
+			"complexityScore": 9,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Create upload interface, integrate OCR processing, implement manual review queue, build review modal, and test OCR accuracy.",
+			"reasoning": "This task involves integrating OCR technology and handling low-confidence scans, which adds complexity due to the need for manual review processes."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Build Lead Group Management",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Add lead_groups table, create API endpoints, build UI for group management.",
+			"reasoning": "This task involves extending existing database and UI components, which is relatively straightforward."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Implement AI Email Campaign Generation",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Create email_campaigns table, build UI for template creation, integrate OpenAI API, and test draft generation.",
+			"reasoning": "Integrating AI services like OpenAI adds complexity due to the need to handle variable inputs and outputs."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Develop CSV Export for Gmail Mail Merge",
+			"complexityScore": 4,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Add export endpoint, implement CSV formatting for Gmail Mail Merge.",
+			"reasoning": "This task involves creating a simple export function, which is a common and well-understood task."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Build Dashboard Analytics",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Design dashboard UI, fetch and display metrics, implement real-time updates.",
+			"reasoning": "Building a dashboard requires understanding of UI design and data fetching, but the components are generally straightforward."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Polish UI/UX and Implement Loading/Error States",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Audit UI components, implement loading spinners, ensure error feedback, and test cross-browser compatibility.",
+			"reasoning": "This task involves ensuring consistency and accessibility across multiple components, which can be time-consuming but follows established best practices."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Documentation and Handoff",
+			"complexityScore": 3,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Write comprehensive documentation, include setup instructions and API specs.",
+			"reasoning": "Preparing documentation is essential but generally less complex than coding tasks, as it involves organizing existing knowledge."
+		}
+	]
+}

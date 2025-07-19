@@ -1,0 +1,25 @@
+# Task ID: 7
+# Title: Develop CSV Export for Gmail Mail Merge
+# Status: pending
+# Dependencies: 1, 2, 3, 4, 5, 6
+# Priority: medium
+# Description: Implement CSV export functionality for AI-generated email drafts, formatted for Gmail Mail Merge.
+# Details:
+Add an export endpoint in the backend that generates a CSV file from email_campaigns and contacts data, formatted for Gmail Mail Merge. Provide a download button in the UI.
+
+# Test Strategy:
+Test CSV generation and download. Verify that the CSV is correctly formatted for Gmail Mail Merge and contains all necessary fields.
+
+# Subtasks:
+## 1. Design CSV Export Endpoint [pending]
+### Dependencies: None
+### Description: Create a backend API endpoint that retrieves email_campaigns and contacts data, formats it according to Gmail Mail Merge requirements, and returns a downloadable CSV file.
+### Details:
+Implement an Express route that queries the database for the relevant campaign and contact data. Transform the data into a CSV format where each column corresponds to a merge field (e.g., First Name, Last Name, Email). Ensure the CSV header row matches Gmail Mail Merge expectations. Return the CSV as a file download response.
+
+## 2. Build CSV Download UI Component [pending]
+### Dependencies: 7.1
+### Description: Develop a frontend component that allows users to trigger the CSV export and download the generated file.
+### Details:
+Create a React button or link that calls the export endpoint. Handle the file download in the browser, providing user feedback during the process. Ensure the UI is integrated with the existing campaign management interface.
+

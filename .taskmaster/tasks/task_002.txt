@@ -1,0 +1,31 @@
+# Task ID: 2
+# Title: Design and Deploy PostgreSQL Database Schema
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Define and deploy the PostgreSQL database schema using Supabase, including tables for events, contacts, lead_groups, email_campaigns, and activity_logs.
+# Details:
+Use Drizzle ORM to define schema models in TypeScript. Create migrations for events, contacts, lead_groups, email_campaigns, and activity_logs tables. Deploy schema to Supabase. Ensure foreign keys and constraints match the logical dependency chain (e.g., contacts reference events).
+
+# Test Strategy:
+Validate schema with integration tests, checking CRUD operations for each table. Confirm relationships and constraints are enforced.
+
+# Subtasks:
+## 1. Define Schema Models [pending]
+### Dependencies: None
+### Description: Use Drizzle ORM to define schema models in TypeScript for events, contacts, lead_groups, email_campaigns, and activity_logs tables.
+### Details:
+Ensure foreign keys and constraints match the logical dependency chain.
+
+## 2. Create Migrations [pending]
+### Dependencies: 2.1
+### Description: Create migrations for the defined schema models using Supabase migration tools.
+### Details:
+Run commands like `pnpm --filter web supabase migration new support-schema` to create new migration files.
+
+## 3. Deploy Schema to Supabase [pending]
+### Dependencies: 2.2
+### Description: Deploy the schema to Supabase and validate its integrity.
+### Details:
+Use integration tests to check CRUD operations for each table and confirm relationships and constraints are enforced.
+

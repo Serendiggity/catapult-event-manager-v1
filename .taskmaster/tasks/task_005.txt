@@ -1,0 +1,31 @@
+# Task ID: 5
+# Title: Build Lead Group Management
+# Status: pending
+# Dependencies: 1, 2, 3, 4
+# Priority: medium
+# Description: Enable users to create, view, and manage lead groups for segmenting contacts.
+# Details:
+Add lead_groups table and API endpoints. Build UI for creating, viewing, and editing lead groups. Allow users to add/remove contacts from groups. Ensure groups are associated with events.
+
+# Test Strategy:
+Test group creation, contact assignment, and group deletion. Verify that groups are correctly associated with events and contacts.
+
+# Subtasks:
+## 1. Add lead_groups Table to Database [pending]
+### Dependencies: None
+### Description: Create a new table in the database to store lead groups.
+### Details:
+Design the schema for the lead_groups table, including columns for group name, description, and associated events. Execute SQL commands to create the table.
+
+## 2. Develop API Endpoints for Lead Group Management [pending]
+### Dependencies: 5.1
+### Description: Create REST API endpoints for creating, reading, updating, and deleting lead groups.
+### Details:
+Implement API endpoints using Express to handle CRUD operations for lead groups. Ensure proper error handling and validation.
+
+## 3. Build UI for Lead Group Management [pending]
+### Dependencies: 5.2
+### Description: Design and implement a user interface for creating, viewing, and editing lead groups.
+### Details:
+Use React to build components for lead group management. Allow users to add or remove contacts from groups and associate groups with events.
+

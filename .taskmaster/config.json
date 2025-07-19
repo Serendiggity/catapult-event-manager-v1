@@ -1,0 +1,36 @@
+{
+  "models": {
+    "main": {
+      "provider": "google",
+      "modelId": "gemini-2.5-flash-preview-04-17",
+      "maxTokens": 64000,
+      "temperature": 0.2
+    },
+    "research": {
+      "provider": "perplexity",
+      "modelId": "sonar",
+      "maxTokens": 8700,
+      "temperature": 0.1
+    },
+    "fallback": {
+      "provider": "openrouter",
+      "modelId": "deepseek/deepseek-chat-v3-0324:free",
+      "maxTokens": 64000,
+      "temperature": 0.2
+    }
+  },
+  "global": {
+    "logLevel": "info",
+    "debug": false,
+    "defaultSubtasks": 5,
+    "defaultPriority": "medium",
+    "projectName": "Task Master",
+    "ollamaBaseURL": "http://localhost:11434/api",
+    "defaultNumTasks": 10,
+    "bedrockBaseURL": "https://bedrock.us-east-1.amazonaws.com",
+    "responseLanguage": "English",
+    "userId": "1234567890",
+    "azureBaseURL": "https://your-endpoint.azure.com/",
+    "defaultTag": "master"
+  }
+}

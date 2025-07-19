@@ -11,9 +11,10 @@
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "typecheck": "npm run typecheck --workspaces",
-    "build:shared": "cd packages/shared && npm run build",
-    "build:server": "npm run build:shared && cd packages/server && npm run build",
-    "build:client": "npm run build:shared && cd packages/client && npm run build",
+    "install:all": "npm install && npm install --workspaces",
+    "build:shared": "cd packages/shared && npm install && npm run build",
+    "build:server": "npm run build:shared && cd packages/server && npm install && npm run build",
+    "build:client": "npm run build:shared && cd packages/client && npm install && npm run build",
     "start:server": "cd packages/server && npm start",
     "start": "npm run start:server"
   },

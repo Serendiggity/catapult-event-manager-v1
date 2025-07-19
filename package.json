@@ -15,5 +15,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Catapult Event Manager - Monorepo"
+  "description": "Catapult Event Manager - Monorepo",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }

@@ -5,8 +5,8 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run start --workspace=@catapult-event-manager/server
+    buildCommand: npm ci
+    startCommand: cd packages/server && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,7 +22,7 @@ services:
   - type: web
     name: catapult-event-manager-client
     runtime: static
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && cd packages/client && npm run build
     staticPublishPath: ./packages/client/dist
     routes:
       - type: rewrite

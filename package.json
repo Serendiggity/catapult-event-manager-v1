@@ -10,7 +10,9 @@
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
-    "typecheck": "npm run typecheck --workspaces"
+    "typecheck": "npm run typecheck --workspaces",
+    "start": "cd packages/server && npm run build && npm start",
+    "build:client": "cd packages/client && npm run build"
   },
   "keywords": [],
   "author": "",

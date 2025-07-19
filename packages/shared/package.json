@@ -17,6 +17,7 @@
   "description": "Shared types and utilities for Catapult Event Manager",
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "eslint": "^9.31.0",

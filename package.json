@@ -11,13 +11,12 @@
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "typecheck": "npm run typecheck --workspaces",
-    "install:all": "npm install && npm install --workspaces",
+    "install:all": "npm install --workspaces",
     "build:shared": "cd packages/shared && npm ci && npm run build",
     "build:server": "npm run build:shared && cd packages/server && npm ci && npm run build",
     "build:client": "npm run build:shared && cd packages/client && npm ci && npm run build",
     "start:server": "cd packages/server && npm start",
-    "start": "npm run start:server",
-    "postinstall": "npm install --workspaces --include-workspace-root --legacy-peer-deps"
+    "start": "npm run start:server"
   },
   "keywords": [],
   "author": "",

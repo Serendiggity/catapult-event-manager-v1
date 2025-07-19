@@ -10,8 +10,7 @@
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
-    "typecheck": "npm run typecheck --workspaces",
-    "install": "npm install --workspaces --include-workspace-root"
+    "typecheck": "npm run typecheck --workspaces"
   },
   "keywords": [],
   "author": "",

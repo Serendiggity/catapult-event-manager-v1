@@ -1,0 +1,45 @@
+{
+  "entry_id": "KB-RENDER-001",
+  "timestamp": "2025-07-20T02:00:00Z",
+  "category": "ERROR_SOLUTION",
+  "access_level": "FREQUENT",
+  "title": "Render Deployment Fails for npm Monorepo with TypeScript",
+  "tags": ["render", "monorepo", "typescript", "npm-workspaces", "deployment", "build-error"],
+  "problem_context": "Deploying a npm workspace monorepo to Render fails with various build errors including npm ci sync issues, TypeScript compilation errors, and missing type definitions",
+  "verified_facts": [
+    "Render does not install devDependencies by default in production builds",
+    "npm ci requires perfect sync between package.json and package-lock.json",
+    "TypeScript type definitions (@types/*) must be in dependencies for production builds",
+    "Shell scripts may have execution permission issues on Render",
+    "Render's build environment may have different paths than local development"
+  ],
+  "solution_summary": "Move TypeScript type definitions to dependencies, use explicit workspace install commands, and ensure proper build order for monorepo packages",
+  "detailed_content": {
+    "steps": [
+      "1. Move all @types/* packages from devDependencies to dependencies in package.json",
+      "2. Use 'npm install --workspaces --include-workspace-root' instead of npm ci",
+      "3. Create explicit build scripts that respect monorepo dependency order (shared → server/client)",
+      "4. Remove explicit 'types' array from tsconfig.json to avoid missing type errors",
+      "5. Use direct node execution in start command (e.g., 'node packages/server/dist/index.js')",
+      "6. Add .nvmrc file to specify Node version consistency"
+    ],
+    "code_snippets": {
+      "render.yaml": "buildCommand: npm install --workspaces --include-workspace-root && npm run build:server\nstartCommand: node packages/server/dist/index.js",
+      "package.json": "\"build:server\": \"npm run build:shared && npm run build --workspace=@catapult-event-manager/server\"",
+      "tsconfig.json": "Remove 'types: [\"node\"]' and add 'typeRoots: [\"./node_modules/@types\"]'"
+    },
+    "api_endpoints": "N/A",
+    "dependencies": [
+      "Node.js 20.11.1 (specified in .nvmrc)",
+      "npm workspaces",
+      "TypeScript",
+      "@types/node moved to dependencies"
+    ],
+    "testing_notes": "Test build locally with 'npm install --workspaces --include-workspace-root && npm run build:server' to replicate Render environment"
+  },
+  "related_entries": [],
+  "conversation_log_refs": ["RENDER-DEPLOY-2025-07-20"],
+  "last_used": "2025-07-20T02:00:00Z",
+  "success_rate": "HIGH",
+  "notes": "Key lesson: Production builds require all TypeScript types in dependencies, not devDependencies. Avoid complex shell scripts; use npm scripts directly in render.yaml."
+}

@@ -1,0 +1,50 @@
+{
+  "entry_id": "KB-RENDER-002",
+  "timestamp": "2025-07-20T04:40:00Z",
+  "category": "ERROR_SOLUTION",
+  "access_level": "FREQUENT",
+  "title": "Complete Render Deployment Solution for npm Monorepo with TypeScript and Vite",
+  "tags": ["render", "monorepo", "typescript", "vite", "npm-workspaces", "deployment", "react", "express"],
+  "problem_context": "Deploying npm workspace monorepo with TypeScript server and Vite+React client to Render resulted in multiple build failures",
+  "verified_facts": [
+    "Render production builds do not install devDependencies by default",
+    "Render requires all TypeScript type definitions in dependencies for production builds",
+    "Render build environment may have different Node.js crypto module behavior than local",
+    "Vite absolute path imports (/path) can fail with crypto.hash errors on Render",
+    "npm workspaces with --include-workspace-root flag properly installs all dependencies",
+    "TypeScript build tools (typescript package) must be in dependencies for production",
+    "Vite and build plugins must be in dependencies for static site builds"
+  ],
+  "solution_summary": "Move all build-time dependencies including TypeScript types, build tools, and Vite to dependencies section, use relative imports for assets",
+  "detailed_content": {
+    "steps": [
+      "1. Server: Move @types/node, @types/express, @types/cors from devDependencies to dependencies",
+      "2. Client: Move @types/react, @types/react-dom, @types/node, typescript, vite, @vitejs/plugin-react to dependencies",
+      "3. Use 'npm install --workspaces --include-workspace-root' in build commands",
+      "4. Change absolute asset imports (/vite.svg) to relative imports (./vite.svg)",
+      "5. Copy public assets to src directory if needed for module imports",
+      "6. Remove explicit 'types' array from tsconfig.json files",
+      "7. Use direct node execution for start command: 'node packages/server/dist/index.js'"
+    ],
+    "code_snippets": {
+      "server_package.json": "\"dependencies\": {\n  \"@types/node\": \"^24.0.15\",\n  \"@types/express\": \"^5.0.3\",\n  \"@types/cors\": \"^2.8.19\"\n}",
+      "client_package.json": "\"dependencies\": {\n  \"@types/react\": \"^19.1.8\",\n  \"@types/react-dom\": \"^19.1.6\",\n  \"@types/node\": \"^24.0.15\",\n  \"vite\": \"^7.0.4\",\n  \"@vitejs/plugin-react\": \"^4.6.0\",\n  \"typescript\": \"~5.8.3\"\n}",
+      "render.yaml": "buildCommand: npm install --workspaces --include-workspace-root && npm run build:server\nstartCommand: node packages/server/dist/index.js",
+      "asset_import_fix": "// Change from:\nimport viteLogo from '/vite.svg'\n// To:\nimport viteLogo from './vite.svg'"
+    },
+    "api_endpoints": "N/A",
+    "dependencies": [
+      "Node.js 20.11.1",
+      "npm workspaces",
+      "TypeScript in dependencies",
+      "Vite in dependencies",
+      "All @types/* packages in dependencies"
+    ],
+    "testing_notes": "Test builds locally with exact Render commands: 'npm install --workspaces --include-workspace-root && npm run build:server' and 'npm run build:client'"
+  },
+  "related_entries": ["KB-RENDER-001"],
+  "conversation_log_refs": ["RENDER-DEPLOY-2025-07-20-COMPLETE"],
+  "last_used": "2025-07-20T04:40:00Z",
+  "success_rate": "HIGH",
+  "notes": "Critical insight: ALL build-time dependencies must be in 'dependencies' not 'devDependencies' for Render. This includes TypeScript, type definitions, and build tools like Vite."
+}

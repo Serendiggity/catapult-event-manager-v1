@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tesseract Test</title>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@6/dist/tesseract.min.js'></script>
+</head>
+<body>
+    <h1>Tesseract.js Test</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <div id="result"></div>
+    <script>
+        document.getElementById('imageInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const imageData = event.target.result;
+                console.log('Image data URL:', imageData.substring(0, 50) + '...');
+                
+                try {
+                    const worker = await Tesseract.createWorker('eng');
+                    console.log('Worker created');
+                    
+                    const { data: { text } } = await worker.recognize(imageData);
+                    console.log('Text extracted:', text);
+                    
+                    document.getElementById('result').innerHTML = `<pre>${text}</pre>`;
+                    await worker.terminate();
+                } catch (error) {
+                    console.error('Tesseract error:', error);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

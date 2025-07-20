@@ -1,34 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Layout } from '@/components/layout/Layout'
+import { EventsPage } from '@/pages/EventsPage'
+import { ContactsPage } from '@/pages/ContactsPage'
+import { ContactDetailsPage } from '@/pages/ContactDetailsPage'
+import { ContactsListPage } from '@/pages/ContactsListPage'
+import { ReviewQueuePage } from '@/pages/ReviewQueuePage'
+import { LeadGroupsPage } from '@/pages/LeadGroupsPage'
+import { CampaignsPage } from '@/pages/CampaignsPage'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<EventsPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/contacts" element={<ContactsListPage />} />
+          <Route path="/events/:eventId/contacts/new" element={<ContactsPage />} />
+          <Route path="/contacts/:id" element={<ContactDetailsPage />} />
+          <Route path="/events/:eventId/review" element={<ReviewQueuePage />} />
+          <Route path="/events/:eventId/groups" element={<LeadGroupsPage />} />
+          <Route path="/events/:eventId/campaigns" element={<CampaignsPage />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
 

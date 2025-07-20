@@ -4,9 +4,11 @@ import { getDb } from '../db/connection';
 import { emailCampaigns, campaignGroups, emailDrafts, leadGroups, contactsToLeadGroups, contacts } from '../db/schema';
 import type { EmailCampaign, NewEmailCampaign, CampaignGroup, NewCampaignGroup } from '../db/schema';
 import { EmailGenerator } from '../services/email-generation/email-generator';
+import { EmailSender } from '../services/email/email-sender';
 
 const router = Router();
 let emailGenerator: EmailGenerator | null = null;
+let emailSender: EmailSender | null = null;
 
 // Lazy initialization of email generator
 function getEmailGenerator(): EmailGenerator {
@@ -14,6 +16,14 @@ function getEmailGenerator(): EmailGenerator {
     emailGenerator = new EmailGenerator();
   }
   return emailGenerator;
+}
+
+// Lazy initialization of email sender
+function getEmailSender(): EmailSender {
+  if (!emailSender) {
+    emailSender = new EmailSender();
+  }
+  return emailSender;
 }
 
 // Get all email campaigns for an event
@@ -389,6 +399,117 @@ router.get('/campaigns/:id/export-csv', async (req, res) => {
   } catch (error) {
     console.error('Error exporting campaign CSV:', error);
     res.status(500).json({ error: 'Failed to export campaign CSV' });
+  }
+});
+
+// Send a single email draft
+router.post('/drafts/:id/send', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Verify draft exists
+    const draft = await getDb().query.emailDrafts.findFirst({
+      where: eq(emailDrafts.id, id),
+    });
+    
+    if (!draft) {
+      return res.status(404).json({ error: 'Draft not found' });
+    }
+    
+    if (draft.status !== 'approved') {
+      return res.status(400).json({ error: 'Only approved drafts can be sent' });
+    }
+    
+    // Check if email service is available
+    try {
+      const sender = getEmailSender();
+      const isConnected = await sender.testConnection();
+      if (!isConnected) {
+        return res.status(503).json({ error: 'Email service is not configured properly. Please check SMTP settings.' });
+      }
+    } catch (error) {
+      return res.status(503).json({ error: 'Email service is not available. Please configure SMTP settings.' });
+    }
+    
+    // Send the email
+    const result = await getEmailSender().sendDraft(id);
+    
+    if (result.success) {
+      res.json({ message: 'Email sent successfully', messageId: result.messageId });
+    } else {
+      res.status(500).json({ error: result.error || 'Failed to send email' });
+    }
+  } catch (error) {
+    console.error('Error sending draft:', error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+});
+
+// Send all approved drafts for a campaign
+router.post('/campaigns/:id/send', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { draftIds } = req.body; // Optional: specific draft IDs to send
+    
+    // Verify campaign exists
+    const campaign = await getDb().query.emailCampaigns.findFirst({
+      where: eq(emailCampaigns.id, id),
+    });
+    
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+    
+    // Check if email service is available
+    try {
+      const sender = getEmailSender();
+      const isConnected = await sender.testConnection();
+      if (!isConnected) {
+        return res.status(503).json({ error: 'Email service is not configured properly. Please check SMTP settings.' });
+      }
+    } catch (error) {
+      return res.status(503).json({ error: 'Email service is not available. Please configure SMTP settings.' });
+    }
+    
+    // Send emails
+    const results = await getEmailSender().sendCampaignDrafts(id, draftIds);
+    
+    res.json({
+      message: 'Email sending completed',
+      sent: results.sent,
+      failed: results.failed,
+      errors: results.errors,
+    });
+  } catch (error) {
+    console.error('Error sending campaign emails:', error);
+    res.status(500).json({ error: 'Failed to send campaign emails' });
+  }
+});
+
+// Test email configuration
+router.get('/test-email-config', async (req, res) => {
+  try {
+    const sender = getEmailSender();
+    const isConnected = await sender.testConnection();
+    
+    if (isConnected) {
+      res.json({ 
+        connected: true, 
+        message: 'Email service is configured correctly',
+        smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        smtp_user: process.env.SMTP_USER ? `${process.env.SMTP_USER.substring(0, 3)}...` : 'Not configured'
+      });
+    } else {
+      res.status(503).json({ 
+        connected: false, 
+        message: 'Email service connection failed' 
+      });
+    }
+  } catch (error) {
+    res.status(503).json({ 
+      connected: false, 
+      message: 'Email service is not configured. Please set SMTP environment variables.' 
+    });
   }
 });
 

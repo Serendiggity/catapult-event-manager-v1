@@ -9,7 +9,7 @@
         "testStrategy": "Verify monorepo structure, build scripts, and deployment pipelines with automated tests. Confirm successful deployment to Render staging environment.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -50,7 +50,7 @@
               3
             ],
             "details": "Configure Render to host both client and server services, ensuring proper routing and service discovery.\n<info added on 2025-07-19T22:18:03.040Z>\nSuccessfully created Render services for both client and server with service IDs srv-d1u19k2dbo4c73e3tkk0 (server) and srv-d1u19k2dbo4c73e3tkl0 (client). Fixed build configuration issues by simplifying the build commands, resulting in successful deployments. Configured GitHub secrets to enable automatic deployments on push to the repository. Both services are properly bound to the PORT environment variable as required by Render, ensuring correct routing and service discovery.\n</info added on 2025-07-19T22:18:03.040Z>",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -65,7 +65,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -73,7 +73,7 @@
             "description": "Use Drizzle ORM to define schema models in TypeScript for events, contacts, lead_groups, email_campaigns, and activity_logs tables.",
             "dependencies": [],
             "details": "Ensure foreign keys and constraints match the logical dependency chain.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -83,8 +83,8 @@
             "dependencies": [
               1
             ],
-            "details": "Run commands like `pnpm --filter web supabase migration new support-schema` to create new migration files.",
-            "status": "pending",
+            "details": "Run commands like `pnpm --filter web supabase migration new support-schema` to create new migration files.\n<info added on 2025-07-20T05:35:35.821Z>\nThe previous `drizzle-kit generate:pg` command is deprecated. To generate new database migrations, update to use the new `drizzle-kit generate` command as per the latest migration guide. This command requires specifying the SQL dialect and schema path either via the `drizzle.config.ts` configuration file or CLI options. It will compare the current Drizzle schema snapshot with previous migrations and generate SQL migration files accordingly. Use `drizzle-kit migrate` to apply these generated migrations to the database. Adjust your migration scripts and package.json commands to replace `generate:pg` with `generate` to align with the updated Drizzle Kit CLI usage.\n</info added on 2025-07-20T05:35:35.821Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -94,8 +94,8 @@
             "dependencies": [
               2
             ],
-            "details": "Use integration tests to check CRUD operations for each table and confirm relationships and constraints are enforced.",
-            "status": "pending",
+            "details": "Use integration tests to check CRUD operations for each table and confirm relationships and constraints are enforced.\n<info added on 2025-07-20T05:38:38.290Z>\nSuccessfully deployed the complete database schema to Supabase, creating all 7 tables: events, contacts, lead_groups, contacts_to_lead_groups, email_campaigns, email_drafts, and activity_logs. Implemented 8 foreign key constraints to enforce relationships between tables. Utilized Drizzle ORM migrations for schema deployment. Verified the deployment integrity with a custom verification script that queries the information_schema to confirm the existence of all tables and constraints. Integration tests were used to validate CRUD operations and ensure all relationships and constraints are properly enforced.\n</info added on 2025-07-20T05:38:38.290Z>",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -111,15 +111,15 @@
           1,
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
             "title": "Create Backend API Endpoints",
             "description": "Implement REST API endpoints in Express for event creation, reading, updating, and deletion.",
             "dependencies": [],
-            "details": "Use Express to create endpoints for CRUD operations on events, aligning with HTTP methods POST, GET, PUT/PATCH, and DELETE.",
-            "status": "pending",
+            "details": "Use Express to create endpoints for CRUD operations on events, aligning with HTTP methods POST, GET, PUT/PATCH, and DELETE.\n<info added on 2025-07-20T05:56:26.164Z>\nThe database connection is currently being established immediately upon module import, causing the server to hang. To resolve this, refactor the database connection logic into a separate module that exports an asynchronous function to initialize the connection. Then, invoke this connection function explicitly during server startup, ensuring the database connection is established before the Express app begins listening. This approach prevents the connection from blocking module loading and allows proper error handling before starting the server. Investigate and implement this pattern to fix the database connection issue before proceeding with API endpoint testing.\n</info added on 2025-07-20T05:56:26.164Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -129,8 +129,8 @@
             "dependencies": [
               1
             ],
-            "details": "Create React components that interact with the backend API for displaying, creating, updating, and deleting events.",
-            "status": "pending",
+            "details": "Create React components that interact with the backend API for displaying, creating, updating, and deleting events.\n<info added on 2025-07-20T06:17:09.674Z>\nSuccessfully built all frontend components using shadcn/ui, including EventList, EventCard, EventForm, and EventDetails, providing a full CRUD user interface. Installed and configured Tailwind CSS and shadcn/ui components such as Button, Card, Input, Label, and Textarea. Integrated React Router for client-side routing. Established a clean and maintainable component structure with proper TypeScript typings. The frontend application is running on localhost:5173 without any TypeScript errors. These components are ready to interact with the backend API for event management.\n</info added on 2025-07-20T06:17:09.674Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -141,8 +141,8 @@
               1,
               2
             ],
-            "details": "Use fetch API or a library like Axios to make HTTP requests from React to the Express backend.",
-            "status": "pending",
+            "details": "Use fetch API or a library like Axios to make HTTP requests from React to the Express backend.\n<info added on 2025-07-20T06:30:16.468Z>\nSuccessfully connected the frontend to the backend API by creating a custom React hook, useEvents, which manages all CRUD operations with integrated error handling. The EventsPage component was updated to utilize this API hook instead of local state, enabling full integration where the frontend can create, read, update, and delete events through the backend API. Additionally, the Vite development server proxy is configured to forward all /api requests to the backend server running on port 3001, ensuring seamless communication between frontend and backend during development.\n</info added on 2025-07-20T06:30:16.468Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -155,7 +155,7 @@
               3
             ],
             "details": "Implement try-catch blocks in Express for backend errors and use React state management for frontend loading and error states.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -163,68 +163,69 @@
       {
         "id": 4,
         "title": "Develop Contact Creation with OCR Integration",
-        "description": "Implement business card image upload, OCR processing with Tesseract.js, and contact creation with manual review for low-confidence scans.",
-        "details": "Create an upload interface in React. On the backend, use Tesseract.js to extract contact info from images, assign a confidence score, and save to the contacts table. Expose a 'Needs Review' queue in the UI. Build a review modal for manual correction of low-confidence scans.",
-        "testStrategy": "Test OCR accuracy with varied business card images. Validate that low-confidence scans are flagged and manually correctable. Ensure data integrity after manual review.",
-        "priority": "high",
+        "description": "Implement business card image upload, OCR processing with Tesseract.js, and contact creation with AI-enhanced field parsing via OpenAI API, including manual review for low-confidence fields.",
+        "status": "done",
         "dependencies": [
           1,
           2,
-          3
+          3,
+          11
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Create an upload interface in React. On the backend, use Tesseract.js to extract raw text from business card images, then send this raw text to the OpenAI API for intelligent parsing and categorization of contact fields with confidence scores (leveraging task 11). Save the structured data to the contacts table, flagging low-confidence fields for review. Expose a 'Needs Review' queue in the UI for manual correction of these fields. Build a review modal to allow users to edit and save corrected contact information.",
+        "testStrategy": "Test the end-to-end workflow with varied business card images: verify raw text extraction by Tesseract.js, validate the OpenAI API's field parsing and confidence scoring, ensure low-confidence fields are correctly flagged, and confirm manual review updates data accurately. Check data integrity after manual corrections and UI responsiveness of the review queue and modal.",
         "subtasks": [
           {
             "id": 1,
             "title": "Create Upload Interface",
             "description": "Design and implement a user-friendly interface in React for uploading business card images.",
+            "status": "done",
             "dependencies": [],
-            "details": "Use React components to create an upload form with file input and submit button.",
-            "status": "pending",
+            "details": "Use React components to create an upload form with file input and submit button.\n<info added on 2025-07-20T07:11:44.826Z>\nAdd camera capture functionality to the upload interface allowing users to either upload an existing image file or capture a business card photo directly using their device camera. On mobile devices, implement the HTML5 capture attribute on the file input to launch the native camera app. On desktop devices with a webcam, integrate a camera capture interface using the MediaDevices API or a React camera component such as react-webcam or react-camera-pro. This interface should display a live video preview from the webcam, provide a capture button to take a photo, and show the captured image with an option to retake. Ensure the camera component handles permissions, supports switching between front and rear cameras if available, and works seamlessly within the React upload form. This enhancement will provide a user-friendly, versatile image input method for business card capture across device types.\n</info added on 2025-07-20T07:11:44.826Z>",
             "testStrategy": ""
           },
           {
             "id": 2,
-            "title": "Integrate OCR Processing with Tesseract.js",
-            "description": "Implement OCR processing using Tesseract.js to extract contact information from uploaded images.",
+            "title": "Integrate OCR Processing with Tesseract.js and OpenAI API",
+            "description": "Implement OCR processing using Tesseract.js to extract raw text, then send this text to the OpenAI API for intelligent field parsing and categorization with confidence scoring.",
+            "status": "done",
             "dependencies": [
               1
             ],
-            "details": "Use Tesseract.js to recognize text in images and assign a confidence score to the extracted data.",
-            "status": "pending",
+            "details": "Use Tesseract.js to recognize text in images. Send extracted raw text to OpenAI API (from task 11) to parse and categorize contact fields with confidence scores. Handle API responses to structure data and identify low-confidence fields.",
             "testStrategy": ""
           },
           {
             "id": 3,
             "title": "Implement Manual Review Queue",
-            "description": "Develop a UI component to display a 'Needs Review' queue for low-confidence scans.",
+            "description": "Develop a UI component to display a 'Needs Review' queue for contacts with low-confidence fields flagged by AI parsing.",
+            "status": "done",
             "dependencies": [
               2
             ],
-            "details": "Expose a queue in the UI where users can view and manually correct low-confidence scans.",
-            "status": "pending",
+            "details": "Expose a queue in the UI where users can view contacts requiring manual review of specific fields flagged as low-confidence.",
             "testStrategy": ""
           },
           {
             "id": 4,
             "title": "Build Review Modal",
-            "description": "Create a modal for manual correction of low-confidence scans.",
+            "description": "Create a modal for manual correction of low-confidence fields in contact data.",
+            "status": "done",
             "dependencies": [
               3
             ],
-            "details": "Design a modal that allows users to edit and save corrected contact information.",
-            "status": "pending",
+            "details": "Design a modal that allows users to edit and save corrected contact information for fields flagged during AI parsing.",
             "testStrategy": ""
           },
           {
             "id": 5,
             "title": "Test OCR Accuracy and Manual Review Workflow",
-            "description": "Test the OCR accuracy with varied business card images and validate the manual review process.",
+            "description": "Test the OCR accuracy with varied business card images and validate the manual review process including AI parsing and confidence flagging.",
+            "status": "done",
             "dependencies": [
               4
             ],
-            "details": "Conduct thorough testing to ensure OCR accuracy and data integrity after manual review.",
-            "status": "pending",
+            "details": "Conduct thorough testing to ensure Tesseract.js extracts raw text correctly, OpenAI API parses fields accurately with confidence scores, low-confidence fields are flagged, and manual review updates data correctly. Verify data integrity after manual review.",
             "testStrategy": ""
           }
         ]
@@ -242,7 +243,7 @@
           3,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -250,7 +251,7 @@
             "description": "Create a new table in the database to store lead groups.",
             "dependencies": [],
             "details": "Design the schema for the lead_groups table, including columns for group name, description, and associated events. Execute SQL commands to create the table.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -261,7 +262,7 @@
               1
             ],
             "details": "Implement API endpoints using Express to handle CRUD operations for lead groups. Ensure proper error handling and validation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -272,7 +273,7 @@
               2
             ],
             "details": "Use React to build components for lead group management. Allow users to add or remove contacts from groups and associate groups with events.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -291,7 +292,7 @@
           4,
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -299,7 +300,7 @@
             "description": "Design and implement the email_campaigns table in the database to store email templates and campaign details.",
             "dependencies": [],
             "details": "Use SQL to create the table with necessary fields such as template_id, campaign_name, and template_content.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -310,7 +311,7 @@
               1
             ],
             "details": "Use React to build a template editor with input fields for variables and a preview feature.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -322,7 +323,7 @@
               2
             ],
             "details": "Use Express to create API endpoints that interact with OpenAI's API for draft generation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -335,7 +336,7 @@
               3
             ],
             "details": "Verify that drafts are correctly personalized and saved to the database, and ensure UI functionality.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -355,7 +356,7 @@
           5,
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -363,7 +364,7 @@
             "description": "Create a backend API endpoint that retrieves email_campaigns and contacts data, formats it according to Gmail Mail Merge requirements, and returns a downloadable CSV file.",
             "dependencies": [],
             "details": "Implement an Express route that queries the database for the relevant campaign and contact data. Transform the data into a CSV format where each column corresponds to a merge field (e.g., First Name, Last Name, Email). Ensure the CSV header row matches Gmail Mail Merge expectations. Return the CSV as a file download response.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -374,7 +375,7 @@
               1
             ],
             "details": "Create a React button or link that calls the export endpoint. Handle the file download in the browser, providing user feedback during the process. Ensure the UI is integrated with the existing campaign management interface.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -535,11 +536,342 @@
             "testStrategy": ""
           }
         ]
+      },
+      {
+        "id": 11,
+        "title": "Enhance OCR Processing with OpenAI API for Intelligent Field Matching and Categorization",
+        "description": "After Tesseract.js extracts raw text from business card images, use the OpenAI API to intelligently parse, categorize, and structure the text into contact fields (name, title, company, email, phone, address), with confidence scoring and manual review flags for low-confidence extractions.",
+        "details": "Implement a backend service that receives OCR-extracted text from Tesseract.js (Task 4) and sends it to the OpenAI API (e.g., GPT-4o or GPT-4 Turbo with Vision) for advanced parsing and field categorization. Design a prompt that instructs the AI to return a structured JSON object matching a predefined schema (e.g., {name, title, company, email, phone, address}), and include a confidence score (0-1) for each field. For fields with confidence below a threshold (e.g., 0.7), flag them for manual review in the UI. Handle varied business card layouts and ambiguous text placement by leveraging the AI's natural language understanding and context awareness[1][3]. Store the structured, scored data in the contacts table, and expose the 'Needs Review' queue for manual correction (extending Task 4's functionality). Use the OpenAI API's multimodal capabilities to improve accuracy over traditional OCR, especially for complex or non-standard card formats[3]. Consider batching requests for efficiency and implementing retries with exponential backoff for API reliability. Document the prompt engineering approach and schema for maintainability.",
+        "testStrategy": "Test with a diverse set of business card images covering different layouts, languages, and print qualities. Verify that the AI correctly parses and categorizes each field, and that confidence scores are generated and stored. Confirm that low-confidence fields are flagged in the 'Needs Review' queue and that manual corrections propagate correctly to the database. Measure accuracy improvement over Tesseract.js alone by comparing field assignment correctness before and after AI enhancement. Test edge cases: ambiguous text, missing fields, and non-standard formats. Validate that the system gracefully handles API rate limits and errors. Include performance testing to ensure acceptable latency for batch processing.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design JSON Schema and Prompt for AI Parsing",
+            "description": "Define the structured JSON schema for contact fields (name, title, company, email, phone, address) and design the prompt to instruct the OpenAI API to parse OCR text accordingly, including confidence scoring and manual review flags.",
+            "dependencies": [],
+            "details": "Create a clear and concise prompt that guides the AI to return data matching the predefined schema with confidence scores (0-1) for each field. Specify threshold rules for flagging low-confidence fields for manual review.",
+            "status": "done",
+            "testStrategy": "Validate prompt outputs with sample OCR text inputs to ensure correct JSON structure, accurate field extraction, and appropriate confidence scoring."
+          },
+          {
+            "id": 2,
+            "title": "Implement Backend Service for OCR Text Processing",
+            "description": "Develop a backend service that receives raw OCR text from Tesseract.js and sends requests to the OpenAI API for intelligent parsing and categorization.",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Build API endpoints to accept OCR-extracted text, integrate with OpenAI API (e.g., GPT-4o or GPT-4 Turbo with Vision), handle request batching for efficiency, and implement retries with exponential backoff for reliability.",
+            "status": "done",
+            "testStrategy": "Test API integration with various OCR text inputs, verify successful parsing responses, and ensure retry logic handles failures gracefully."
+          },
+          {
+            "id": 3,
+            "title": "Develop Confidence Scoring and Manual Review Flagging Logic",
+            "description": "Implement logic to evaluate confidence scores returned by the AI and flag fields below the threshold (e.g., 0.7) for manual review in the UI.",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Create mechanisms to parse confidence scores from AI responses, compare against threshold, and mark low-confidence fields. Integrate flags into the data model for downstream UI consumption.",
+            "status": "done",
+            "testStrategy": "Verify that fields with confidence below threshold are correctly flagged and that flags propagate to the UI review queue."
+          },
+          {
+            "id": 4,
+            "title": "Store Structured Data and Flags in Contacts Database",
+            "description": "Extend the contacts table schema to store the structured contact fields along with confidence scores and manual review flags.",
+            "dependencies": [
+              "11.3"
+            ],
+            "details": "Modify database schema as needed, implement data persistence logic to save parsed contact data, confidence scores, and review flags. Ensure data integrity and consistency.",
+            "status": "done",
+            "testStrategy": "Test database writes and reads for structured contact data and flags. Confirm data integrity after manual review updates."
+          },
+          {
+            "id": 5,
+            "title": "Expose 'Needs Review' Queue for Manual Correction",
+            "description": "Build or extend the UI to display a queue of contacts with low-confidence fields flagged for manual review and correction.",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Develop UI components to list flagged contacts, provide editing interfaces for manual correction, and update the backend with corrected data.\n<info added on 2025-07-20T07:15:42.699Z>\nThe backend API endpoints required for the 'Needs Review' queue are now complete: GET /api/contacts/needs-review retrieves all contacts with fields flagged for manual review, and PATCH /api/contacts/:id allows updating individual contact records with corrected data. These endpoints are ready for integration with the frontend UI components that will be developed in Tasks 4.3 and 4.4.\n</info added on 2025-07-20T07:15:42.699Z>",
+            "status": "done",
+            "testStrategy": "Test UI displays flagged contacts correctly, allows edits, and updates backend data. Verify workflow from flagging to manual correction."
+          },
+          {
+            "id": 6,
+            "title": "Document Prompt Engineering and Schema for Maintainability",
+            "description": "Create comprehensive documentation covering the prompt design, JSON schema, confidence scoring approach, and integration details for future maintenance and enhancements.",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Document the rationale behind prompt construction, schema definitions, confidence thresholds, API usage patterns, and error handling strategies.",
+            "status": "done",
+            "testStrategy": "Review documentation for clarity, completeness, and accuracy. Ensure it supports onboarding and troubleshooting."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Implement Contact Details Page at /contacts/:id",
+        "description": "Create a detailed contact information page accessible via /contacts/:id that displays the full contact details including business card image, all contact fields, confidence scores, and provides edit functionality.",
+        "details": "Develop a React component for the Contact Details page routed at /contacts/:id. Use React Router to capture the contact ID from the URL. On component mount, fetch the full contact data from the backend API, including the business card image URL, all parsed contact fields (name, title, company, email, phone, address), and their associated confidence scores as generated by the OCR and AI parsing pipeline (Tasks 4 and 11). Display the business card image prominently. Render all contact fields with their confidence scores clearly indicated, using visual cues such as color coding or icons for low-confidence fields. Implement an edit mode allowing users to update any contact field inline or via a modal form. Changes should be validated and submitted to the backend API to update the contact record. Ensure the UI follows the existing design system (shadcn/ui) for consistency. Handle loading and error states gracefully. Include navigation options to return to the contacts list or other relevant pages.",
+        "testStrategy": "Verify that navigating to /contacts/:id loads the correct contact data from the backend. Confirm that the business card image and all contact fields with confidence scores are displayed accurately. Test the edit functionality by modifying fields and saving changes, then verify updates persist on reload. Check that low-confidence fields are visually distinct and editable. Test error handling by simulating API failures and invalid input. Perform UI responsiveness and accessibility checks. Conduct end-to-end tests covering data fetch, display, edit, and update workflows.",
+        "status": "done",
+        "dependencies": [
+          3,
+          4,
+          11
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Dynamic Routing and Data Fetching",
+            "description": "Implement React Router dynamic routing for /contacts/:id and fetch contact data on component mount.",
+            "dependencies": [],
+            "details": "Use React Router v6 to define a dynamic route at /contacts/:id. Capture the contact ID from the URL using useParams. On component mount, fetch the full contact details (including business card image URL, all parsed fields, and confidence scores) from the backend API. Handle loading and error states during data fetch. Ensure the component is only rendered when data is available[1][2][3].",
+            "status": "done",
+            "testStrategy": "Verify that navigating to /contacts/:id with a valid ID loads the correct contact data. Test error handling for invalid or missing IDs."
+          },
+          {
+            "id": 2,
+            "title": "Render Contact Details and Confidence Indicators",
+            "description": "Display the business card image and all contact fields with visual confidence indicators.",
+            "dependencies": [
+              "12.1"
+            ],
+            "details": "Render the business card image prominently at the top of the page. List all contact fields (name, title, company, email, phone, address) along with their associated confidence scores. Use color coding, icons, or other visual cues to highlight low-confidence fields, following the design system (shadcn/ui). Ensure the UI is consistent with the rest of the application.",
+            "status": "done",
+            "testStrategy": "Check that all fields and the business card image are displayed correctly. Confirm that confidence scores are visually indicated and that the UI matches the design system."
+          },
+          {
+            "id": 3,
+            "title": "Implement Edit Functionality",
+            "description": "Enable inline or modal editing of contact fields with validation and API submission.",
+            "dependencies": [
+              "12.1",
+              "12.2"
+            ],
+            "details": "Add an edit button to toggle edit mode. Allow users to update any contact field inline or via a modal form. Implement client-side validation for edited fields. On save, submit changes to the backend API to update the contact record. Handle success and error feedback. Ensure the edit UI is consistent with the design system.",
+            "status": "done",
+            "testStrategy": "Test editing each field, both inline and via modal. Verify that validation works and that changes are correctly submitted to the backend. Check that the UI provides appropriate feedback."
+          },
+          {
+            "id": 4,
+            "title": "Add Navigation and Final Polish",
+            "description": "Include navigation options and handle edge cases for a complete user experience.",
+            "dependencies": [
+              "12.1",
+              "12.2",
+              "12.3"
+            ],
+            "details": "Add a 'Back to Contacts' button or link to return to the contacts list. Ensure all navigation is handled without page reloads using React Router's Link or useNavigate. Review and polish loading, error, and empty states. Confirm accessibility and responsiveness. Perform a final UI review against the design system.",
+            "status": "done",
+            "testStrategy": "Test navigation to and from the contact details page. Verify all edge cases (loading, error, empty data) are handled gracefully. Check for accessibility and responsiveness issues."
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Implement Email Draft Generation Using OpenAI API and Campaign Template",
+        "description": "Develop functionality to generate personalized email drafts for each contact in a campaign by leveraging the OpenAI API and the campaign's email template.",
+        "details": "Implement a backend service endpoint that takes a selected email campaign and retrieves its template along with the associated contacts. For each contact, dynamically substitute template variables with contact-specific data (e.g., name, company) and send a prompt to the OpenAI API to generate a personalized email draft. Use the OpenAI text generation API (e.g., GPT-4 or GPT-4 Turbo) with a carefully designed prompt that includes the campaign template and contact details to produce coherent, contextually relevant email drafts. Save each generated draft in the database linked to the respective contact and campaign. Ensure error handling for API failures and rate limits. On the frontend, provide a UI to trigger draft generation and display progress or status updates.",
+        "testStrategy": "Verify that the system correctly fetches the campaign template and contact list. Test that for each contact, the OpenAI API is called with the correct prompt including personalized data. Confirm that generated drafts are saved in the database with correct associations. Validate that the UI reflects generation status and handles errors gracefully. Perform tests with multiple contacts to ensure batch processing works reliably. Additionally, check that variable substitution in templates is accurate and that drafts are personalized appropriately.",
+        "status": "done",
+        "dependencies": [
+          6,
+          12
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Backend Endpoint to Retrieve Campaign Template and Contacts",
+            "description": "Create a backend service endpoint that accepts a selected email campaign ID and retrieves the associated email template and list of contacts linked to the campaign.",
+            "dependencies": [],
+            "details": "Implement API logic to query the database for the campaign's email template and all contacts associated with the campaign. Ensure data integrity and efficient retrieval to support subsequent processing.",
+            "status": "done",
+            "testStrategy": "Verify that the endpoint returns the correct template and complete contact list for various campaign IDs. Test error handling for invalid or missing campaign IDs."
+          },
+          {
+            "id": 2,
+            "title": "Implement Template Variable Substitution with Contact Data",
+            "description": "Develop functionality to dynamically substitute variables in the campaign email template with contact-specific data such as name, company, and other personalized fields.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Parse the email template to identify placeholders and replace them with corresponding values from each contact's data. Handle missing or null values gracefully to avoid malformed emails.",
+            "status": "done",
+            "testStrategy": "Test substitution accuracy for multiple contacts with diverse data. Confirm that all template variables are correctly replaced and that fallback values are used when data is missing."
+          },
+          {
+            "id": 3,
+            "title": "Integrate OpenAI API for Personalized Email Draft Generation",
+            "description": "Send a prompt to the OpenAI text generation API (e.g., GPT-4 or GPT-4 Turbo) for each contact, including the substituted template and contact details, to generate a coherent and contextually relevant email draft.",
+            "dependencies": [
+              "13.2"
+            ],
+            "details": "Design and optimize prompts that combine the campaign template and personalized contact data to instruct the OpenAI model to produce high-quality email drafts. Implement API calls with error handling and rate limit management.",
+            "status": "done",
+            "testStrategy": "Validate that the API is called with correct prompts for each contact. Check the quality and relevance of generated drafts. Simulate API failures and rate limits to ensure robust error handling."
+          },
+          {
+            "id": 4,
+            "title": "Save Generated Email Drafts to Database with Proper Associations",
+            "description": "Store each generated email draft in the database, linking it to the respective contact and campaign for future retrieval and management.",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Design database schema or extend existing tables to accommodate email drafts. Implement transactional saving to ensure data consistency. Include metadata such as generation timestamp and status.",
+            "status": "done",
+            "testStrategy": "Confirm that drafts are saved correctly with accurate associations. Test retrieval of drafts by contact and campaign. Verify data integrity after multiple generation cycles."
+          },
+          {
+            "id": 5,
+            "title": "Develop Frontend UI to Trigger Draft Generation and Display Status",
+            "description": "Create a user interface component that allows users to initiate the email draft generation process for a selected campaign and view real-time progress or status updates.",
+            "dependencies": [
+              "13.4"
+            ],
+            "details": "Implement frontend controls to call the backend endpoint for draft generation. Display progress indicators, success messages, and error notifications. Ensure responsive and user-friendly design.",
+            "status": "done",
+            "testStrategy": "Test UI functionality to trigger generation and receive status updates. Validate user feedback for success, in-progress, and error states. Ensure compatibility across supported browsers and devices."
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Implement Export and Direct Email Sending Functionality with CSV Export for Gmail Mail Merge",
+        "description": "Develop features to export AI-generated email drafts as CSV files formatted for Gmail mail merge and enable direct sending of emails from the application.",
+        "details": "1. Extend the backend to provide an API endpoint that exports personalized email drafts for a selected campaign and its contacts into a CSV file formatted specifically for Gmail mail merge. This CSV should include all necessary fields such as recipient email, personalized variables, and email body.\n\n2. Implement a frontend UI component that allows users to trigger the CSV export and download the generated file.\n\n3. Develop functionality to send emails directly from the application using the generated drafts. This includes integrating with an email sending service or SMTP server, handling authentication, and managing sending status and errors.\n\n4. Ensure that the export and sending features support the personalized content generated in Task 13, using the drafts stored in the database.\n\n5. Follow best practices for error handling, user feedback, and security (e.g., rate limiting, email validation).\n\n6. Coordinate with existing CSV export implementation (Task 7) to maintain consistent CSV formatting and reuse code where possible.\n\n7. Document the API endpoints and UI usage for these features.",
+        "testStrategy": "- Verify that the CSV export API generates a correctly formatted CSV file compatible with Gmail mail merge, containing all personalized email draft data.\n- Test the frontend export button triggers the download of the CSV file and that the file contents match expected data.\n- Confirm that direct email sending functionality sends emails correctly to intended recipients with personalized content.\n- Simulate error conditions such as invalid email addresses, SMTP failures, and verify proper error messages and retry mechanisms.\n- Perform end-to-end tests from draft generation (Task 13) through export and sending to ensure data integrity and workflow correctness.\n- Conduct security testing to ensure no unauthorized email sending or data leakage occurs.",
+        "status": "done",
+        "dependencies": [
+          7,
+          13
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Migrate Business Card Image Storage to Supabase Storage Buckets",
+        "description": "Refactor the system to store business card images in Supabase Storage buckets instead of base64 encoding them in the database to improve performance and scalability.",
+        "details": "1. Create a dedicated Supabase Storage bucket for business card images, configuring appropriate access controls (public or private) based on security requirements. Use the Supabase Dashboard or client libraries to create and configure the bucket, including restrictions on file types and sizes if needed. 2. Update the backend API to handle image uploads by storing the image files directly in the Supabase Storage bucket instead of encoding and saving them as base64 strings in the database. 3. Modify the database schema to store only the image file references (e.g., URLs or storage keys) instead of the full base64 image data. 4. Adjust the contact creation and update workflows (related to Task 4) to upload images to Supabase Storage and save the returned file reference in the contacts table. 5. Update the frontend components that display business card images (e.g., Contact Details page in Task 12) to fetch and render images from Supabase Storage URLs. 6. Implement appropriate error handling and validation for image uploads, including file type and size checks. 7. Ensure security by applying Row Level Security (RLS) policies on the storage bucket if private access is required, restricting access to authorized users only. 8. Remove legacy base64 image storage and related code after migration is complete and verified. 9. Test the entire flow end-to-end to confirm images are uploaded, stored, referenced, and displayed correctly with improved performance and scalability.",
+        "testStrategy": "1. Verify that business card images can be uploaded successfully to the Supabase Storage bucket via the backend API. 2. Confirm that the database stores only the image reference (URL or key) and no longer contains base64 image data. 3. Test that the frontend correctly fetches and displays images from Supabase Storage URLs on the Contact Details page and other relevant UI components. 4. Validate that file type and size restrictions are enforced during upload. 5. Check access control by ensuring only authorized users can upload or retrieve images if the bucket is private, using RLS policies. 6. Perform performance testing to compare image retrieval times before and after migration, confirming improved scalability. 7. Conduct regression testing to ensure no disruption to contact creation, editing, or review workflows involving business card images. 8. Confirm that legacy base64 image data is fully removed and no longer used in the system.",
+        "status": "pending",
+        "dependencies": [
+          2,
+          4,
+          12
+        ],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Implement Enhanced OCR Processing for Inverted Color Business Cards",
+        "description": "Add preprocessing steps to detect business cards with dark backgrounds and light/white text and apply image adjustments to improve OCR accuracy for these inverted color schemes.",
+        "details": "Enhance the existing OCR pipeline to better handle business cards that use inverted color schemes (dark backgrounds with light or white text). Implement an image preprocessing module that first detects if a business card image has a dark background with light text. This can be done by analyzing the image histogram or average brightness and contrast levels. If detected, apply image inversion to convert the image to a light background with dark text. Additionally, apply contrast enhancement and noise reduction techniques to improve text clarity. Adjust Tesseract.js OCR parameters or use specialized OCR configurations optimized for inverted text. Integrate this preprocessing step seamlessly before the OCR extraction phase in the backend service. Ensure compatibility with the existing AI parsing and confidence scoring pipeline (Tasks 4 and 11).",
+        "testStrategy": "Test the enhanced OCR pipeline with a diverse set of business card images including standard light-background cards and inverted color cards with dark backgrounds and white text. Verify that the preprocessing correctly detects inverted color schemes and applies image inversion and contrast adjustments. Confirm that OCR text extraction accuracy improves for inverted cards compared to the previous implementation. Validate that the AI parsing and confidence scoring (Task 11) correctly processes the OCR output. Perform regression testing to ensure no degradation in OCR accuracy for standard cards.",
+        "status": "pending",
+        "dependencies": [
+          4,
+          11
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Implement Manual Review Flow for Low-Confidence OCR Results",
+        "description": "Develop an intermediate review and edit screen for OCR results with confidence below a threshold, enabling manual verification and correction before saving to the database.",
+        "details": "Enhance the OCR processing pipeline to detect when the confidence score of extracted fields falls below a defined threshold (e.g., 70%). When such low-confidence results are detected, intercept the save operation and present an intermediate review screen to the user. This screen should display the original business card image alongside the extracted text fields. Each field should be editable, with low-confidence fields visually highlighted to draw attention. Provide clear options to either save the corrected data or discard changes. Ensure that manual edits update the contact data accurately in the database. Implement validation to prevent saving incomplete or invalid data. The UI should be intuitive and responsive, supporting efficient human verification. This manual review flow will improve data quality by combining automated extraction with human oversight, especially for uncertain OCR outputs.",
+        "testStrategy": "Test the OCR pipeline with business card images that produce varying confidence scores. Verify that when confidence falls below the threshold, the review/edit screen is triggered before saving. Confirm that the business card image and all extracted fields are displayed correctly, with low-confidence fields highlighted. Test manual editing of all fields and ensure changes persist after saving. Validate that the discard option cancels changes without saving. Check that saving updates the database correctly and that no data is lost or corrupted. Perform usability testing to ensure the review screen is clear and user-friendly. Conduct regression tests to confirm that high-confidence OCR results bypass the review screen and save directly.",
+        "status": "pending",
+        "dependencies": [
+          4,
+          11,
+          12
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Comprehensive Contacts Management Page",
+        "description": "Develop a centralized Contacts Management Page accessible from main navigation that displays all contacts across events with search, filtering, sorting, bulk actions, pagination, status indicators, quick view/edit, and event association features.",
+        "details": "Build a React frontend component for the Contacts Management Page that fetches and displays all contacts from the backend, including their associated event information. Implement search functionality allowing users to query contacts by name, email, company, and other relevant fields. Add filtering options to filter contacts by status such as 'needs review', 'verified', etc. Provide sorting capabilities by name, date added, and confidence score. Implement bulk actions including delete, export, and assign to groups with multi-select checkboxes. Integrate pagination to efficiently handle large datasets. Display contact status indicators visually to highlight review or verification states. Include quick view and edit capabilities via modals or inline editing to allow fast updates without leaving the page. Ensure each contact entry clearly shows which event it belongs to, linking to event details if needed. Connect this page to the main navigation menu for easy access. Backend API endpoints should support all required queries, filters, sorting, bulk operations, and pagination. Follow best practices for data consistency and user permissions to maintain data integrity and security.",
+        "testStrategy": "Verify that the Contacts Management Page loads all contacts correctly with associated event data. Test search functionality with various queries and confirm accurate filtering results. Validate filtering by status and sorting by all specified criteria. Confirm bulk actions operate correctly on multiple selected contacts, including deletion, export, and group assignment. Test pagination controls for correct page navigation and data loading. Check that contact status indicators display properly according to contact states. Test quick view and edit features for responsiveness and data persistence after edits. Ensure navigation to and from the page works seamlessly. Perform security tests to verify access permissions and data integrity during bulk operations.",
+        "status": "done",
+        "dependencies": [
+          3,
+          12
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Contacts Management Frontend Component",
+            "description": "Create a React component for the Contacts Management Page that fetches and displays all contacts with their associated event information. Ensure the UI supports displaying contact details, event associations, and status indicators.",
+            "dependencies": [],
+            "details": "Build the main React component integrated with the backend API to retrieve contacts data including event associations. Design the UI to show contacts in a list or table format with clear event linkage and visual status indicators for review and verification states.",
+            "status": "done",
+            "testStrategy": "Verify that the component loads and displays all contacts correctly with associated event data and status indicators. Test UI responsiveness and correctness of displayed information."
+          },
+          {
+            "id": 2,
+            "title": "Implement Search, Filtering, and Sorting Functionalities",
+            "description": "Add search functionality to query contacts by name, email, company, and other fields. Implement filtering options by contact status (e.g., 'needs review', 'verified'). Provide sorting capabilities by name, date added, and confidence score.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Develop frontend controls for search input, filter dropdowns, and sortable column headers. Connect these controls to backend API endpoints that support query parameters for search, filter, and sort criteria.",
+            "status": "done",
+            "testStrategy": "Test search with various queries and confirm accurate results. Validate filtering by each status option and sorting by all specified criteria. Ensure combined search, filter, and sort operations work correctly."
+          },
+          {
+            "id": 3,
+            "title": "Implement Bulk Actions and Multi-Select Functionality",
+            "description": "Enable multi-select checkboxes for contacts and implement bulk actions such as delete, export, and assign to groups.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Add UI elements for selecting multiple contacts and bulk action buttons. Integrate with backend API endpoints to perform bulk delete, export data, and group assignment operations securely and efficiently.",
+            "status": "done",
+            "testStrategy": "Verify multi-select functionality works correctly. Test each bulk action for proper execution and data consistency. Confirm UI feedback and error handling during bulk operations."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Pagination for Efficient Data Handling",
+            "description": "Implement pagination controls to handle large datasets efficiently, allowing users to navigate through pages of contacts.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Add pagination UI components such as page numbers and next/previous buttons. Connect pagination controls to backend API endpoints supporting paged data retrieval with page size and offset parameters.",
+            "status": "done",
+            "testStrategy": "Test pagination navigation for correct data loading on each page. Confirm performance and responsiveness when handling large numbers of contacts."
+          },
+          {
+            "id": 5,
+            "title": "Add Quick View and Inline Edit Features with Navigation Integration",
+            "description": "Implement quick view and edit capabilities for contacts via modals or inline editing to allow fast updates without leaving the page. Integrate the Contacts Management Page into the main navigation menu for easy access.",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Develop modal or inline editing UI components for contact details updates. Ensure changes are saved via backend API calls with validation and permission checks. Add a navigation link or menu item to access the Contacts Management Page from the main app navigation.",
+            "status": "done",
+            "testStrategy": "Verify quick view and edit modals open correctly and save changes persistently. Test navigation link accessibility and correct routing to the Contacts Management Page."
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-07-19T03:43:11.109Z",
-      "updated": "2025-07-19T04:15:21.345Z",
+      "updated": "2025-07-20T17:34:16.471Z",
       "description": "Tasks for master context"
     }
   }

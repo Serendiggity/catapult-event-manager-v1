@@ -13,9 +13,33 @@ import { initializeDatabase } from './db/connection';
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Configure CORS with proper options for production
+// Configure CORS to allow multiple development ports
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174', 
+  'http://localhost:5175',
+  'http://localhost:5176',
+  'http://localhost:5177',
+  'http://localhost:5178'
+];
+
+// Add any custom CORS_ORIGIN from env
+if (process.env.CORS_ORIGIN && !allowedOrigins.includes(process.env.CORS_ORIGIN)) {
+  allowedOrigins.push(process.env.CORS_ORIGIN);
+}
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -29,7 +53,19 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    cors: {
+      allowedOrigins: allowedOrigins
+    }
+  });
+});
+
+// API health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    api: true,
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -56,7 +92,7 @@ async function startServer() {
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`CORS enabled for: ${corsOptions.origin}`);
+      console.log(`CORS enabled for multiple localhost ports (5173-5178)`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

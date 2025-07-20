@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LeadGroupsList } from '../components/leadGroups/LeadGroupsList';
 import { Button } from '../components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Mail } from 'lucide-react';
 
 export function LeadGroupsPage() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -14,14 +14,19 @@ export function LeadGroupsPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between items-center">
         <Button
           variant="ghost"
           onClick={() => navigate(`/events/${eventId}`)}
-          className="mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Event
+        </Button>
+        <Button
+          onClick={() => navigate(`/events/${eventId}/campaigns`)}
+        >
+          <Mail className="h-4 w-4 mr-2" />
+          Email Campaigns
         </Button>
       </div>
 

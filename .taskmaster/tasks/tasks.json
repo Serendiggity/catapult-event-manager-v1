@@ -867,11 +867,25 @@
             "testStrategy": "Verify quick view and edit modals open correctly and save changes persistently. Test navigation link accessibility and correct routing to the Contacts Management Page."
           }
         ]
+      },
+      {
+        "id": 19,
+        "title": "Apply Critical UX Hotfixes for Campaign Modal, Contacts List, and Routing",
+        "description": "Fix urgent UX issues including the campaign modal disappearing, add a 'Create Contact' button on the contacts list page, and resolve route inconsistency from /groups to /lead-groups to unblock core user workflows.",
+        "details": "1. Investigate and fix the campaign modal disappearing issue to ensure it remains visible and functional during user interactions. This may involve reviewing modal state management and event handling in the frontend React components.\n\n2. Add a prominently placed 'Create Contact' button on the Contacts Management Page that navigates users to the contact creation flow. Ensure the button is styled consistently with the UI and accessible.\n\n3. Correct the routing inconsistency by updating all references and navigation paths from '/groups' to '/lead-groups' to align with the lead group management feature. This includes React Router paths, links, and any backend API endpoints if applicable.\n\n4. Test all fixes across supported browsers and devices to confirm stability and usability.\n\n5. Coordinate with the existing Contacts Management Page (Task 18) and Lead Group Management (Task 5) implementations to ensure seamless integration of these hotfixes.",
+        "testStrategy": "1. Verify that the campaign modal no longer disappears unexpectedly during all relevant user interactions, including opening, closing, and navigating within the app.\n\n2. Confirm the 'Create Contact' button appears on the contacts list page, is clickable, and correctly routes to the contact creation page.\n\n3. Test navigation and routing to ensure all '/groups' URLs redirect or are replaced with '/lead-groups' without errors.\n\n4. Perform regression testing on related features such as contact management and lead group functionalities to ensure no new issues are introduced.\n\n5. Conduct cross-browser and device testing to validate consistent behavior.",
+        "status": "in-progress",
+        "dependencies": [
+          5,
+          18
+        ],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-07-19T03:43:11.109Z",
-      "updated": "2025-07-20T17:34:16.471Z",
+      "updated": "2025-07-20T19:46:29.452Z",
       "description": "Tasks for master context"
     }
   }

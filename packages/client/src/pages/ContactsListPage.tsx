@@ -11,7 +11,8 @@ import {
   Download,
   Users,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CreateContactModal } from '@/components/contacts/CreateContactModal';
 import type { Contact } from '@catapult-event-manager/shared';
 
 // Helper function to convert text to sentence case
@@ -62,9 +64,14 @@ export function ContactsListPage() {
   // Selection states
   const [selectedContacts, setSelectedContacts] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  
+  // Modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [events, setEvents] = useState<Array<{ id: string; title: string }>>([]);
 
   useEffect(() => {
     fetchContacts();
+    fetchEvents();
   }, [searchQuery, statusFilter, sortBy, sortOrder, currentPage]);
 
   const fetchContacts = async () => {
@@ -102,6 +109,21 @@ export function ContactsListPage() {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('/api/events');
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      const data = await response.json();
+      if (data.success && data.data) {
+        setEvents(data.data.map((event: any) => ({ id: event.id, title: event.title })));
+      }
+    } catch (err) {
+      console.error('Error fetching events:', err);
     }
   };
 
@@ -214,9 +236,15 @@ export function ContactsListPage() {
   return (
     <div className="container mx-auto p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Contacts</h1>
-        <p className="text-gray-600">Manage all your event contacts in one place</p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Contacts</h1>
+          <p className="text-gray-600">Manage all your event contacts in one place</p>
+        </div>
+        <Button onClick={() => setShowCreateModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Contact
+        </Button>
       </div>
 
       {/* Filters and Search */}
@@ -472,6 +500,13 @@ export function ContactsListPage() {
           </Button>
         </Card>
       )}
+
+      {/* Create Contact Modal */}
+      <CreateContactModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        events={events}
+      />
     </div>
   );
 }

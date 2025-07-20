@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspaces",
+    "dev": "./scripts/dev.sh",
+    "dev:all": "npm run dev --workspaces",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",

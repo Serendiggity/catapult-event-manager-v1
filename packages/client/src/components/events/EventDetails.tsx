@@ -93,7 +93,7 @@ export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsPr
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => navigate(`/events/${event.id}/groups`)}
+              onClick={() => navigate(`/events/${event.id}/lead-groups`)}
             >
               <UsersRound className="mr-2 h-4 w-4" />
               Lead Groups

@@ -19,7 +19,7 @@ function App() {
           <Route path="/events/:eventId/contacts/new" element={<ContactsPage />} />
           <Route path="/contacts/:id" element={<ContactDetailsPage />} />
           <Route path="/events/:eventId/review" element={<ReviewQueuePage />} />
-          <Route path="/events/:eventId/groups" element={<LeadGroupsPage />} />
+          <Route path="/events/:eventId/lead-groups" element={<LeadGroupsPage />} />
           <Route path="/events/:eventId/campaigns" element={<CampaignsPage />} />
         </Routes>
       </Layout>

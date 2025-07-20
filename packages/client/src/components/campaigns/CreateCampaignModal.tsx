@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Alert, AlertDescription } from '../ui/alert';
-import { Info, Sparkles } from 'lucide-react';
+import { Info, Sparkles, Users } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
 import type { LeadGroup } from '@catapult-event-manager/shared';
 
@@ -17,6 +18,7 @@ interface CreateCampaignModalProps {
 }
 
 export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: CreateCampaignModalProps) {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [subject, setSubject] = useState('');
   const [templateBody, setTemplateBody] = useState('');
@@ -28,7 +30,11 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
 
   useEffect(() => {
     if (isOpen) {
+      console.log('Modal opened, fetching lead groups...');
       fetchLeadGroups();
+    } else {
+      // Reset form when modal closes
+      resetForm();
     }
   }, [isOpen, eventId]);
 
@@ -38,12 +44,20 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
 
   const fetchLeadGroups = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lead-groups/event/${eventId}`);
-      if (!response.ok) throw new Error('Failed to fetch lead groups');
+      const url = `${import.meta.env.VITE_API_URL || ''}/api/lead-groups/event/${eventId}`;
+      console.log('Fetching lead groups from:', url);
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error('Response not ok:', response.status, response.statusText);
+        throw new Error('Failed to fetch lead groups');
+      }
       const data = await response.json();
       setLeadGroups(data);
+      setError(''); // Clear any previous errors
     } catch (error) {
       console.error('Error fetching lead groups:', error);
+      setError('Failed to load lead groups. Please check your connection and try again.');
+      // Don't close the modal on error
     }
   };
 
@@ -92,7 +106,7 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
       }
 
       onSuccess();
-      resetForm();
+      // Don't reset form here, let the useEffect handle it when modal closes
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -124,7 +138,7 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Create Email Campaign</DialogTitle>
           <DialogDescription>
@@ -204,7 +218,23 @@ Best regards,
               <Label>Select Lead Groups</Label>
               <div className="space-y-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
                 {leadGroups.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No lead groups available</p>
+                  <div className="text-center py-4">
+                    <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">No lead groups available</p>
+                    <p className="text-xs text-muted-foreground mb-3">Create lead groups to organize your contacts first</p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        onClose();
+                        navigate(`/events/${eventId}/lead-groups`);
+                      }}
+                    >
+                      <Users className="h-4 w-4 mr-2" />
+                      Go to Lead Groups
+                    </Button>
+                  </div>
                 ) : (
                   leadGroups.map((group) => (
                     <label

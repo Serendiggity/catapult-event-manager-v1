@@ -1,44 +1,28 @@
 services:
-  # Web Service for Express Backend
   - type: web
     name: catapult-event-manager-server
     runtime: node
-    region: oregon
-    plan: free
-    buildCommand: npm install && npm run build:server
+    repo: https://github.com/Serendiggity/catapult-event-manager-v1
+    branch: master
+    rootDir: .
+    buildCommand: npm ci --include-workspace-root --workspaces && npm run build:server
     startCommand: npm run start:server
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
-      - key: CORS_ORIGIN
-        sync: false
+        generateValue: true
     healthCheckPath: /health
-    autoDeploy: true
-    rootDir: .
 
-  # Static Site for React Frontend
-  - type: static
+  - type: web
     name: catapult-event-manager-client
-    buildCommand: npm install && npm run build:client
+    runtime: static
+    repo: https://github.com/Serendiggity/catapult-event-manager-v1
+    branch: master
+    rootDir: .
+    buildCommand: npm ci --include-workspace-root --workspaces && npm run build:client
     staticPublishPath: ./packages/client/dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: NODE_ENV
-        value: production
     headers:
       - path: /*
         name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: X-XSS-Protection
-        value: 1; mode=block
-    autoDeploy: true
-    rootDir: .
+        value: SAMEORIGIN

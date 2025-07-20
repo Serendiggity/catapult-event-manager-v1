@@ -5,8 +5,8 @@ services:
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master
     rootDir: .
-    buildCommand: npm install && npm run build:server
-    startCommand: npm run start:server
+    buildCommand: npm install && npm run build:server:render
+    startCommand: node packages/server/dist/index.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -25,7 +25,7 @@ services:
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master
     rootDir: .
-    buildCommand: npm install && npm run build:client
+    buildCommand: npm install && npm run build:client:render
     staticPublishPath: ./packages/client/dist
     routes:
       - type: rewrite

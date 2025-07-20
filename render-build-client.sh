@@ -2,9 +2,9 @@
 # Exit on error
 set -o errexit
 
-# Install dependencies
+# Install dependencies (use install instead of ci for better compatibility)
 echo "Installing dependencies..."
-npm ci --include-workspace-root --workspaces
+npm install --include-workspace-root --workspaces
 
 # Build client (which includes building shared)
 echo "Building client and dependencies..."

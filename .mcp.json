@@ -5,13 +5,15 @@
       "command": "npx",
       "args": ["-y", "--package=task-master-ai", "task-master-ai"]
     },
-    "supabase-dev": {
+    "supabase": {
       "command": "npx",
       "args": [
         "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--features=account,database,docs,debug,development,functions,branching,storage"
-      ]
+        "@supabase/mcp-server-supabase@latest"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "{{SUPABASE_ACCESS_TOKEN}}"
+      }
     }
   }
 }

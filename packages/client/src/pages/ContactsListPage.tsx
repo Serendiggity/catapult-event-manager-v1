@@ -459,17 +459,21 @@ export function ContactsListPage() {
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="border-b">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr className="text-left">
                 <th className="p-4 w-12">
-                  <Checkbox
-                    checked={selectAll}
-                    onCheckedChange={handleSelectAll}
-                  />
+                  <div className="flex items-center justify-center">
+                    <Checkbox
+                      checked={selectAll}
+                      onCheckedChange={handleSelectAll}
+                      className="h-5 w-5 border-2"
+                      aria-label="Select all leads"
+                    />
+                  </div>
                 </th>
-                <th className="p-4">
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
                   <button
-                    className="font-medium flex items-center gap-1 hover:text-gray-700"
+                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
                     onClick={() => handleSort('name')}
                   >
                     Name
@@ -478,9 +482,9 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4">
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
                   <button
-                    className="font-medium flex items-center gap-1 hover:text-gray-700"
+                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
                     onClick={() => handleSort('email')}
                   >
                     Email
@@ -489,9 +493,9 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4">
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
                   <button
-                    className="font-medium flex items-center gap-1 hover:text-gray-700"
+                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
                     onClick={() => handleSort('company')}
                   >
                     Company
@@ -500,11 +504,11 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4">Event</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">Event</th>
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">Status</th>
+                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
                   <button
-                    className="font-medium flex items-center gap-1 hover:text-gray-700"
+                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
                     onClick={() => handleSort('createdAt')}
                   >
                     Date Added
@@ -513,12 +517,15 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4 text-right">Actions</th>
+                <th className="p-4 text-right text-sm font-semibold text-gray-900 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {contacts.map((contact) => (
-                <tr key={contact.id} className="border-b hover:bg-gray-50">
+            <tbody className="bg-white divide-y divide-gray-200">
+              {contacts.map((contact, index) => (
+                <tr 
+                  key={contact.id} 
+                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50 transition-colors`}
+                >
                   <td className="p-4">
                     <Checkbox
                       checked={selectedContacts.has(contact.id)}

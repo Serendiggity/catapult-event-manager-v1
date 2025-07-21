@@ -16,9 +16,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -68,7 +69,12 @@ export function ContactsListPage() {
   
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAssignGroupModal, setShowAssignGroupModal] = useState(false);
   const [events, setEvents] = useState<Array<{ id: string; title: string }>>([]);
+  
+  // Lead groups for assign modal
+  const [leadGroups, setLeadGroups] = useState<any[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
 
   useEffect(() => {
     fetchContacts();
@@ -115,7 +121,7 @@ export function ContactsListPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/events');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events`);
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
@@ -125,6 +131,32 @@ export function ContactsListPage() {
       }
     } catch (err) {
       console.error('Error fetching events:', err);
+    }
+  };
+  
+  const fetchLeadGroups = async () => {
+    try {
+      // Fetch lead groups for all events
+      const eventsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events`);
+      if (!eventsResponse.ok) return;
+      
+      const eventsData = await eventsResponse.json();
+      const events = eventsData.data || eventsData;
+      
+      const groupsPromises = events.map(async (event: any) => {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${event.id}`
+        );
+        if (!response.ok) return [];
+        const data = await response.json();
+        const groups = data.groups || data;
+        return Array.isArray(groups) ? groups.map((g: any) => ({ ...g, eventTitle: event.title })) : [];
+      });
+      
+      const allGroups = await Promise.all(groupsPromises);
+      setLeadGroups(allGroups.flat());
+    } catch (err) {
+      console.error('Error fetching lead groups:', err);
     }
   };
 
@@ -160,19 +192,71 @@ export function ContactsListPage() {
   const handleBulkDelete = async () => {
     if (selectedContacts.size === 0) return;
     
-    if (!confirm(`Are you sure you want to delete ${selectedContacts.size} lead(s)?`)) {
+    if (!confirm(`Are you sure you want to delete ${selectedContacts.size} lead(s)? This action cannot be undone.`)) {
       return;
     }
     
-    // TODO: Implement bulk delete API
-    console.log('Bulk delete:', Array.from(selectedContacts));
+    try {
+      const deletePromises = Array.from(selectedContacts).map(contactId => 
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts/${contactId}`, {
+          method: 'DELETE',
+        })
+      );
+      
+      await Promise.all(deletePromises);
+      
+      // Clear selection and refresh
+      setSelectedContacts(new Set());
+      setSelectAll(false);
+      fetchContacts();
+      
+      // Show success message (you could add a toast here)
+      alert(`Successfully deleted ${selectedContacts.size} lead(s)`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete contacts');
+      alert('Failed to delete some or all selected leads');
+    }
   };
 
   const handleBulkExport = () => {
     if (selectedContacts.size === 0) return;
     
-    // TODO: Implement bulk export
-    console.log('Bulk export:', Array.from(selectedContacts));
+    // Get selected contacts data
+    const selectedContactsData = contacts.filter(contact => 
+      selectedContacts.has(contact.id)
+    );
+    
+    // Convert to CSV
+    const headers = ['First Name', 'Last Name', 'Email', 'Company', 'Title', 'Phone', 'Event', 'Status', 'Date Added'];
+    const csvContent = [
+      headers.join(','),
+      ...selectedContactsData.map(contact => [
+        contact.firstName || '',
+        contact.lastName || '',
+        contact.email || '',
+        contact.company || '',
+        contact.title || '',
+        contact.phone || '',
+        contact.event?.title || '',
+        contact.needsReview ? 'Needs Review' : 'Verified',
+        new Date(contact.createdAt).toLocaleDateString()
+      ].map(field => `"${field}"`).join(','))
+    ].join('\n');
+    
+    // Download CSV
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clear selection
+    setSelectedContacts(new Set());
+    setSelectAll(false);
   };
 
   const handleDeleteContact = async (contactId: string) => {
@@ -181,7 +265,7 @@ export function ContactsListPage() {
     }
     
     try {
-      const response = await fetch(`/api/contacts/${contactId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts/${contactId}`, {
         method: 'DELETE',
       });
       
@@ -194,6 +278,44 @@ export function ContactsListPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete contact');
     }
+  };
+  
+  const handleAssignToGroup = async () => {
+    if (!selectedGroupId || selectedContacts.size === 0) {
+      alert('Please select a lead group');
+      return;
+    }
+    
+    try {
+      // Add each selected contact to the group
+      const assignPromises = Array.from(selectedContacts).map(contactId => 
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${selectedGroupId}/contacts`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ contactId }),
+        })
+      );
+      
+      await Promise.all(assignPromises);
+      
+      // Close modal and clear selection
+      setShowAssignGroupModal(false);
+      setSelectedContacts(new Set());
+      setSelectAll(false);
+      setSelectedGroupId('');
+      
+      alert(`Successfully assigned ${selectedContacts.size} lead(s) to the group`);
+    } catch (err) {
+      alert('Failed to assign some or all leads to the group');
+    }
+  };
+  
+  const openAssignGroupModal = () => {
+    if (selectedContacts.size === 0) return;
+    fetchLeadGroups();
+    setShowAssignGroupModal(true);
   };
 
   const getStatusBadge = (contact: Contact) => {
@@ -315,7 +437,7 @@ export function ContactsListPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => console.log('Assign to group')}
+                onClick={openAssignGroupModal}
               >
                 <Users className="h-4 w-4 mr-2" />
                 Assign to Group
@@ -514,6 +636,62 @@ export function ContactsListPage() {
         onClose={() => setShowCreateModal(false)}
         events={events}
       />
+      
+      {/* Assign to Group Modal */}
+      {showAssignGroupModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4">
+            <CardHeader>
+              <CardTitle>Assign to Lead Group</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Assign {selectedContacts.size} selected lead(s) to a group
+                </p>
+                <div>
+                  <Label htmlFor="group-select">Select Lead Group</Label>
+                  <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
+                    <SelectTrigger id="group-select">
+                      <SelectValue placeholder="Choose a lead group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {leadGroups.map((group) => (
+                        <SelectItem key={group.id} value={group.id}>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: group.color }}
+                            />
+                            <span>{group.name}</span>
+                            <span className="text-sm text-gray-500">
+                              ({group.eventTitle})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowAssignGroupModal(false);
+                    setSelectedGroupId('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleAssignToGroup}>
+                  Assign to Group
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

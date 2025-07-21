@@ -3,6 +3,7 @@ import { EventCard } from './EventCard'
 import { Button } from '@/components/ui/button'
 import { Plus, Users, Mail } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { QUICK_ADD_EVENT_ID } from '@/constants/quick-add'
 
 interface EventListProps {
   events: Event[]
@@ -59,15 +60,22 @@ export function EventList({
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            onView={() => onViewEvent(event)}
-            onEdit={() => onEditEvent(event)}
-            onDelete={() => onDeleteEvent(event)}
-          />
-        ))}
+        {/* Sort events to show Quick Add first */}
+        {events
+          .sort((a, b) => {
+            if (a.id === QUICK_ADD_EVENT_ID) return -1;
+            if (b.id === QUICK_ADD_EVENT_ID) return 1;
+            return 0;
+          })
+          .map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onView={() => onViewEvent(event)}
+              onEdit={() => onEditEvent(event)}
+              onDelete={() => onDeleteEvent(event)}
+            />
+          ))}
       </div>
     </div>
   )

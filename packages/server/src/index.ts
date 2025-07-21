@@ -89,6 +89,10 @@ async function startServer() {
   try {
     await initializeDatabase();
     
+    // Run migrations
+    const { createQuickAddEvent } = await import('./db/migrations/create-quick-add-event');
+    await createQuickAddEvent();
+    
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);

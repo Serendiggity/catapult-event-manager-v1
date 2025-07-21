@@ -27,12 +27,12 @@ export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
   const isQuickAdd = event.id === QUICK_ADD_EVENT_ID;
 
   return (
-    <Card className={`hover:shadow-lg transition-shadow ${isQuickAdd ? 'border-purple-500 bg-purple-50/50' : ''}`}>
+    <Card className={`hover:shadow-lg transition-shadow ${isQuickAdd ? 'border-green-600 bg-green-50/50' : ''}`}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <CardTitle className="text-xl">{event.title}</CardTitle>
           {isQuickAdd && (
-            <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-300">
+            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
               <Zap className="h-3 w-3 mr-1" />
               Quick Add
             </Badge>

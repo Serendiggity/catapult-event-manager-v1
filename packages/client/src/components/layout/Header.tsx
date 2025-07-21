@@ -46,7 +46,7 @@ export function Header() {
             </Link>
             <Button
               size="sm"
-              className="ml-4 bg-purple-600 hover:bg-purple-700"
+              className="ml-4 bg-green-600 hover:bg-green-700"
               onClick={() => navigate(`/events/${QUICK_ADD_EVENT_ID}/contacts/new`)}
             >
               <Zap className="h-4 w-4 mr-2" />

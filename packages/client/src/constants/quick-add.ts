@@ -7,5 +7,5 @@ export const QUICK_ADD_EVENT = {
   title: 'Quick Add Leads',
   description: 'For leads collected outside of formal events',
   icon: '⚡', // Lightning bolt for quick actions
-  color: 'purple' // Special color to distinguish
+  color: 'green' // Light forest green color to distinguish
 } as const;

@@ -37,17 +37,24 @@ export function AllLeadGroupsPage() {
       // Fetch all events
       const eventsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events`);
       if (!eventsResponse.ok) throw new Error('Failed to fetch events');
-      const eventsData = await eventsResponse.json();
-      setEvents(eventsData);
+      const eventsResult = await eventsResponse.json();
+      
+      // Handle both direct array and API response object formats
+      const eventsData = eventsResult.data || eventsResult;
+      const eventsArray = Array.isArray(eventsData) ? eventsData : [];
+      setEvents(eventsArray);
 
       // Fetch lead groups for all events
-      const groupsPromises = eventsData.map(async (event: any) => {
+      const groupsPromises = eventsArray.map(async (event: any) => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${event.id}`
         );
         if (!response.ok) return [];
         const data = await response.json();
-        return data.groups.map((group: LeadGroup) => ({
+        // Handle both direct array and object with groups property
+        const groups = data.groups || data;
+        const groupsArray = Array.isArray(groups) ? groups : [];
+        return groupsArray.map((group: LeadGroup) => ({
           ...group,
           event: {
             id: event.id,

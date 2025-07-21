@@ -36,17 +36,24 @@ export function AllCampaignsPage() {
       // Fetch all events
       const eventsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events`);
       if (!eventsResponse.ok) throw new Error('Failed to fetch events');
-      const eventsData = await eventsResponse.json();
-      setEvents(eventsData);
+      const eventsResult = await eventsResponse.json();
+      
+      // Handle both direct array and API response object formats
+      const eventsData = eventsResult.data || eventsResult;
+      const eventsArray = Array.isArray(eventsData) ? eventsData : [];
+      setEvents(eventsArray);
 
       // Fetch campaigns for all events
-      const campaignsPromises = eventsData.map(async (event: any) => {
+      const campaignsPromises = eventsArray.map(async (event: any) => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaigns/event/${event.id}`
         );
         if (!response.ok) return [];
         const data = await response.json();
-        return (data.campaigns || data).map((campaign: CampaignWithEvent) => ({
+        // Handle both direct array and object with campaigns property
+        const campaigns = data.campaigns || data;
+        const campaignsArray = Array.isArray(campaigns) ? campaigns : [];
+        return campaignsArray.map((campaign: CampaignWithEvent) => ({
           ...campaign,
           event: {
             id: event.id,

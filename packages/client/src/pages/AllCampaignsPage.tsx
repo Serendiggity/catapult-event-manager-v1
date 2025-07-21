@@ -46,7 +46,7 @@ export function AllCampaignsPage() {
       // Fetch campaigns for all events
       const campaignsPromises = eventsArray.map(async (event: any) => {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaigns/event/${event.id}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events/${event.id}/campaigns`
         );
         if (!response.ok) return [];
         const data = await response.json();

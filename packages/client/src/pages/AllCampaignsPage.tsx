@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Mail, Plus, Calendar, ArrowLeft, Send, Edit, FileText, Clock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import type { EmailCampaign } from '@catapult-event-manager/shared';
+import { CampaignDetails } from '@/components/campaigns/CampaignDetails';
+import type { EmailCampaign, LeadGroup } from '@catapult-event-manager/shared';
 
 interface CampaignWithEvent extends EmailCampaign {
   event?: {
@@ -14,6 +15,7 @@ interface CampaignWithEvent extends EmailCampaign {
     title: string;
     date: string;
   };
+  leadGroups?: LeadGroup[];
   leadGroupCount?: number;
   draftCount?: number;
   sentCount?: number;
@@ -26,6 +28,7 @@ export function AllCampaignsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedCampaign, setSelectedCampaign] = useState<CampaignWithEvent | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -113,6 +116,17 @@ export function AllCampaignsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-lg font-semibold">Loading campaigns...</div>
         </div>
+      </div>
+    );
+  }
+
+  if (selectedCampaign) {
+    return (
+      <div className="container mx-auto p-6">
+        <CampaignDetails
+          campaign={selectedCampaign}
+          onBack={() => setSelectedCampaign(null)}
+        />
       </div>
     );
   }
@@ -226,7 +240,7 @@ export function AllCampaignsPage() {
             <Card 
               key={campaign.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => navigate(`/events/${campaign.eventId}/campaigns`)}
+              onClick={() => setSelectedCampaign(campaign)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">

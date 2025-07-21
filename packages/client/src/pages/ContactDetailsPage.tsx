@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Save, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Save, X, AlertCircle, CheckCircle, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -170,18 +170,25 @@ export function ContactDetailsPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
+      {/* Breadcrumb */}
+      <nav className="flex items-center text-sm text-gray-600 mb-4">
+        <Link to="/contacts" className="hover:text-blue-600">Leads</Link>
+        <ChevronRight className="h-4 w-4 mx-2" />
+        <span className="text-gray-900">Lead Details</span>
+      </nav>
+
       <div className="mb-6">
         <Button
           variant="ghost"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/contacts')}
           className="mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Events
+          Back to Leads
         </Button>
         
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Contact Details</h1>
+          <h1 className="text-3xl font-bold">Lead Details</h1>
           {!editing ? (
             <Button onClick={() => setEditing(true)}>
               <Edit className="h-4 w-4 mr-2" />
@@ -254,7 +261,7 @@ export function ContactDetailsPage() {
         {/* Contact Information */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
+            <CardTitle>Lead Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">

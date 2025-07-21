@@ -218,6 +218,17 @@ export async function addContactsToGroup(req: Request, res: Response) {
       .values(values)
       .onConflictDoNothing();
     
+    // Update the contact count
+    const contactCount = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(contactsToLeadGroups)
+      .where(eq(contactsToLeadGroups.leadGroupId, id));
+    
+    await getDb()
+      .update(leadGroups)
+      .set({ contactCount: contactCount[0].count })
+      .where(eq(leadGroups.id, id));
+    
     res.json({
       success: true,
       message: `Added ${contactIds.length} contacts to the group`
@@ -250,6 +261,17 @@ export async function removeContactsFromGroup(req: Request, res: Response) {
           inArray(contactsToLeadGroups.contactId, contactIds)
         )
       );
+    
+    // Update the contact count
+    const contactCount = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(contactsToLeadGroups)
+      .where(eq(contactsToLeadGroups.leadGroupId, id));
+    
+    await getDb()
+      .update(leadGroups)
+      .set({ contactCount: contactCount[0].count })
+      .where(eq(leadGroups.id, id));
     
     res.json({
       success: true,

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Users } from 'lucide-react';
+import { Calendar, Users, Mail } from 'lucide-react';
 
 export function Header() {
   const location = useLocation();
@@ -26,11 +26,20 @@ export function Header() {
             <Link 
               to="/contacts" 
               className={`flex items-center gap-2 hover:text-blue-600 transition-colors ${
-                isActive('/contacts') ? 'text-blue-600' : 'text-gray-600'
+                isActive('/contacts') || isActive('/lead-groups') ? 'text-blue-600' : 'text-gray-600'
               }`}
             >
               <Users className="h-4 w-4" />
-              Contacts
+              Leads
+            </Link>
+            <Link 
+              to="/campaigns" 
+              className={`flex items-center gap-2 hover:text-blue-600 transition-colors ${
+                isActive('/campaigns') ? 'text-blue-600' : 'text-gray-600'
+              }`}
+            >
+              <Mail className="h-4 w-4" />
+              Campaigns
             </Link>
           </nav>
         </div>

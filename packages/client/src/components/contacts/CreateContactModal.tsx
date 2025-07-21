@@ -27,9 +27,9 @@ export function CreateContactModal({ isOpen, onClose, events }: CreateContactMod
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Contact</DialogTitle>
+          <DialogTitle>Create New Lead</DialogTitle>
           <DialogDescription>
-            Select an event to associate with the new contact
+            Select an event to associate with the new lead
           </DialogDescription>
         </DialogHeader>
 

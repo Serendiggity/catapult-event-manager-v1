@@ -30,7 +30,6 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
 
   useEffect(() => {
     if (isOpen) {
-      console.log('Modal opened, fetching lead groups...');
       fetchLeadGroups();
     } else {
       // Reset form when modal closes
@@ -45,19 +44,18 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
   const fetchLeadGroups = async () => {
     try {
       const url = `${import.meta.env.VITE_API_URL || ''}/api/lead-groups/event/${eventId}`;
-      console.log('Fetching lead groups from:', url);
       const response = await fetch(url);
       if (!response.ok) {
-        console.error('Response not ok:', response.status, response.statusText);
         throw new Error('Failed to fetch lead groups');
       }
       const data = await response.json();
-      setLeadGroups(data);
+      // Handle both direct array and object with groups property
+      const groups = data.groups || data;
+      setLeadGroups(Array.isArray(groups) ? groups : []);
       setError(''); // Clear any previous errors
     } catch (error) {
       console.error('Error fetching lead groups:', error);
       setError('Failed to load lead groups. Please check your connection and try again.');
-      // Don't close the modal on error
     }
   };
 
@@ -138,7 +136,7 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Email Campaign</DialogTitle>
           <DialogDescription>
@@ -217,11 +215,11 @@ Best regards,
             <div>
               <Label>Select Lead Groups</Label>
               <div className="space-y-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                {leadGroups.length === 0 ? (
+                {!leadGroups || leadGroups.length === 0 ? (
                   <div className="text-center py-4">
                     <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground mb-2">No lead groups available</p>
-                    <p className="text-xs text-muted-foreground mb-3">Create lead groups to organize your contacts first</p>
+                    <p className="text-xs text-muted-foreground mb-3">Create lead groups to organize your leads first</p>
                     <Button
                       type="button"
                       size="sm"
@@ -252,7 +250,7 @@ Best regards,
                         />
                         <span className="text-sm">{group.name}</span>
                         <span className="text-sm text-muted-foreground">
-                          ({group.contactCount} contacts)
+                          ({group.contactCount} leads)
                         </span>
                       </div>
                     </label>

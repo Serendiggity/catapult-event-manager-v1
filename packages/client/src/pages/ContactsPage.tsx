@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { BusinessCardUpload } from '../components/contacts/BusinessCardUpload';
 import { OCRProcessor } from '../components/contacts/OCRProcessor';
 import { Button } from '../components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronRight } from 'lucide-react';
 
 type ProcessingState = 'upload' | 'processing' | 'complete' | 'error';
 
@@ -14,6 +14,25 @@ export function ContactsPage() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [contactId, setContactId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [eventTitle, setEventTitle] = useState<string>('');
+
+  useEffect(() => {
+    if (eventId) {
+      fetchEventTitle();
+    }
+  }, [eventId]);
+
+  const fetchEventTitle = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events/${eventId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setEventTitle(data.title || '');
+      }
+    } catch (error) {
+      console.error('Error fetching event:', error);
+    }
+  };
 
   if (!eventId) {
     return <div>Event ID is required</div>;
@@ -53,6 +72,17 @@ export function ContactsPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
+      {/* Breadcrumb */}
+      <nav className="flex items-center text-sm text-gray-600 mb-4">
+        <Link to="/events" className="hover:text-blue-600">Events</Link>
+        <ChevronRight className="h-4 w-4 mx-2" />
+        <Link to={`/events/${eventId}`} className="hover:text-blue-600">
+          {eventTitle || 'Event'}
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2" />
+        <span className="text-gray-900">Add Lead</span>
+      </nav>
+
       <div className="mb-6">
         <Button
           variant="ghost"
@@ -63,9 +93,9 @@ export function ContactsPage() {
           Back to Event
         </Button>
         
-        <h1 className="text-3xl font-bold">Add Contact</h1>
+        <h1 className="text-3xl font-bold">Add Lead</h1>
         <p className="text-gray-600 mt-2">
-          Capture or upload a business card to add a new contact
+          Capture or upload a business card to add a new lead
         </p>
       </div>
 
@@ -89,16 +119,16 @@ export function ContactsPage() {
         <div className="text-center space-y-6">
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-green-800 mb-2">
-              Contact Added Successfully!
+              Lead Added Successfully!
             </h2>
             <p className="text-green-700">
-              The business card has been processed and the contact has been saved.
+              The business card has been processed and the lead has been saved.
             </p>
           </div>
           
           <div className="flex justify-center gap-4">
             <Button onClick={handleViewContact} variant="default">
-              View Contact
+              View Lead
             </Button>
             <Button onClick={handleViewReviewQueue} variant="outline">
               Review Queue

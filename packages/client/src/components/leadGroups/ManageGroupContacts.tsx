@@ -90,7 +90,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
       await fetchContacts();
     } catch (error) {
       console.error('Error adding contacts:', error);
-      alert('Failed to add contacts to group');
+      alert('Failed to add leads to group');
     } finally {
       setSaving(false);
     }
@@ -120,7 +120,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
       await fetchContacts();
     } catch (error) {
       console.error('Error removing contacts:', error);
-      alert('Failed to remove contacts from group');
+      alert('Failed to remove leads from group');
     } finally {
       setSaving(false);
     }
@@ -140,7 +140,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
     if (contact.firstName || contact.lastName) {
       return `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
     }
-    return contact.email || 'Unknown Contact';
+    return contact.email || 'Unknown Lead';
   };
 
   const filteredContacts = (mode === 'view' ? groupContacts : availableContacts).filter(contact => {
@@ -164,7 +164,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
               />
               <h2 className="text-xl font-bold">{group.name}</h2>
               <Badge variant="secondary">
-                {groupContacts.length} contact{groupContacts.length !== 1 ? 's' : ''}
+                {groupContacts.length} lead{groupContacts.length !== 1 ? 's' : ''}
               </Badge>
             </div>
             <Button
@@ -183,7 +183,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search contacts..."
+              placeholder="Search leads..."
               className="pl-10"
             />
           </div>
@@ -195,7 +195,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
                 variant="outline"
               >
                 <UserPlus className="h-4 w-4 mr-2" />
-                Add Contacts
+                Add Leads
               </Button>
               {selectedContacts.size > 0 && (
                 <Button
@@ -233,15 +233,15 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-240px)]">
           {loading ? (
             <div className="text-center py-12">
-              <div className="text-lg font-semibold">Loading contacts...</div>
+              <div className="text-lg font-semibold">Loading leads...</div>
             </div>
           ) : filteredContacts.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               {mode === 'view' 
-                ? 'No contacts in this group yet'
+                ? 'No leads in this group yet'
                 : searchTerm 
-                  ? 'No contacts found matching your search'
-                  : 'No available contacts to add'
+                  ? 'No leads found matching your search'
+                  : 'No available leads to add'
               }
             </div>
           ) : (

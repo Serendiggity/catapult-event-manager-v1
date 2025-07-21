@@ -106,7 +106,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
           <div>
             <h2 className="text-2xl font-bold">Lead Groups</h2>
             <p className="text-gray-600 mt-1">
-              Organize your contacts into groups for targeted campaigns
+              Organize your leads into groups for targeted campaigns
             </p>
           </div>
           <Button onClick={handleCreateGroup}>
@@ -121,7 +121,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Lead Groups Yet</h3>
               <p className="text-gray-600 mb-4">
-                Create your first lead group to start organizing contacts
+                Create your first lead group to start organizing leads
               </p>
               <Button onClick={handleCreateGroup}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -143,7 +143,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
                       <CardTitle className="text-lg">{group.name}</CardTitle>
                     </div>
                     <Badge variant="secondary">
-                      {group.contactCount} contact{group.contactCount !== 1 ? 's' : ''}
+                      {group.contactCount} lead{group.contactCount !== 1 ? 's' : ''}
                     </Badge>
                   </div>
                 </CardHeader>

@@ -89,7 +89,7 @@ export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsPr
               onClick={() => navigate(`/events/${event.id}/contacts/new`)}
             >
               <UserPlus className="mr-2 h-4 w-4" />
-              Add Contact
+              Add Lead
             </Button>
             <Button 
               variant="outline" 

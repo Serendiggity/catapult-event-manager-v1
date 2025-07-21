@@ -7,6 +7,8 @@ import { ContactsListPage } from '@/pages/ContactsListPage'
 import { ReviewQueuePage } from '@/pages/ReviewQueuePage'
 import { LeadGroupsPage } from '@/pages/LeadGroupsPage'
 import { CampaignsPage } from '@/pages/CampaignsPage'
+import { AllLeadGroupsPage } from '@/pages/AllLeadGroupsPage'
+import { AllCampaignsPage } from '@/pages/AllCampaignsPage'
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/" element={<EventsPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/contacts" element={<ContactsListPage />} />
+          <Route path="/lead-groups" element={<AllLeadGroupsPage />} />
+          <Route path="/campaigns" element={<AllCampaignsPage />} />
           <Route path="/events/:eventId/contacts/new" element={<ContactsPage />} />
           <Route path="/contacts/:id" element={<ContactDetailsPage />} />
           <Route path="/events/:eventId/review" element={<ReviewQueuePage />} />

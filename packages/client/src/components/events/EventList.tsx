@@ -1,7 +1,8 @@
 import type { Event } from '@catapult-event-manager/shared'
 import { EventCard } from './EventCard'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Plus, Users, Mail } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 interface EventListProps {
   events: Event[]
@@ -18,6 +19,7 @@ export function EventList({
   onDeleteEvent,
   onCreateEvent 
 }: EventListProps) {
+  const navigate = useNavigate();
   if (events.length === 0) {
     return (
       <div className="text-center py-12">
@@ -37,10 +39,24 @@ export function EventList({
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Events</h2>
-        <Button onClick={onCreateEvent}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Event
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/contacts')}>
+            <Users className="mr-2 h-4 w-4" />
+            All Leads
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/lead-groups')}>
+            <Users className="mr-2 h-4 w-4" />
+            All Lead Groups
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/campaigns')}>
+            <Mail className="mr-2 h-4 w-4" />
+            All Campaigns
+          </Button>
+          <Button onClick={onCreateEvent}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Event
+          </Button>
+        </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (

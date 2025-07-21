@@ -14,6 +14,14 @@ A monorepo for the Catapult Event Manager application with React/Vite frontend, 
 └── tsconfig.json     # Root TypeScript configuration
 ```
 
+## Important Notes
+
+### Terminology: Contacts vs Leads
+- **In Code**: We use "Contact" throughout the database, API, and internal code
+- **In UI**: We display "Lead" to users in all interface text
+- **Reason**: This separation allows business terminology flexibility without breaking changes
+- **For Developers**: Continue using "contact" in code; only use "lead" in UI text
+
 ## Getting Started
 
 ### Prerequisites

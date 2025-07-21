@@ -159,7 +159,7 @@ export function ContactsListPage() {
   const handleBulkDelete = async () => {
     if (selectedContacts.size === 0) return;
     
-    if (!confirm(`Are you sure you want to delete ${selectedContacts.size} contact(s)?`)) {
+    if (!confirm(`Are you sure you want to delete ${selectedContacts.size} lead(s)?`)) {
       return;
     }
     
@@ -175,7 +175,7 @@ export function ContactsListPage() {
   };
 
   const handleDeleteContact = async (contactId: string) => {
-    if (!confirm('Are you sure you want to delete this contact?')) {
+    if (!confirm('Are you sure you want to delete this lead?')) {
       return;
     }
     
@@ -238,13 +238,22 @@ export function ContactsListPage() {
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Contacts</h1>
-          <p className="text-gray-600">Manage all your event contacts in one place</p>
+          <h1 className="text-3xl font-bold mb-2">Leads</h1>
+          <p className="text-gray-600">Manage all your event leads in one place</p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create Contact
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => navigate('/lead-groups')}
+            variant="outline"
+          >
+            <Users className="h-4 w-4 mr-2" />
+            Lead Groups
+          </Button>
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Lead
+          </Button>
+        </div>
       </div>
 
       {/* Filters and Search */}
@@ -268,7 +277,7 @@ export function ContactsListPage() {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Contacts</SelectItem>
+              <SelectItem value="all">All Leads</SelectItem>
               <SelectItem value="needs-review">Needs Review</SelectItem>
               <SelectItem value="verified">Verified</SelectItem>
             </SelectContent>
@@ -294,7 +303,7 @@ export function ContactsListPage() {
         <Card className="p-4 mb-4 bg-blue-50 border-blue-200">
           <div className="flex items-center justify-between">
             <span className="text-sm text-blue-700">
-              {selectedContacts.size} contact(s) selected
+              {selectedContacts.size} lead(s) selected
             </span>
             <div className="space-x-2">
               <Button
@@ -437,7 +446,7 @@ export function ContactsListPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => navigate(`/contacts/${contact.id}`)}
-                        title="Edit contact"
+                        title="Edit lead"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -445,7 +454,7 @@ export function ContactsListPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteContact(contact.id)}
-                        title="Delete contact"
+                        title="Delete lead"
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -461,7 +470,7 @@ export function ContactsListPage() {
         {/* Pagination */}
         <div className="flex items-center justify-between p-4 border-t">
           <div className="text-sm text-gray-600">
-            Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalContacts)} of {totalContacts} contacts
+            Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalContacts)} of {totalContacts} leads
           </div>
           <div className="flex gap-2">
             <Button

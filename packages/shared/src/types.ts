@@ -58,6 +58,22 @@ export interface EmailDraft {
   sentAt: Date | null;
 }
 
+/**
+ * IMPORTANT TERMINOLOGY NOTE:
+ * 
+ * Throughout the codebase, we use "Contact" in the database, API, and internal code,
+ * but display "Lead" in the UI. This is intentional:
+ * 
+ * - Database: Uses 'contacts' table for stability and compatibility
+ * - API: Uses /api/contacts endpoints to maintain consistency
+ * - Code: Uses Contact interfaces and contact variables
+ * - UI: Displays "Leads" to users as it better represents the business context
+ * 
+ * When working on this codebase:
+ * - Keep using "contact" in code and database
+ * - Use "lead" only in user-facing text (UI labels, messages, etc.)
+ * - This separation allows us to change business terminology without breaking changes
+ */
 export interface Contact {
   id: string;
   eventId: string;

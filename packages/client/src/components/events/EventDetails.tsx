@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import type { Event } from '@catapult-event-manager/shared'
+import { QUICK_ADD_EVENT_ID } from '@/constants/quick-add'
 
 interface EventDetailsProps {
   event: Event
@@ -13,6 +14,7 @@ interface EventDetailsProps {
 
 export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsProps) {
   const navigate = useNavigate()
+  const isQuickAdd = event.id === QUICK_ADD_EVENT_ID
   
   const formatDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -83,7 +85,9 @@ export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsPr
           </div>
           
           <div className="flex flex-wrap gap-2 mt-6">
-            <Button onClick={onEdit}>Edit Event</Button>
+            {!isQuickAdd && (
+              <Button onClick={onEdit}>Edit Event</Button>
+            )}
             <Button 
               variant="secondary" 
               onClick={() => navigate(`/events/${event.id}/contacts/new`)}
@@ -112,9 +116,11 @@ export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsPr
               <ClipboardCheck className="mr-2 h-4 w-4" />
               Review Queue
             </Button>
-            <Button variant="destructive" onClick={onDelete}>
-              Delete Event
-            </Button>
+            {!isQuickAdd && (
+              <Button variant="destructive" onClick={onDelete}>
+                Delete Event
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

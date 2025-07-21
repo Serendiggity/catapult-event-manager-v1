@@ -67,12 +67,16 @@ export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
           <Button size="sm" variant="outline" onClick={onView}>
             View
           </Button>
-          <Button size="sm" variant="outline" onClick={onEdit}>
-            Edit
-          </Button>
-          <Button size="sm" variant="destructive" onClick={onDelete}>
-            Delete
-          </Button>
+          {!isQuickAdd && (
+            <>
+              <Button size="sm" variant="outline" onClick={onEdit}>
+                Edit
+              </Button>
+              <Button size="sm" variant="destructive" onClick={onDelete}>
+                Delete
+              </Button>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

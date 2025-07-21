@@ -138,13 +138,26 @@ export function AllCampaignsPage() {
             <h1 className="text-3xl font-bold mb-2">Email Campaigns</h1>
             <p className="text-gray-600">Manage all your email campaigns across events</p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold">{filteredCampaigns.length}</div>
-            <div className="text-sm text-gray-600">Total Campaigns</div>
-            <div className="text-xl font-semibold mt-2">
-              {filteredCampaigns.filter(c => c.status === 'sent').length}
+          <div className="flex items-start gap-4">
+            <div className="text-right">
+              <div className="text-2xl font-bold">{filteredCampaigns.length}</div>
+              <div className="text-sm text-gray-600">Total Campaigns</div>
+              <div className="text-xl font-semibold mt-2">
+                {filteredCampaigns.filter(c => c.status === 'sent').length}
+              </div>
+              <div className="text-sm text-gray-600">Sent</div>
             </div>
-            <div className="text-sm text-gray-600">Sent</div>
+            {selectedEventId !== 'all' ? (
+              <Button onClick={() => navigate(`/events/${selectedEventId}/campaigns`)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Campaign
+              </Button>
+            ) : (
+              <Button variant="outline" disabled>
+                <Plus className="h-4 w-4 mr-2" />
+                Select Event to Create Campaign
+              </Button>
+            )}
           </div>
         </div>
       </div>

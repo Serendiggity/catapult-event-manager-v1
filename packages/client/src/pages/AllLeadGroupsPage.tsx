@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Users, Plus, Calendar, ArrowLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface LeadGroup {
   id: string;
@@ -83,7 +84,7 @@ export function AllLeadGroupsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-lg font-semibold">Loading lead groups...</div>
+          <LoadingSpinner size="lg" text="Loading lead groups..." />
         </div>
       </div>
     );

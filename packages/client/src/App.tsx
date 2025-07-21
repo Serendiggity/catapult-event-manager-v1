@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from '@/components/layout/Layout'
 import { EventsPage } from '@/pages/EventsPage'
+import { EventDetailsPage } from '@/pages/EventDetailsPage'
+import { EventCreatePage } from '@/pages/EventCreatePage'
+import { EventEditPage } from '@/pages/EventEditPage'
 import { ContactsPage } from '@/pages/ContactsPage'
 import { ContactDetailsPage } from '@/pages/ContactDetailsPage'
 import { ContactsListPage } from '@/pages/ContactsListPage'
@@ -17,6 +20,9 @@ function App() {
         <Routes>
           <Route path="/" element={<EventsPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/new" element={<EventCreatePage />} />
+          <Route path="/events/:id" element={<EventDetailsPage />} />
+          <Route path="/events/:id/edit" element={<EventEditPage />} />
           <Route path="/contacts" element={<ContactsListPage />} />
           <Route path="/lead-groups" element={<AllLeadGroupsPage />} />
           <Route path="/campaigns" element={<AllCampaignsPage />} />

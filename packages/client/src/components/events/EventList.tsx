@@ -38,28 +38,47 @@ export function EventList({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Events</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/contacts')}>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Events</h2>
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/contacts')}
+            className="flex-1 sm:flex-initial"
+          >
             <Users className="mr-2 h-4 w-4" />
-            All Leads
+            <span className="hidden sm:inline">All </span>Leads
           </Button>
-          <Button variant="outline" onClick={() => navigate('/lead-groups')}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/lead-groups')}
+            className="hidden sm:flex"
+          >
             <Users className="mr-2 h-4 w-4" />
             All Lead Groups
           </Button>
-          <Button variant="outline" onClick={() => navigate('/campaigns')}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/campaigns')}
+            className="hidden sm:flex"
+          >
             <Mail className="mr-2 h-4 w-4" />
             All Campaigns
           </Button>
-          <Button onClick={onCreateEvent}>
+          <Button 
+            size="sm" 
+            onClick={onCreateEvent}
+            className="flex-1 sm:flex-initial"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Create Event
           </Button>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* Sort events to show Quick Add first */}
         {events
           .sort((a, b) => {

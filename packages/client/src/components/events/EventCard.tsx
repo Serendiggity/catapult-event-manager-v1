@@ -27,52 +27,70 @@ export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
   const isQuickAdd = event.id === QUICK_ADD_EVENT_ID;
 
   return (
-    <Card className={`hover:shadow-lg transition-shadow ${isQuickAdd ? 'border-green-600 bg-green-50/50' : ''}`}>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-xl">{event.title}</CardTitle>
+    <Card 
+      className={`hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ${isQuickAdd ? 'border-green-600 bg-green-50/50' : ''}`}
+      tabIndex={-1}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="text-lg sm:text-xl line-clamp-2">{event.title}</CardTitle>
           {isQuickAdd && (
-            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
-              <Zap className="h-3 w-3 mr-1" />
-              Quick Add
+            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300 shrink-0">
+              <Zap className="h-3 w-3 sm:mr-1" />
+              <span className="hidden sm:inline">Quick Add</span>
             </Badge>
           )}
         </div>
         {event.description && (
-          <CardDescription className="line-clamp-2">
+          <CardDescription className="line-clamp-2 mt-1">
             {event.description}
           </CardDescription>
         )}
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="mr-2 h-4 w-4" />
-            {formatDate(event.date)}
+        <div className="space-y-1.5 mb-4">
+          <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
+            <Calendar className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{formatDate(event.date)}</span>
           </div>
           {event.location && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPin className="mr-2 h-4 w-4" />
-              {event.location}
+            <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
+              <MapPin className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{event.location}</span>
             </div>
           )}
           {event.capacity && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="mr-2 h-4 w-4" />
-              Capacity: {event.capacity}
+            <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
+              <Users className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+              <span>Capacity: {event.capacity}</span>
             </div>
           )}
         </div>
-        <div className="flex gap-2 mt-4">
-          <Button size="sm" variant="outline" onClick={onView}>
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={onView}
+            className="flex-1 sm:flex-initial"
+          >
             View
           </Button>
           {!isQuickAdd && (
             <>
-              <Button size="sm" variant="outline" onClick={onEdit}>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={onEdit}
+                className="flex-1 sm:flex-initial"
+              >
                 Edit
               </Button>
-              <Button size="sm" variant="destructive" onClick={onDelete}>
+              <Button 
+                size="sm" 
+                variant="destructive" 
+                onClick={onDelete}
+                className="flex-1 sm:flex-initial"
+              >
                 Delete
               </Button>
             </>

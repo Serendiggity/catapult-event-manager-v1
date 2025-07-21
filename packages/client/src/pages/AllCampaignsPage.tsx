@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mail, Plus, Calendar, ArrowLeft, Send, Edit, FileText, Clock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { CampaignDetails } from '@/components/campaigns/CampaignDetails';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import type { EmailCampaign, LeadGroup } from '@catapult-event-manager/shared';
 
 interface CampaignWithEvent extends EmailCampaign {
@@ -114,7 +115,7 @@ export function AllCampaignsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-lg font-semibold">Loading campaigns...</div>
+          <LoadingSpinner size="lg" text="Loading campaigns..." />
         </div>
       </div>
     );

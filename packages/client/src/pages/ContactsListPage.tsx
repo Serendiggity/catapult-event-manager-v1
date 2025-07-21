@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CreateContactModal } from '@/components/contacts/CreateContactModal';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import type { Contact } from '@catapult-event-manager/shared';
 
 // Helper function to convert text to sentence case
@@ -224,10 +225,7 @@ export function ContactsListPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading contacts...</p>
-          </div>
+          <LoadingSpinner size="lg" text="Loading leads..." />
         </div>
       </div>
     );

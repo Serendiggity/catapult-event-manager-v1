@@ -15,6 +15,13 @@
       "when": 1753016450048,
       "tag": "0001_spooky_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753140928992,
+      "tag": "0002_absurd_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }

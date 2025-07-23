@@ -5,16 +5,16 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 
-interface LeadGroup {
+interface CampaignGroup {
   id: string;
   name: string;
   description: string | null;
   color: string;
 }
 
-interface LeadGroupFormProps {
+interface CampaignGroupFormProps {
   eventId: string;
-  group?: LeadGroup | null;
+  group?: CampaignGroup | null;
   onClose: () => void;
 }
 
@@ -29,7 +29,7 @@ const PRESET_COLORS = [
   '#F97316', // Orange
 ];
 
-export function LeadGroupForm({ eventId, group, onClose }: LeadGroupFormProps) {
+export function CampaignGroupForm({ eventId, group, onClose }: CampaignGroupFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -55,8 +55,8 @@ export function LeadGroupForm({ eventId, group, onClose }: LeadGroupFormProps) {
 
     try {
       const url = group
-        ? `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${group.id}`
-        : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${eventId}`;
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${group.id}`
+        : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/event/${eventId}`;
       
       const method = group ? 'PATCH' : 'POST';
       
@@ -73,7 +73,7 @@ export function LeadGroupForm({ eventId, group, onClose }: LeadGroupFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save lead group');
+        throw new Error('Failed to save campaign group');
       }
 
       onClose();
@@ -89,7 +89,7 @@ export function LeadGroupForm({ eventId, group, onClose }: LeadGroupFormProps) {
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="p-6 border-b flex items-center justify-between">
           <h2 className="text-xl font-bold">
-            {group ? 'Edit Lead Group' : 'Create Lead Group'}
+            {group ? 'Edit Campaign Group' : 'Create Campaign Group'}
           </h2>
           <Button
             variant="ghost"

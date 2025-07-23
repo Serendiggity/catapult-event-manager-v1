@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 
 interface EventFormProps {
   event?: Event

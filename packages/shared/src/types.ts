@@ -38,10 +38,10 @@ export interface EmailCampaign {
   updatedAt: Date;
 }
 
-export interface CampaignGroup {
+export interface CampaignGroupAssignment {
   id: string;
   campaignId: string;
-  leadGroupId: string;
+  campaignGroupId: string;
   createdAt: Date;
 }
 
@@ -95,7 +95,7 @@ export interface Contact {
   updatedAt: Date;
 }
 
-export interface LeadGroup {
+export interface CampaignGroup {
   id: string;
   eventId: string;
   name: string;

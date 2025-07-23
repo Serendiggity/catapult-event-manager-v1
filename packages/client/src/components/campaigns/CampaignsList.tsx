@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Plus, Mail, Users, Clock, Edit, Trash2 } from 'lucide-react';
-import { CreateCampaignModal } from './CreateCampaignModal';
+import { Plus, Mail, Users, Clock, Edit, Trash2, Sparkles } from 'lucide-react';
+import { CreateCampaignModalEnhanced } from './CreateCampaignModalEnhanced';
 import { EditCampaignModal } from './EditCampaignModal';
 import { CampaignDetails } from './CampaignDetails';
-import type { EmailCampaign, LeadGroup } from '@catapult-event-manager/shared';
+import type { EmailCampaign, CampaignGroup } from '@new-era-event-manager/shared';
 
 interface CampaignsListProps {
   eventId: string;
 }
 
 interface CampaignWithGroups extends EmailCampaign {
-  leadGroups: LeadGroup[];
+  campaignGroups: CampaignGroup[];
 }
 
 export function CampaignsList({ eventId }: CampaignsListProps) {
@@ -84,9 +84,9 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Email Campaigns</h2>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Campaign
+        <Button onClick={() => setIsCreateModalOpen(true)} data-onboarding="create-campaign-button">
+          <Sparkles className="h-4 w-4 mr-2" />
+          New AI Campaign
         </Button>
       </div>
 
@@ -97,9 +97,9 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
             <p className="text-muted-foreground text-center">
               No email campaigns yet. Create your first campaign to start sending personalized emails.
             </p>
-            <Button onClick={() => setIsCreateModalOpen(true)} className="mt-4">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Campaign
+            <Button onClick={() => setIsCreateModalOpen(true)} className="mt-4" data-onboarding="create-campaign-button">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Create AI Campaign
             </Button>
           </CardContent>
         </Card>
@@ -121,7 +121,7 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
                   <div className="flex items-center text-muted-foreground">
                     <Users className="h-4 w-4 mr-2" />
                     <span>
-                      {campaign.leadGroups.length} group{campaign.leadGroups.length !== 1 ? 's' : ''}
+                      {campaign.campaignGroups.length} group{campaign.campaignGroups.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="flex items-center text-muted-foreground">
@@ -171,7 +171,7 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
         </div>
       )}
 
-      <CreateCampaignModal
+      <CreateCampaignModalEnhanced
         eventId={eventId}
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

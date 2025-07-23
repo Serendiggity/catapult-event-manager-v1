@@ -1,7 +1,7 @@
 import { pgTable, uuid, text, timestamp, integer, primaryKey } from 'drizzle-orm/pg-core';
 import { events } from './events';
 
-export const leadGroups = pgTable('lead_groups', {
+export const campaignGroups = pgTable('campaign_groups', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
@@ -12,20 +12,20 @@ export const leadGroups = pgTable('lead_groups', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// Junction table for many-to-many relationship between contacts and lead groups
-export const contactsToLeadGroups = pgTable('contacts_to_lead_groups', 
+// Junction table for many-to-many relationship between contacts and campaign groups
+export const contactsToCampaignGroups = pgTable('contacts_to_campaign_groups', 
   {
     contactId: uuid('contact_id').references(() => contacts.id, { onDelete: 'cascade' }).notNull(),
-    leadGroupId: uuid('lead_group_id').references(() => leadGroups.id, { onDelete: 'cascade' }).notNull(),
+    campaignGroupId: uuid('campaign_group_id').references(() => campaignGroups.id, { onDelete: 'cascade' }).notNull(),
     addedAt: timestamp('added_at').defaultNow().notNull(),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.contactId, table.leadGroupId] })
+    pk: primaryKey({ columns: [table.contactId, table.campaignGroupId] })
   })
 );
 
-// Import contacts after defining leadGroups to avoid circular dependency
+// Import contacts after defining campaignGroups to avoid circular dependency
 import { contacts } from './contacts';
 
-export type LeadGroup = typeof leadGroups.$inferSelect;
-export type NewLeadGroup = typeof leadGroups.$inferInsert;
+export type CampaignGroup = typeof campaignGroups.$inferSelect;
+export type NewCampaignGroup = typeof campaignGroups.$inferInsert;

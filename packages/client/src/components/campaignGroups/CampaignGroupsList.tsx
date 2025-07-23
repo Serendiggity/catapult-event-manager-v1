@@ -3,10 +3,10 @@ import { Users, Plus, Edit2, Trash2, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { LeadGroupForm } from './LeadGroupForm';
+import { CampaignGroupForm } from './CampaignGroupForm';
 import { ManageGroupContacts } from './ManageGroupContacts';
 
-interface LeadGroup {
+interface CampaignGroup {
   id: string;
   name: string;
   description: string | null;
@@ -16,33 +16,33 @@ interface LeadGroup {
   updatedAt: string;
 }
 
-interface LeadGroupsListProps {
+interface CampaignGroupsListProps {
   eventId: string;
 }
 
-export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
-  const [groups, setGroups] = useState<LeadGroup[]>([]);
+export function CampaignGroupsList({ eventId }: CampaignGroupsListProps) {
+  const [groups, setGroups] = useState<CampaignGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingGroup, setEditingGroup] = useState<LeadGroup | null>(null);
-  const [managingGroup, setManagingGroup] = useState<LeadGroup | null>(null);
+  const [editingGroup, setEditingGroup] = useState<CampaignGroup | null>(null);
+  const [managingGroup, setManagingGroup] = useState<CampaignGroup | null>(null);
 
   useEffect(() => {
-    fetchLeadGroups();
+    fetchCampaignGroups();
   }, [eventId]);
 
-  const fetchLeadGroups = async () => {
+  const fetchCampaignGroups = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${eventId}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/event/${eventId}`
       );
       
-      if (!response.ok) throw new Error('Failed to fetch lead groups');
+      if (!response.ok) throw new Error('Failed to fetch campaign groups');
       
       const data = await response.json();
       setGroups(data.groups);
     } catch (error) {
-      console.error('Error fetching lead groups:', error);
+      console.error('Error fetching campaign groups:', error);
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
     setShowForm(true);
   };
 
-  const handleEditGroup = (group: LeadGroup) => {
+  const handleEditGroup = (group: CampaignGroup) => {
     setEditingGroup(group);
     setShowForm(true);
   };
@@ -63,7 +63,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${groupId}`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${groupId}`,
         {
           method: 'DELETE'
         }
@@ -72,7 +72,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
       if (!response.ok) throw new Error('Failed to delete group');
 
       // Refresh the list
-      await fetchLeadGroups();
+      await fetchCampaignGroups();
     } catch (error) {
       console.error('Error deleting group:', error);
       alert('Failed to delete group');
@@ -82,10 +82,10 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
   const handleFormClose = () => {
     setShowForm(false);
     setEditingGroup(null);
-    fetchLeadGroups();
+    fetchCampaignGroups();
   };
 
-  const handleManageContacts = (group: LeadGroup) => {
+  const handleManageContacts = (group: CampaignGroup) => {
     setManagingGroup(group);
   };
 
@@ -93,7 +93,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="text-lg font-semibold">Loading lead groups...</div>
+          <div className="text-lg font-semibold">Loading campaign groups...</div>
         </div>
       </div>
     );
@@ -101,10 +101,10 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6" data-onboarding="campaign-groups-section">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Lead Groups</h2>
+            <h2 className="text-2xl font-bold">Campaign Groups</h2>
             <p className="text-gray-600 mt-1">
               Organize your leads into groups for targeted campaigns
             </p>
@@ -119,9 +119,9 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
           <Card>
             <CardContent className="text-center py-12">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Lead Groups Yet</h3>
+              <h3 className="text-lg font-semibold mb-2">No Campaign Groups Yet</h3>
               <p className="text-gray-600 mb-4">
-                Create your first lead group to start organizing leads
+                Create your first campaign group to start organizing leads
               </p>
               <Button onClick={handleCreateGroup}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -186,7 +186,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
       </div>
 
       {showForm && (
-        <LeadGroupForm
+        <CampaignGroupForm
           eventId={eventId}
           group={editingGroup}
           onClose={handleFormClose}
@@ -199,7 +199,7 @@ export function LeadGroupsList({ eventId }: LeadGroupsListProps) {
           eventId={eventId}
           onClose={() => {
             setManagingGroup(null);
-            fetchLeadGroups();
+            fetchCampaignGroups();
           }}
         />
       )}

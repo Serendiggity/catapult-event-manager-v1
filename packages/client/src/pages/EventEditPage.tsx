@@ -3,7 +3,7 @@ import { useEvents } from '@/hooks/useEvents'
 import { EventForm } from '@/components/events/EventForm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 
 export function EventEditPage() {
   const { id } = useParams()

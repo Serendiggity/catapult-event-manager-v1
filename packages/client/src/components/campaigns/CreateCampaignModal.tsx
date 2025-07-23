@@ -8,7 +8,7 @@ import { Textarea } from '../ui/textarea';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Info, Sparkles, Users } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
-import type { LeadGroup } from '@catapult-event-manager/shared';
+import type { CampaignGroup } from '@new-era-event-manager/shared';
 
 interface CreateCampaignModalProps {
   eventId: string;
@@ -23,14 +23,14 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
   const [subject, setSubject] = useState('');
   const [templateBody, setTemplateBody] = useState('');
   const [variables, setVariables] = useState<string[]>([]);
-  const [leadGroups, setLeadGroups] = useState<LeadGroup[]>([]);
+  const [campaignGroups, setCampaignGroups] = useState<CampaignGroup[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      fetchLeadGroups();
+      fetchCampaignGroups();
     } else {
       // Reset form when modal closes
       resetForm();
@@ -41,21 +41,21 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
     extractVariables();
   }, [templateBody]);
 
-  const fetchLeadGroups = async () => {
+  const fetchCampaignGroups = async () => {
     try {
-      const url = `${import.meta.env.VITE_API_URL || ''}/api/lead-groups/event/${eventId}`;
+      const url = `${import.meta.env.VITE_API_URL || ''}/api/campaign-groups/event/${eventId}`;
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error('Failed to fetch lead groups');
+        throw new Error('Failed to fetch campaign groups');
       }
       const data = await response.json();
       // Handle both direct array and object with groups property
       const groups = data.groups || data;
-      setLeadGroups(Array.isArray(groups) ? groups : []);
+      setCampaignGroups(Array.isArray(groups) ? groups : []);
       setError(''); // Clear any previous errors
     } catch (error) {
-      console.error('Error fetching lead groups:', error);
-      setError('Failed to load lead groups. Please check your connection and try again.');
+      console.error('Error fetching campaign groups:', error);
+      setError('Failed to load campaign groups. Please check your connection and try again.');
     }
   };
 
@@ -94,7 +94,7 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
           subject,
           templateBody,
           variables,
-          leadGroupIds: selectedGroupIds,
+          campaignGroupIds: selectedGroupIds,
         }),
       });
 
@@ -138,7 +138,7 @@ export function CreateCampaignModal({ eventId, isOpen, onClose, onSuccess }: Cre
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Email Campaign</DialogTitle>
+          <DialogTitle>Create email campaign</DialogTitle>
           <DialogDescription>
             Set up a new email campaign template with personalization variables.
           </DialogDescription>
@@ -213,28 +213,28 @@ Best regards,
             )}
 
             <div>
-              <Label>Select Lead Groups</Label>
+              <Label>Select Campaign Groups</Label>
               <div className="space-y-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                {!leadGroups || leadGroups.length === 0 ? (
+                {!campaignGroups || campaignGroups.length === 0 ? (
                   <div className="text-center py-4">
                     <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-2">No lead groups available</p>
-                    <p className="text-xs text-muted-foreground mb-3">Create lead groups to organize your leads first</p>
+                    <p className="text-sm text-muted-foreground mb-2">No campaign groups available</p>
+                    <p className="text-xs text-muted-foreground mb-3">Create campaign groups to organize your leads first</p>
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
                       onClick={() => {
                         onClose();
-                        navigate(`/events/${eventId}/lead-groups`);
+                        navigate(`/events/${eventId}/campaign-groups`);
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
-                      Go to Lead Groups
+                      Go to Campaign Groups
                     </Button>
                   </div>
                 ) : (
-                  leadGroups.map((group) => (
+                  campaignGroups.map((group) => (
                     <label
                       key={group.id}
                       className="flex items-center space-x-2 cursor-pointer"

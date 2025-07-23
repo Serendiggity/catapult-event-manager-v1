@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { leadGroups } from './lead-groups';
+import { campaignGroups } from './campaign-groups';
 import { events } from './events';
 
 export const emailCampaigns = pgTable('email_campaigns', {
@@ -9,16 +9,19 @@ export const emailCampaigns = pgTable('email_campaigns', {
   subject: text('subject').notNull(),
   templateBody: text('template_body').notNull(),
   variables: jsonb('variables').$type<string[]>().default([]).notNull(), // List of variable names used in template
+  enabledVariables: jsonb('enabled_variables').$type<string[]>().default([]).notNull(), // Variables that AI should use for personalization
+  senderVariables: jsonb('sender_variables').$type<Record<string, string>>().default({}).notNull(), // Sender information variables
+  aiChatHistory: jsonb('ai_chat_history').$type<Array<{role: string; content: string; timestamp: string}>>().default([]), // Chat history with AI
   status: text('status', { enum: ['draft', 'generating', 'ready', 'sent'] }).default('draft').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// Junction table for many-to-many relationship between campaigns and lead groups
-export const campaignGroups = pgTable('campaign_groups', {
+// Junction table for many-to-many relationship between campaigns and campaign groups
+export const campaignGroupAssignments = pgTable('campaign_group_assignments', {
   id: uuid('id').primaryKey().defaultRandom(),
   campaignId: uuid('campaign_id').references(() => emailCampaigns.id, { onDelete: 'cascade' }).notNull(),
-  leadGroupId: uuid('lead_group_id').references(() => leadGroups.id, { onDelete: 'cascade' }).notNull(),
+  campaignGroupId: uuid('campaign_group_id').references(() => campaignGroups.id, { onDelete: 'cascade' }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -39,9 +42,12 @@ export const emailDrafts = pgTable('email_drafts', {
 // Import contacts after defining emailCampaigns to avoid circular dependency
 import { contacts } from './contacts';
 
+// Import draft versions table
+export { emailDraftVersions } from './email-draft-versions';
+
 export type EmailCampaign = typeof emailCampaigns.$inferSelect;
 export type NewEmailCampaign = typeof emailCampaigns.$inferInsert;
-export type CampaignGroup = typeof campaignGroups.$inferSelect;
-export type NewCampaignGroup = typeof campaignGroups.$inferInsert;
+export type CampaignGroupAssignment = typeof campaignGroupAssignments.$inferSelect;
+export type NewCampaignGroupAssignment = typeof campaignGroupAssignments.$inferInsert;
 export type EmailDraft = typeof emailDrafts.$inferSelect;
 export type NewEmailDraft = typeof emailDrafts.$inferInsert;

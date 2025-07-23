@@ -16,14 +16,14 @@ interface Contact {
   addedAt?: string;
 }
 
-interface LeadGroup {
+interface CampaignGroup {
   id: string;
   name: string;
   color: string;
 }
 
 interface ManageGroupContactsProps {
-  group: LeadGroup;
+  group: CampaignGroup;
   eventId: string;
   onClose: () => void;
 }
@@ -45,7 +45,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
     try {
       // Fetch group contacts
       const groupResponse = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${group.id}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${group.id}`
       );
       if (!groupResponse.ok) throw new Error('Failed to fetch group');
       const groupData = await groupResponse.json();
@@ -53,7 +53,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
 
       // Fetch available contacts
       const availableResponse = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${eventId}/available-contacts?groupId=${group.id}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/event/${eventId}/available-contacts?groupId=${group.id}`
       );
       if (!availableResponse.ok) throw new Error('Failed to fetch available contacts');
       const availableData = await availableResponse.json();
@@ -71,7 +71,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
     setSaving(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${group.id}/contacts`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${group.id}/contacts`,
         {
           method: 'POST',
           headers: {
@@ -102,7 +102,7 @@ export function ManageGroupContacts({ group, eventId, onClose }: ManageGroupCont
     setSaving(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${group.id}/contacts`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${group.id}/contacts`,
         {
           method: 'DELETE',
           headers: {

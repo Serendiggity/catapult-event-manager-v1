@@ -1,46 +1,46 @@
 import { Request, Response } from 'express';
 import { getDb } from '../db/connection';
-import { leadGroups, contactsToLeadGroups, NewLeadGroup } from '../db/schema/lead-groups';
+import { campaignGroups, contactsToCampaignGroups, NewCampaignGroup } from '../db/schema/campaign-groups';
 import { contacts } from '../db/schema/contacts';
 import { eq, and, sql, inArray } from 'drizzle-orm';
 
-// Get all lead groups for an event
-export async function getLeadGroups(req: Request, res: Response) {
+// Get all campaign groups for an event
+export async function getCampaignGroups(req: Request, res: Response) {
   try {
     const { eventId } = req.params;
     
     const groups = await getDb()
       .select()
-      .from(leadGroups)
-      .where(eq(leadGroups.eventId, eventId))
-      .orderBy(leadGroups.createdAt);
+      .from(campaignGroups)
+      .where(eq(campaignGroups.eventId, eventId))
+      .orderBy(campaignGroups.createdAt);
     
     res.json({
       success: true,
       groups
     });
   } catch (error) {
-    console.error('Error fetching lead groups:', error);
+    console.error('Error fetching campaign groups:', error);
     res.status(500).json({
-      error: 'Failed to fetch lead groups'
+      error: 'Failed to fetch campaign groups'
     });
   }
 }
 
-// Get a specific lead group with its contacts
-export async function getLeadGroup(req: Request, res: Response) {
+// Get a specific campaign group with its contacts
+export async function getCampaignGroup(req: Request, res: Response) {
   try {
     const { id } = req.params;
     
-    // Get the lead group
+    // Get the campaign group
     const [group] = await getDb()
       .select()
-      .from(leadGroups)
-      .where(eq(leadGroups.id, id));
+      .from(campaignGroups)
+      .where(eq(campaignGroups.id, id));
     
     if (!group) {
       return res.status(404).json({
-        error: 'Lead group not found'
+        error: 'Campaign group not found'
       });
     }
     
@@ -54,15 +54,15 @@ export async function getLeadGroup(req: Request, res: Response) {
         phone: contacts.phone,
         company: contacts.company,
         title: contacts.title,
-        addedAt: contactsToLeadGroups.addedAt
+        addedAt: contactsToCampaignGroups.addedAt
       })
       .from(contacts)
       .innerJoin(
-        contactsToLeadGroups,
-        eq(contacts.id, contactsToLeadGroups.contactId)
+        contactsToCampaignGroups,
+        eq(contacts.id, contactsToCampaignGroups.contactId)
       )
-      .where(eq(contactsToLeadGroups.leadGroupId, id))
-      .orderBy(contactsToLeadGroups.addedAt);
+      .where(eq(contactsToCampaignGroups.campaignGroupId, id))
+      .orderBy(contactsToCampaignGroups.addedAt);
     
     res.json({
       success: true,
@@ -72,15 +72,15 @@ export async function getLeadGroup(req: Request, res: Response) {
       }
     });
   } catch (error) {
-    console.error('Error fetching lead group:', error);
+    console.error('Error fetching campaign group:', error);
     res.status(500).json({
-      error: 'Failed to fetch lead group'
+      error: 'Failed to fetch campaign group'
     });
   }
 }
 
-// Create a new lead group
-export async function createLeadGroup(req: Request, res: Response) {
+// Create a new campaign group
+export async function createCampaignGroup(req: Request, res: Response) {
   try {
     const { eventId } = req.params;
     const { name, description, color } = req.body;
@@ -91,7 +91,7 @@ export async function createLeadGroup(req: Request, res: Response) {
       });
     }
     
-    const newGroup: NewLeadGroup = {
+    const newGroup: NewCampaignGroup = {
       eventId,
       name,
       description: description || null,
@@ -99,7 +99,7 @@ export async function createLeadGroup(req: Request, res: Response) {
     };
     
     const [createdGroup] = await getDb()
-      .insert(leadGroups)
+      .insert(campaignGroups)
       .values(newGroup)
       .returning();
     
@@ -108,15 +108,15 @@ export async function createLeadGroup(req: Request, res: Response) {
       group: createdGroup
     });
   } catch (error) {
-    console.error('Error creating lead group:', error);
+    console.error('Error creating campaign group:', error);
     res.status(500).json({
-      error: 'Failed to create lead group'
+      error: 'Failed to create campaign group'
     });
   }
 }
 
-// Update a lead group
-export async function updateLeadGroup(req: Request, res: Response) {
+// Update a campaign group
+export async function updateCampaignGroup(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -128,17 +128,17 @@ export async function updateLeadGroup(req: Request, res: Response) {
     delete updates.contactCount;
     
     const [updatedGroup] = await getDb()
-      .update(leadGroups)
+      .update(campaignGroups)
       .set({
         ...updates,
         updatedAt: new Date()
       })
-      .where(eq(leadGroups.id, id))
+      .where(eq(campaignGroups.id, id))
       .returning();
     
     if (!updatedGroup) {
       return res.status(404).json({
-        error: 'Lead group not found'
+        error: 'Campaign group not found'
       });
     }
     
@@ -147,42 +147,42 @@ export async function updateLeadGroup(req: Request, res: Response) {
       group: updatedGroup
     });
   } catch (error) {
-    console.error('Error updating lead group:', error);
+    console.error('Error updating campaign group:', error);
     res.status(500).json({
-      error: 'Failed to update lead group'
+      error: 'Failed to update campaign group'
     });
   }
 }
 
-// Delete a lead group
-export async function deleteLeadGroup(req: Request, res: Response) {
+// Delete a campaign group
+export async function deleteCampaignGroup(req: Request, res: Response) {
   try {
     const { id } = req.params;
     
     const [deletedGroup] = await getDb()
-      .delete(leadGroups)
-      .where(eq(leadGroups.id, id))
+      .delete(campaignGroups)
+      .where(eq(campaignGroups.id, id))
       .returning();
     
     if (!deletedGroup) {
       return res.status(404).json({
-        error: 'Lead group not found'
+        error: 'Campaign group not found'
       });
     }
     
     res.json({
       success: true,
-      message: 'Lead group deleted successfully'
+      message: 'Campaign group deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting lead group:', error);
+    console.error('Error deleting campaign group:', error);
     res.status(500).json({
-      error: 'Failed to delete lead group'
+      error: 'Failed to delete campaign group'
     });
   }
 }
 
-// Add contacts to a lead group
+// Add contacts to a campaign group
 export async function addContactsToGroup(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -194,40 +194,40 @@ export async function addContactsToGroup(req: Request, res: Response) {
       });
     }
     
-    // Verify the lead group exists
+    // Verify the campaign group exists
     const [group] = await getDb()
       .select()
-      .from(leadGroups)
-      .where(eq(leadGroups.id, id));
+      .from(campaignGroups)
+      .where(eq(campaignGroups.id, id));
     
     if (!group) {
       return res.status(404).json({
-        error: 'Lead group not found'
+        error: 'Campaign group not found'
       });
     }
     
     // Prepare values for insertion
     const values = contactIds.map(contactId => ({
-      leadGroupId: id,
+      campaignGroupId: id,
       contactId
     }));
     
     // Insert contacts, ignoring duplicates
     await getDb()
-      .insert(contactsToLeadGroups)
+      .insert(contactsToCampaignGroups)
       .values(values)
       .onConflictDoNothing();
     
     // Update the contact count
     const contactCount = await getDb()
       .select({ count: sql<number>`count(*)` })
-      .from(contactsToLeadGroups)
-      .where(eq(contactsToLeadGroups.leadGroupId, id));
+      .from(contactsToCampaignGroups)
+      .where(eq(contactsToCampaignGroups.campaignGroupId, id));
     
     await getDb()
-      .update(leadGroups)
+      .update(campaignGroups)
       .set({ contactCount: contactCount[0].count })
-      .where(eq(leadGroups.id, id));
+      .where(eq(campaignGroups.id, id));
     
     res.json({
       success: true,
@@ -241,7 +241,7 @@ export async function addContactsToGroup(req: Request, res: Response) {
   }
 }
 
-// Remove contacts from a lead group
+// Remove contacts from a campaign group
 export async function removeContactsFromGroup(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -254,24 +254,24 @@ export async function removeContactsFromGroup(req: Request, res: Response) {
     }
     
     await getDb()
-      .delete(contactsToLeadGroups)
+      .delete(contactsToCampaignGroups)
       .where(
         and(
-          eq(contactsToLeadGroups.leadGroupId, id),
-          inArray(contactsToLeadGroups.contactId, contactIds)
+          eq(contactsToCampaignGroups.campaignGroupId, id),
+          inArray(contactsToCampaignGroups.contactId, contactIds)
         )
       );
     
     // Update the contact count
     const contactCount = await getDb()
       .select({ count: sql<number>`count(*)` })
-      .from(contactsToLeadGroups)
-      .where(eq(contactsToLeadGroups.leadGroupId, id));
+      .from(contactsToCampaignGroups)
+      .where(eq(contactsToCampaignGroups.campaignGroupId, id));
     
     await getDb()
-      .update(leadGroups)
+      .update(campaignGroups)
       .set({ contactCount: contactCount[0].count })
-      .where(eq(leadGroups.id, id));
+      .where(eq(campaignGroups.id, id));
     
     res.json({
       success: true,
@@ -292,7 +292,7 @@ export async function getAvailableContacts(req: Request, res: Response) {
     const { groupId } = req.query;
     
     // Base query for contacts in this event
-    let query = getDb()
+    const baseQuery = getDb()
       .select({
         id: contacts.id,
         firstName: contacts.firstName,
@@ -305,19 +305,31 @@ export async function getAvailableContacts(req: Request, res: Response) {
       .from(contacts)
       .where(eq(contacts.eventId, eventId));
     
+    let availableContacts;
+    
     // If groupId is provided, exclude contacts already in that group
     if (groupId && typeof groupId === 'string') {
-      const contactsInGroup = getDb()
-        .select({ contactId: contactsToLeadGroups.contactId })
-        .from(contactsToLeadGroups)
-        .where(eq(contactsToLeadGroups.leadGroupId, groupId));
+      const contactsInGroup = await getDb()
+        .select({ contactId: contactsToCampaignGroups.contactId })
+        .from(contactsToCampaignGroups)
+        .where(eq(contactsToCampaignGroups.campaignGroupId, groupId));
       
-      query = query.where(
-        sql`${contacts.id} NOT IN ${contactsInGroup}`
-      );
+      const contactIdsInGroup = contactsInGroup.map(c => c.contactId);
+      
+      if (contactIdsInGroup.length > 0) {
+        availableContacts = await baseQuery
+          .where(and(
+            eq(contacts.eventId, eventId),
+            sql`${contacts.id} NOT IN (${contactIdsInGroup.map(() => '?').join(', ')})`,
+            ...contactIdsInGroup
+          ))
+          .orderBy(contacts.createdAt);
+      } else {
+        availableContacts = await baseQuery.orderBy(contacts.createdAt);
+      }
+    } else {
+      availableContacts = await baseQuery.orderBy(contacts.createdAt);
     }
-    
-    const availableContacts = await query.orderBy(contacts.createdAt);
     
     res.json({
       success: true,

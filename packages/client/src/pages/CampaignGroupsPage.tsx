@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { LeadGroupsList } from '../components/leadGroups/LeadGroupsList';
+import { CampaignGroupsList } from '../components/campaignGroups/CampaignGroupsList';
 import { Button } from '../components/ui/button';
 import { ArrowLeft, Mail, ChevronRight } from 'lucide-react';
 
-export function LeadGroupsPage() {
+export function CampaignGroupsPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [eventTitle, setEventTitle] = useState<string>('');
@@ -41,7 +41,7 @@ export function LeadGroupsPage() {
           {eventTitle || 'Event'}
         </Link>
         <ChevronRight className="h-4 w-4 mx-2" />
-        <span className="text-gray-900">Lead Groups</span>
+        <span className="text-gray-900">Campaign Groups</span>
       </nav>
 
       <div className="mb-6 flex justify-between items-center">
@@ -60,7 +60,7 @@ export function LeadGroupsPage() {
         </Button>
       </div>
 
-      <LeadGroupsList eventId={eventId} />
+      <CampaignGroupsList eventId={eventId} />
     </div>
   );
 }

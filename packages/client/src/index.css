@@ -4,48 +4,67 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    /* Cold Steel Palette */
+    --cold-steel: #F8F7F4;
+    --pure-white: #FFFFFF;
+    --text-primary: #2B2B2B;
+    --text-secondary: #6B6B6B;
+    --text-tertiary: #9B9B9B;
+    --border-light: #E8E8E8;
+    --amber-accent: #f59e0b;
+    --emerald-accent: #047857;
+    
+    /* Background colors for shadcn compatibility */
+    --background: #F8F7F4;
+    --foreground: #2B2B2B;
+    --card: #FFFFFF;
+    --card-foreground: #2B2B2B;
+    --popover: #FFFFFF;
+    --popover-foreground: #2B2B2B;
+    --primary: #2B2B2B;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F8F7F4;
+    --secondary-foreground: #2B2B2B;
+    --muted: #E8E8E8;
+    --muted-foreground: #6B6B6B;
+    --accent: #F8F7F4;
+    --accent-foreground: #2B2B2B;
+    --destructive: #ef4444;
+    --destructive-foreground: #FFFFFF;
+    --border: #E8E8E8;
+    --input: #E8E8E8;
+    --ring: #2B2B2B;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Dark Mode */
+    --cold-steel: #0A0A0A;
+    --pure-white: #1A1A1A;
+    --text-primary: #F8F7F4;
+    --text-secondary: #A8A8A8;
+    --text-tertiary: #6B6B6B;
+    --border-light: #2A2A2A;
+    
+    --background: #0A0A0A;
+    --foreground: #F8F7F4;
+    --card: #1A1A1A;
+    --card-foreground: #F8F7F4;
+    --popover: #1A1A1A;
+    --popover-foreground: #F8F7F4;
+    --primary: #F8F7F4;
+    --primary-foreground: #0A0A0A;
+    --secondary: #2A2A2A;
+    --secondary-foreground: #F8F7F4;
+    --muted: #2A2A2A;
+    --muted-foreground: #A8A8A8;
+    --accent: #2A2A2A;
+    --accent-foreground: #F8F7F4;
+    --destructive: #991b1b;
+    --destructive-foreground: #F8F7F4;
+    --border: #2A2A2A;
+    --input: #2A2A2A;
+    --ring: #F8F7F4;
   }
 }
 
@@ -53,7 +72,92 @@
   * {
     @apply border-border;
   }
+  
   body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
     @apply bg-background text-foreground;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Custom scrollbar */
+@layer utilities {
+  /* Webkit browsers */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--muted);
+    border-radius: 100vh;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    opacity: 0.3;
+    border-radius: 100vh;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    opacity: 0.5;
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) var(--muted);
+  }
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out;
+}
+
+/* Onboarding styles */
+.onboarding-highlight {
+  position: relative;
+  z-index: 41;
+  animation: onboarding-pulse 2s ease-in-out infinite;
+}
+
+@keyframes onboarding-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
   }
 }

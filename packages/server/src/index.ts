@@ -6,7 +6,7 @@ import cors from 'cors';
 import eventsRouter from './routes/events';
 import ocrRouter from './routes/ocr';
 import contactsRouter from './routes/contacts';
-import leadGroupsRouter from './routes/leadGroups';
+import campaignGroupsRouter from './routes/campaignGroups';
 import emailCampaignsRouter from './routes/email-campaigns';
 import { initializeDatabase } from './db/connection';
 
@@ -83,8 +83,59 @@ app.get('/', (req, res) => {
 app.use('/api/events', eventsRouter);
 app.use('/api/ocr', ocrRouter);
 app.use('/api/contacts', contactsRouter);
-app.use('/api/lead-groups', leadGroupsRouter);
+app.use('/api/campaign-groups', campaignGroupsRouter);
 app.use('/api', emailCampaignsRouter);
+
+// Global error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // Log error details
+  console.error('Error occurred:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.url,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
+
+  // Handle CORS errors specifically
+  if (err.message && err.message.includes('CORS')) {
+    return res.status(403).json({
+      success: false,
+      error: 'CORS policy violation',
+      message: process.env.NODE_ENV === 'development' 
+        ? err.message 
+        : 'Origin not allowed'
+    });
+  }
+
+  // Handle database errors
+  if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+    return res.status(503).json({
+      success: false,
+      error: 'Database connection error',
+      message: 'Service temporarily unavailable'
+    });
+  }
+
+  // Default error response
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// 404 handler
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).json({
+    success: false,
+    error: 'Not found',
+    message: `Route ${req.method} ${req.url} not found`
+  });
+});
+
+// Store server instance for graceful shutdown
+let server: any;
 
 // Initialize database and start server
 async function startServer() {
@@ -95,11 +146,54 @@ async function startServer() {
     const { createQuickAddEvent } = await import('./db/migrations/create-quick-add-event');
     await createQuickAddEvent();
     
-    app.listen(port, () => {
+    server = app.listen(port, () => {
       console.log(`Server running on port ${port}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`CORS enabled for multiple localhost ports (5173-5178)`);
     });
+
+    // Graceful shutdown handlers
+    const gracefulShutdown = async (signal: string) => {
+      console.log(`\n${signal} received. Starting graceful shutdown...`);
+      
+      // Stop accepting new connections
+      server.close(async () => {
+        console.log('HTTP server closed');
+        
+        try {
+          // Import closeDatabase function
+          const { closeDatabase } = await import('./db/connection');
+          await closeDatabase();
+          console.log('Database connections closed');
+        } catch (error) {
+          console.error('Error closing database:', error);
+        }
+        
+        process.exit(0);
+      });
+      
+      // Force shutdown after 10 seconds
+      setTimeout(() => {
+        console.error('Forced shutdown after timeout');
+        process.exit(1);
+      }, 10000);
+    };
+
+    // Handle termination signals
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    
+    // Handle uncaught errors
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      gracefulShutdown('UNCAUGHT_EXCEPTION');
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+      gracefulShutdown('UNHANDLED_REJECTION');
+    });
+    
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

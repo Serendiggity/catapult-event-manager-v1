@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Console Test</title>
+</head>
+<body>
+    <h1>Check Browser Console</h1>
+    <iframe src="http://localhost:5173" style="width: 100%; height: 600px; border: 1px solid #ccc;"></iframe>
+    <script>
+        // Try to capture console messages from the iframe
+        setTimeout(() => {
+            console.log('Parent page loaded, check iframe console');
+        }, 2000);
+    </script>
+</body>
+</html>

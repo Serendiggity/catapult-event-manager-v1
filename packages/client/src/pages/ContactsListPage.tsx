@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/select';
 import { CreateContactModal } from '@/components/contacts/CreateContactModal';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import type { Contact } from '@catapult-event-manager/shared';
+import type { Contact } from '@new-era-event-manager/shared';
 
 // Helper function to convert text to sentence case
 function toSentenceCase(str: string | null | undefined): string {
@@ -72,8 +72,8 @@ export function ContactsListPage() {
   const [showAssignGroupModal, setShowAssignGroupModal] = useState(false);
   const [events, setEvents] = useState<Array<{ id: string; title: string }>>([]);
   
-  // Lead groups for assign modal
-  const [leadGroups, setLeadGroups] = useState<any[]>([]);
+  // Campaign groups for assign modal
+  const [campaignGroups, setCampaignGroups] = useState<any[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export function ContactsListPage() {
   
   const fetchLeadGroups = async () => {
     try {
-      // Fetch lead groups for all events
+      // Fetch campaign groups for all events
       const eventsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/events`);
       if (!eventsResponse.ok) return;
       
@@ -145,7 +145,7 @@ export function ContactsListPage() {
       
       const groupsPromises = events.map(async (event: any) => {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${event.id}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/event/${event.id}`
         );
         if (!response.ok) return [];
         const data = await response.json();
@@ -154,9 +154,9 @@ export function ContactsListPage() {
       });
       
       const allGroups = await Promise.all(groupsPromises);
-      setLeadGroups(allGroups.flat());
+      setCampaignGroups(allGroups.flat());
     } catch (err) {
-      console.error('Error fetching lead groups:', err);
+      console.error('Error fetching campaign groups:', err);
     }
   };
 
@@ -282,14 +282,14 @@ export function ContactsListPage() {
   
   const handleAssignToGroup = async () => {
     if (!selectedGroupId || selectedContacts.size === 0) {
-      alert('Please select a lead group');
+      alert('Please select a campaign group');
       return;
     }
     
     try {
       // Add each selected contact to the group
       const assignPromises = Array.from(selectedContacts).map(contactId => 
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/${selectedGroupId}/contacts`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/${selectedGroupId}/contacts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -323,7 +323,7 @@ export function ContactsListPage() {
       return (
         <Badge variant="secondary" className="gap-1">
           <AlertCircle className="h-3 w-3" />
-          Needs Review
+          Needs review
         </Badge>
       );
     }
@@ -363,15 +363,15 @@ export function ContactsListPage() {
         </div>
         <div className="flex gap-2">
           <Button 
-            onClick={() => navigate('/lead-groups')}
+            onClick={() => navigate('/campaign-groups')}
             variant="outline"
           >
             <Users className="h-4 w-4 mr-2" />
-            Lead Groups
+            Campaign groups
           </Button>
           <Button onClick={() => setShowCreateModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Create Lead
+            Create lead
           </Button>
         </div>
       </div>
@@ -383,12 +383,15 @@ export function ContactsListPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search by name, email, or company..."
+                placeholder="Search: name, email, company, or job (e.g., 'realtor', 'engineer')..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              💡 Try natural language: "real estate" finds realtors, agents, brokers
+            </p>
           </div>
           
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -397,8 +400,8 @@ export function ContactsListPage() {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Leads</SelectItem>
-              <SelectItem value="needs-review">Needs Review</SelectItem>
+              <SelectItem value="all">All leads</SelectItem>
+              <SelectItem value="needs-review">Needs review</SelectItem>
               <SelectItem value="verified">Verified</SelectItem>
             </SelectContent>
           </Select>
@@ -408,7 +411,7 @@ export function ContactsListPage() {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="createdAt">Date Added</SelectItem>
+              <SelectItem value="createdAt">Date added</SelectItem>
               <SelectItem value="name">Name</SelectItem>
               <SelectItem value="email">Email</SelectItem>
               <SelectItem value="company">Company</SelectItem>
@@ -440,7 +443,7 @@ export function ContactsListPage() {
                 onClick={openAssignGroupModal}
               >
                 <Users className="h-4 w-4 mr-2" />
-                Assign to Group
+                Assign to group
               </Button>
               <Button
                 variant="destructive"
@@ -459,7 +462,7 @@ export function ContactsListPage() {
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted/50 dark:bg-muted/20 border-b border-border">
               <tr className="text-left">
                 <th className="p-4 w-12">
                   <div className="flex items-center justify-center">
@@ -471,9 +474,9 @@ export function ContactsListPage() {
                     />
                   </div>
                 </th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
                   <button
-                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                    className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
                     onClick={() => handleSort('name')}
                   >
                     Name
@@ -482,9 +485,9 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
                   <button
-                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                    className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
                     onClick={() => handleSort('email')}
                   >
                     Email
@@ -493,9 +496,9 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
                   <button
-                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                    className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
                     onClick={() => handleSort('company')}
                   >
                     Company
@@ -504,11 +507,11 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">Event</th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">Status</th>
-                <th className="p-4 text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">Event</th>
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">Status</th>
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
                   <button
-                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                    className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
                     onClick={() => handleSort('createdAt')}
                   >
                     Date Added
@@ -517,14 +520,14 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
-                <th className="p-4 text-right text-sm font-semibold text-gray-900 uppercase tracking-wider">Actions</th>
+                <th className="p-4 text-right text-xs font-medium text-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {contacts.map((contact, index) => (
                 <tr 
                   key={contact.id} 
-                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50 transition-colors`}
+                  className={`${index % 2 === 0 ? 'bg-background' : 'bg-muted/20'} hover:bg-muted/40 dark:hover:bg-muted/30 transition-colors`}
                 >
                   <td className="p-4">
                     <Checkbox
@@ -534,29 +537,29 @@ export function ContactsListPage() {
                   </td>
                   <td className="p-4">
                     <div>
-                      <div className="font-medium">
+                      <div className="font-medium text-foreground">
                         {toSentenceCase(contact.firstName)} {toSentenceCase(contact.lastName)}
                       </div>
                       {contact.title && (
-                        <div className="text-sm text-gray-600">{toSentenceCase(contact.title)}</div>
+                        <div className="text-sm text-muted-foreground">{toSentenceCase(contact.title)}</div>
                       )}
                     </div>
                   </td>
-                  <td className="p-4 text-gray-600">
+                  <td className="p-4 text-muted-foreground">
                     {contact.email?.toLowerCase() || '-'}
                   </td>
-                  <td className="p-4 text-gray-600">
+                  <td className="p-4 text-muted-foreground">
                     {toSentenceCase(contact.company)}
                   </td>
                   <td className="p-4">
-                    <span className="text-sm text-gray-600">
-                      {contact.event?.title || 'Unknown Event'}
+                    <span className="text-sm text-muted-foreground">
+                      {contact.event?.title || 'Unknown event'}
                     </span>
                   </td>
                   <td className="p-4">
                     {getStatusBadge(contact)}
                   </td>
-                  <td className="p-4 text-gray-600">
+                  <td className="p-4 text-muted-foreground">
                     {formatDate(contact.createdAt)}
                   </td>
                   <td className="p-4">
@@ -632,7 +635,7 @@ export function ContactsListPage() {
         <Card className="p-12 text-center">
           <p className="text-gray-600 mb-4">No contacts found</p>
           <Button onClick={() => navigate('/')}>
-            Go to Events
+            Go to events
           </Button>
         </Card>
       )}
@@ -649,7 +652,7 @@ export function ContactsListPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <Card className="w-full max-w-md mx-4">
             <CardHeader>
-              <CardTitle>Assign to Lead Group</CardTitle>
+              <CardTitle>Assign to Campaign Group</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -657,13 +660,13 @@ export function ContactsListPage() {
                   Assign {selectedContacts.size} selected lead(s) to a group
                 </p>
                 <div>
-                  <Label htmlFor="group-select">Select Lead Group</Label>
+                  <Label htmlFor="group-select">Select Campaign Group</Label>
                   <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
                     <SelectTrigger id="group-select">
-                      <SelectValue placeholder="Choose a lead group" />
+                      <SelectValue placeholder="Choose a campaign group" />
                     </SelectTrigger>
                     <SelectContent>
-                      {leadGroups.map((group) => (
+                      {campaignGroups.map((group) => (
                         <SelectItem key={group.id} value={group.id}>
                           <div className="flex items-center gap-2">
                             <div
@@ -692,7 +695,7 @@ export function ContactsListPage() {
                   Cancel
                 </Button>
                 <Button onClick={handleAssignToGroup}>
-                  Assign to Group
+                  Assign to group
                 </Button>
               </div>
             </CardContent>

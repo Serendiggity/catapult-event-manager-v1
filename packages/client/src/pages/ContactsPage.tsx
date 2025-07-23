@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { BusinessCardUpload } from '../components/contacts/BusinessCardUpload';
 import { OCRProcessor } from '../components/contacts/OCRProcessor';
 import { Button } from '../components/ui/button';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Send } from 'lucide-react';
 
 type ProcessingState = 'upload' | 'processing' | 'complete' | 'error';
 
@@ -70,6 +70,12 @@ export function ContactsPage() {
     navigate(`/events/${eventId}/review`);
   };
 
+  const handleSendEmail = () => {
+    if (contactId) {
+      navigate(`/quick-email?to=${contactId}`);
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       {/* Breadcrumb */}
@@ -127,11 +133,12 @@ export function ContactsPage() {
           </div>
           
           <div className="flex justify-center gap-4">
-            <Button onClick={handleViewContact} variant="default">
-              View Lead
+            <Button onClick={handleSendEmail} variant="default" size="lg">
+              <Send className="h-4 w-4 mr-2" />
+              Send Email Now
             </Button>
-            <Button onClick={handleViewReviewQueue} variant="outline">
-              Review Queue
+            <Button onClick={handleViewContact} variant="outline">
+              View Lead
             </Button>
             <Button onClick={handleReset} variant="secondary">
               Add Another

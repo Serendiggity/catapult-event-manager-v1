@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Mail, Plus, Calendar, ArrowLeft, Send, Edit, FileText, Clock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { CampaignDetails } from '@/components/campaigns/CampaignDetails';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import type { EmailCampaign, LeadGroup } from '@catapult-event-manager/shared';
+import { CreateCampaignModalGlobal } from '@/components/campaigns/CreateCampaignModalGlobal';
+import type { EmailCampaign, LeadGroup } from '@new-era-event-manager/shared';
 
 interface CampaignWithEvent extends EmailCampaign {
   event?: {
@@ -29,7 +29,7 @@ export function AllCampaignsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedCampaign, setSelectedCampaign] = useState<CampaignWithEvent | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -121,16 +121,6 @@ export function AllCampaignsPage() {
     );
   }
 
-  if (selectedCampaign) {
-    return (
-      <div className="container mx-auto p-6">
-        <CampaignDetails
-          campaign={selectedCampaign}
-          onBack={() => setSelectedCampaign(null)}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-6">
@@ -142,7 +132,7 @@ export function AllCampaignsPage() {
           className="mb-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Events
+          Back to events
         </Button>
       </div>
 
@@ -150,29 +140,22 @@ export function AllCampaignsPage() {
       <div className="mb-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Email Campaigns</h1>
+            <h1 className="text-3xl font-bold mb-2">Email campaigns</h1>
             <p className="text-gray-600">Manage all your email campaigns across events</p>
           </div>
           <div className="flex items-start gap-4">
             <div className="text-right">
               <div className="text-2xl font-bold">{filteredCampaigns.length}</div>
-              <div className="text-sm text-gray-600">Total Campaigns</div>
+              <div className="text-sm text-gray-600">Total campaigns</div>
               <div className="text-xl font-semibold mt-2">
                 {filteredCampaigns.filter(c => c.status === 'sent').length}
               </div>
               <div className="text-sm text-gray-600">Sent</div>
             </div>
-            {selectedEventId !== 'all' ? (
-              <Button onClick={() => navigate(`/events/${selectedEventId}/campaigns`)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Campaign
-              </Button>
-            ) : (
-              <Button variant="outline" disabled>
-                <Plus className="h-4 w-4 mr-2" />
-                Select Event to Create Campaign
-              </Button>
-            )}
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create campaign
+            </Button>
           </div>
         </div>
       </div>
@@ -188,7 +171,7 @@ export function AllCampaignsPage() {
                 <SelectValue placeholder="Select an event" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Events</SelectItem>
+                <SelectItem value="all">All events</SelectItem>
                 {events.map((event) => (
                   <SelectItem key={event.id} value={event.id}>
                     {event.title}
@@ -205,7 +188,7 @@ export function AllCampaignsPage() {
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="generating">Generating</SelectItem>
                 <SelectItem value="ready">Ready</SelectItem>
@@ -221,18 +204,16 @@ export function AllCampaignsPage() {
         <Card>
           <CardContent className="text-center py-12">
             <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Campaigns Found</h3>
+            <h3 className="text-lg font-semibold mb-2">No campaigns found</h3>
             <p className="text-gray-600 mb-4">
               {selectedEventId === 'all' 
                 ? "No email campaigns have been created yet." 
                 : "No campaigns for the selected event."}
             </p>
-            {selectedEventId !== 'all' && (
-              <Button onClick={() => navigate(`/events/${selectedEventId}/campaigns`)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Campaign
-              </Button>
-            )}
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create campaign
+            </Button>
           </CardContent>
         </Card>
       ) : (
@@ -241,7 +222,7 @@ export function AllCampaignsPage() {
             <Card 
               key={campaign.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => setSelectedCampaign(campaign)}
+              onClick={() => navigate(`/campaigns/${campaign.id}`)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -274,6 +255,16 @@ export function AllCampaignsPage() {
           ))}
         </div>
       )}
+
+      {/* Create Campaign Modal */}
+      <CreateCampaignModalGlobal
+        isOpen={showCreateModal}
+        onClose={() => {
+          setShowCreateModal(false);
+          fetchData(); // Refresh campaigns after creation
+        }}
+        preselectedEventId={selectedEventId !== 'all' ? selectedEventId : undefined}
+      />
     </div>
   );
 }

@@ -8,9 +8,14 @@ interface ApiOptions extends RequestInit {
 }
 
 class ApiError extends Error {
-  constructor(public status: number, message: string, public data?: any) {
+  status: number;
+  data?: any;
+  
+  constructor(status: number, message: string, data?: any) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
   }
 }
 
@@ -123,6 +128,12 @@ export const api = {
       method: 'PATCH', 
       body: data ? JSON.stringify(data) : undefined 
     }),
+    
+  // Event-specific methods
+  getEventContacts: async (eventId: string) => {
+    const response = await apiRequest<{ data: any[] }>(`/api/contacts?eventId=${eventId}`);
+    return response.data || [];
+  }
 };
 
 // Export for use in components

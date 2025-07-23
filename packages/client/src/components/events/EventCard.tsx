@@ -2,7 +2,7 @@ import { Calendar, MapPin, Users, Zap } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 import { QUICK_ADD_EVENT_ID } from '@/constants/quick-add'
 
 interface EventCardProps {

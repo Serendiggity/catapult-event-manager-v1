@@ -2,7 +2,7 @@ import { Calendar, MapPin, Users, Clock, UserPlus, ClipboardCheck, UsersRound, M
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 import { QUICK_ADD_EVENT_ID } from '@/constants/quick-add'
 
 interface EventDetailsProps {
@@ -91,16 +91,17 @@ export function EventDetails({ event, onEdit, onDelete, onBack }: EventDetailsPr
             <Button 
               variant="secondary" 
               onClick={() => navigate(`/events/${event.id}/contacts/new`)}
+              data-onboarding="add-lead-button"
             >
               <UserPlus className="mr-2 h-4 w-4" />
               Add Lead
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => navigate(`/events/${event.id}/lead-groups`)}
+              onClick={() => navigate(`/events/${event.id}/campaign-groups`)}
             >
               <UsersRound className="mr-2 h-4 w-4" />
-              Lead Groups
+              Campaign Groups
             </Button>
             <Button 
               variant="outline" 

@@ -1,4 +1,4 @@
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 import { EventCard } from './EventCard'
 import { Button } from '@/components/ui/button'
 import { Plus, Users, Mail } from 'lucide-react'
@@ -28,7 +28,7 @@ export function EventList({
         <p className="text-muted-foreground mb-4">
           Create your first event to get started
         </p>
-        <Button onClick={onCreateEvent}>
+        <Button onClick={onCreateEvent} data-onboarding="create-event-button">
           <Plus className="mr-2 h-4 w-4" />
           Create Event
         </Button>
@@ -72,6 +72,7 @@ export function EventList({
             size="sm" 
             onClick={onCreateEvent}
             className="flex-1 sm:flex-initial"
+            data-onboarding="create-event-button"
           >
             <Plus className="mr-2 h-4 w-4" />
             Create Event

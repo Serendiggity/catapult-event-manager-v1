@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import type { Contact } from '@catapult-event-manager/shared';
+import type { Contact } from '@new-era-event-manager/shared';
 
 interface ContactWithConfidence extends Contact {
   fieldConfidenceScores?: {

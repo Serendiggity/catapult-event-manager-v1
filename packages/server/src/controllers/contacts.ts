@@ -194,18 +194,17 @@ export async function getAllContacts(req: Request, res: Response) {
     let allContacts = await getDb().select().from(contacts);
     const allEvents = await getDb().select().from(events);
     
-    console.log('All events:', allEvents.length);
-    console.log('Sample contact eventId:', allContacts[0]?.eventId);
-    console.log('Sample event:', allEvents[0]);
+    // Debug logging only in development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Fetching contacts: ${allContacts.length} contacts, ${allEvents.length} events`);
+    }
     
     // Create event map
     const eventMap = new Map(allEvents.map(e => [e.id, e]));
-    console.log('Event map size:', eventMap.size);
     
     // Add event data to contacts
     const contactsWithEvents = allContacts.map(contact => {
       const event = eventMap.get(contact.eventId);
-      console.log(`Contact ${contact.id} eventId: ${contact.eventId}, found event:`, event ? event.title : 'NOT FOUND');
       return {
         ...contact,
         event: event || null
@@ -216,11 +215,57 @@ export async function getAllContacts(req: Request, res: Response) {
     let filteredContacts = contactsWithEvents;
     if (search) {
       const searchLower = String(search).toLowerCase();
+      
+      // Define common title synonyms for natural language search
+      const titleSynonyms: Record<string, string[]> = {
+        'realtor': ['real estate agent', 'real estate broker', 'real estate professional', 'property agent', 'estate agent', 'commercial property sales', 'residential sales agent', 'real estate salesperson'],
+        'real estate': ['realtor', 'property', 'estate agent', 'real estate broker', 'real estate agent'],
+        'developer': ['software developer', 'engineer', 'programmer', 'coder', 'software engineer', 'dev', 'full stack', 'fullstack', 'backend', 'frontend'],
+        'engineer': ['developer', 'software engineer', 'programmer', 'technical lead', 'tech lead', 'engineering'],
+        'sales': ['sales rep', 'sales representative', 'account executive', 'business development', 'bd', 'sales manager', 'sales director', 'vp sales'],
+        'marketing': ['marketer', 'marketing manager', 'marketing director', 'cmo', 'brand manager', 'digital marketing', 'marketing specialist'],
+        'ceo': ['chief executive', 'chief executive officer', 'founder', 'co-founder', 'president', 'owner'],
+        'cto': ['chief technology officer', 'vp engineering', 'technical director', 'head of engineering'],
+        'designer': ['ux designer', 'ui designer', 'product designer', 'graphic designer', 'visual designer', 'design'],
+        'manager': ['mgr', 'team lead', 'lead', 'supervisor', 'head of'],
+        'doctor': ['dr', 'physician', 'md', 'medical doctor', 'surgeon'],
+        'lawyer': ['attorney', 'counsel', 'legal counsel', 'solicitor', 'barrister', 'advocate'],
+        'consultant': ['advisor', 'consulting', 'freelance', 'contractor', 'independent'],
+        'accountant': ['cpa', 'accounting', 'finance', 'financial advisor', 'bookkeeper'],
+        'teacher': ['educator', 'professor', 'instructor', 'lecturer', 'faculty'],
+      };
+      
+      // Function to check if search term matches title with synonyms
+      const matchesTitle = (title: string | null, searchTerm: string): boolean => {
+        if (!title) return false;
+        const titleLower = title.toLowerCase();
+        
+        // Direct match
+        if (titleLower.includes(searchTerm)) return true;
+        
+        // Check synonyms
+        for (const [key, synonyms] of Object.entries(titleSynonyms)) {
+          if (searchTerm.includes(key) || key.includes(searchTerm)) {
+            // If search term matches a key, check if title contains any synonym
+            if (synonyms.some(syn => titleLower.includes(syn))) return true;
+          }
+          // Also check if search term is in synonyms and title contains the key
+          if (synonyms.some(syn => syn.includes(searchTerm))) {
+            if (titleLower.includes(key)) return true;
+            // Or if title contains any other synonym in the same group
+            if (synonyms.some(syn => titleLower.includes(syn))) return true;
+          }
+        }
+        
+        return false;
+      };
+      
       filteredContacts = contactsWithEvents.filter(contact => 
         contact.firstName?.toLowerCase().includes(searchLower) ||
         contact.lastName?.toLowerCase().includes(searchLower) ||
         contact.email?.toLowerCase().includes(searchLower) ||
-        contact.company?.toLowerCase().includes(searchLower)
+        contact.company?.toLowerCase().includes(searchLower) ||
+        matchesTitle(contact.title, searchLower)
       );
     }
     

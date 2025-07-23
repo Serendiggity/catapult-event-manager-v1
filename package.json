@@ -1,5 +1,5 @@
 {
-  "name": "catapult-event-manager",
+  "name": "new-era-event-manager",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -13,9 +13,9 @@
     "lint": "npm run lint --workspaces",
     "typecheck": "npm run typecheck --workspaces",
     "install:all": "npm install --workspaces",
-    "build:shared": "npm run build --workspace=@catapult-event-manager/shared",
-    "build:server": "npm run build:shared && npm run build --workspace=@catapult-event-manager/server",
-    "build:client": "npm run build:shared && npm run build --workspace=@catapult-event-manager/client",
+    "build:shared": "npm run build --workspace=@new-era-event-manager/shared",
+    "build:server": "npm run build:shared && npm run build --workspace=@new-era-event-manager/server",
+    "build:client": "npm run build:shared && npm run build --workspace=@new-era-event-manager/client",
     "start:server": "cd packages/server && npm start",
     "start": "npm run start:server",
     "install:ci": "npm ci --workspaces --include-workspace-root"
@@ -23,7 +23,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Catapult Event Manager - Monorepo",
+  "description": "New Era Event Manager - Monorepo",
   "devDependencies": {
     "typescript": "^5.8.3"
   }

@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEvents } from '@/hooks/useEvents'
 import { EventForm } from '@/components/events/EventForm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Event } from '@catapult-event-manager/shared'
+import type { Event } from '@new-era-event-manager/shared'
 
 export function EventCreatePage() {
   const navigate = useNavigate()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Event, ApiResponse } from '@catapult-event-manager/shared'
+import type { Event, ApiResponse } from '@new-era-event-manager/shared'
 import api from '@/lib/api'
 
 export function useEvents() {

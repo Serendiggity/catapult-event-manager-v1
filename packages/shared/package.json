@@ -1,5 +1,5 @@
 {
-  "name": "@catapult-event-manager/shared",
+  "name": "@new-era-event-manager/shared",
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Shared types and utilities for Catapult Event Manager",
+  "description": "Shared types and utilities for New Era Event Manager",
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",

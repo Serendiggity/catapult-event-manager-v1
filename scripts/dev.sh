@@ -3,10 +3,22 @@
 # Development startup script - ensures consistent ports
 echo "🚀 Starting Catapult Event Manager Development Environment"
 
-# Kill any existing processes on our ports
+# Kill any existing processes on our ports (gracefully first, then force)
 echo "📋 Cleaning up existing processes..."
+# Try graceful shutdown first
+lsof -ti:3001 | xargs kill 2>/dev/null || true
+lsof -ti:5173 | xargs kill 2>/dev/null || true
+# Wait a moment for graceful shutdown
+sleep 1
+# Force kill if still running
 lsof -ti:3001 | xargs kill -9 2>/dev/null || true
 lsof -ti:5173 | xargs kill -9 2>/dev/null || true
+
+# Build shared package if needed
+if [ ! -d "packages/shared/dist" ]; then
+  echo "📦 Building shared package..."
+  cd packages/shared && npm run build && cd ../..
+fi
 
 # Start backend server
 echo "🔧 Starting backend server on port 3001..."
@@ -40,8 +52,14 @@ cd ../..
 # Function to cleanup on exit
 cleanup() {
   echo "🛑 Shutting down development servers..."
+  # Try graceful shutdown first
   kill $BACKEND_PID 2>/dev/null
   kill $FRONTEND_PID 2>/dev/null
+  # Wait for processes to exit gracefully
+  sleep 2
+  # Force kill if still running
+  kill -9 $BACKEND_PID 2>/dev/null
+  kill -9 $FRONTEND_PID 2>/dev/null
   exit 0
 }
 

@@ -3,10 +3,10 @@ import { getDb } from '../../db/connection';
 import { eq, and, inArray } from 'drizzle-orm';
 import { 
   emailCampaigns, 
-  campaignGroups, 
+  campaignGroupAssignments, 
   emailDrafts, 
-  leadGroups, 
-  contactsToLeadGroups,
+  campaignGroups, 
+  contactsToCampaignGroups,
   contacts,
   events 
 } from '../../db/schema';
@@ -58,22 +58,22 @@ export class EmailGenerator {
         where: eq(events.id, campaign.eventId),
       });
 
-      // Get all lead groups for this campaign
+      // Get all campaign groups for this campaign
       const groups = await db
-        .select({ leadGroupId: campaignGroups.leadGroupId })
-        .from(campaignGroups)
-        .where(eq(campaignGroups.campaignId, campaignId));
+        .select({ campaignGroupId: campaignGroupAssignments.campaignGroupId })
+        .from(campaignGroupAssignments)
+        .where(eq(campaignGroupAssignments.campaignId, campaignId));
 
-      const leadGroupIds = groups.map(g => g.leadGroupId);
+      const campaignGroupIds = groups.map(g => g.campaignGroupId);
 
-      // Get all contacts in these lead groups
+      // Get all contacts in these campaign groups
       const contactsInGroups = await db
         .select({
           contact: contacts,
         })
-        .from(contactsToLeadGroups)
-        .innerJoin(contacts, eq(contacts.id, contactsToLeadGroups.contactId))
-        .where(inArray(contactsToLeadGroups.leadGroupId, leadGroupIds));
+        .from(contactsToCampaignGroups)
+        .innerJoin(contacts, eq(contacts.id, contactsToCampaignGroups.contactId))
+        .where(inArray(contactsToCampaignGroups.campaignGroupId, campaignGroupIds));
 
       const uniqueContacts = Array.from(
         new Map(contactsInGroups.map(c => [c.contact.id, c.contact])).values()
@@ -144,7 +144,7 @@ export class EmailGenerator {
     event: Event | undefined
   ): Promise<{ subject: string; body: string }> {
     // Replace variables in template
-    const variables: Record<string, string> = {
+    const allVariables: Record<string, string> = {
       firstName: contact.firstName || '',
       lastName: contact.lastName || '',
       email: contact.email || '',
@@ -157,20 +157,56 @@ export class EmailGenerator {
       eventDate: event?.date ? new Date(event.date).toLocaleDateString() : '',
     };
 
+    // Add sender variables if they exist
+    const senderVars = campaign.senderVariables || {};
+    const allVarsWithSender = { ...allVariables, ...senderVars };
+
     let personalizedSubject = campaign.subject;
     let personalizedBody = campaign.templateBody;
 
-    // Replace variables in subject and body
-    for (const [key, value] of Object.entries(variables)) {
-      const placeholder = `{{${key}}}`;
+    // Get enabled variables - use all variables if enabledVariables is not set (backward compatibility)
+    const enabledVariables = campaign.enabledVariables && campaign.enabledVariables.length > 0 
+      ? campaign.enabledVariables 
+      : Object.keys(allVariables);
+
+    // Replace enabled lead variables and all sender variables in subject and body
+    for (const varName of enabledVariables) {
+      const value = allVariables[varName] || '';
+      const placeholder = `{{${varName}}}`;
+      personalizedSubject = personalizedSubject.replace(new RegExp(placeholder, 'g'), value);
+      personalizedBody = personalizedBody.replace(new RegExp(placeholder, 'g'), value);
+    }
+    
+    // Replace sender variables
+    for (const [varName, value] of Object.entries(senderVars)) {
+      const placeholder = `{{${varName}}}`;
       personalizedSubject = personalizedSubject.replace(new RegExp(placeholder, 'g'), value);
       personalizedBody = personalizedBody.replace(new RegExp(placeholder, 'g'), value);
     }
 
     // Use AI to enhance the email
+    const contextInfo = [];
+    if (enabledVariables.includes('firstName') && contact.firstName) {
+      contextInfo.push(`first name: ${contact.firstName}`);
+    }
+    if (enabledVariables.includes('lastName') && contact.lastName) {
+      contextInfo.push(`last name: ${contact.lastName}`);
+    }
+    if (enabledVariables.includes('position') && contact.title) {
+      contextInfo.push(`position: ${contact.title}`);
+    }
+    if (enabledVariables.includes('company') && contact.company) {
+      contextInfo.push(`company: ${contact.company}`);
+    }
+
     const prompt = `You are an expert email writer. Enhance the following email draft to make it more personal, engaging, and professional. 
     
-The email is being sent to ${contact.firstName || 'a contact'} ${contact.lastName || ''} ${contact.title ? `who works as ${contact.title}` : ''} ${contact.company ? `at ${contact.company}` : ''}.
+${contextInfo.length > 0 ? `The email recipient has the following information: ${contextInfo.join(', ')}.` : 'Limited recipient information is available.'}
+
+IMPORTANT: All variables ({{variableName}}) represent information about the EMAIL RECIPIENT, not the sender. For example:
+- {{firstName}} is the recipient's first name
+- {{company}} is the recipient's company
+- {{position}} is the recipient's job title
 
 Original Subject: ${personalizedSubject}
 Original Body: ${personalizedBody}
@@ -192,7 +228,7 @@ Return only the JSON with no additional text.`;
         messages: [
           {
             role: 'system',
-            content: 'You are an expert email writer who creates personalized, professional emails.',
+            content: 'You are an expert email writer who creates personalized, professional emails. Remember that all template variables refer to the email recipient\'s information, not the sender\'s.',
           },
           {
             role: 'user',
@@ -251,5 +287,92 @@ Return only the JSON with no additional text.`;
     }
 
     return this.generateDraftForContact(campaign, contact, event);
+  }
+
+  async refineTemplate(
+    prompt: string,
+    currentTemplate: { subject: string; body: string },
+    enabledVariables: string[],
+    context?: Array<{ role: string; content: string }>,
+    enabledSenderVariables?: Record<string, string>
+  ): Promise<{ subject: string; body: string; explanation: string }> {
+    try {
+      const senderVarsList = enabledSenderVariables 
+        ? Object.keys(enabledSenderVariables).map(key => `- {{${key}}} (sender's ${key.replace('sender', '').toLowerCase()})`)
+        : [];
+
+      const systemPrompt = `You are an expert email copywriter helping to create effective email campaigns. 
+You should maintain personalization variables in the format {{variableName}}.
+
+Available variables for email recipient personalization:
+${enabledVariables.map(v => `- {{${v}}} (recipient's ${v})`).join('\n')}
+
+${senderVarsList.length > 0 ? `Available variables for sender personalization:
+${senderVarsList.join('\n')}` : ''}
+
+IMPORTANT: Variable types:
+- Lead/Recipient variables ({{firstName}}, {{company}}, etc.) = Information about the EMAIL RECIPIENT
+- Sender variables ({{senderName}}, {{senderCompany}}, etc.) = Information about the EMAIL SENDER
+
+When the user asks to include sender information (like signature, contact details, etc.), use the sender variables appropriately.
+When personalizing for the recipient, use the lead variables.
+
+Important:
+1. Keep all {{variable}} placeholders intact
+2. Only use the enabled variables listed above
+3. Make the email natural and engaging
+4. Keep it professional unless instructed otherwise
+5. Ensure the message flows well with the variables
+6. Intelligently place sender variables in appropriate contexts (e.g., signature, introduction)
+7. Return response in JSON format with "subject", "body", and "explanation" fields`;
+
+      const userPrompt = `Current email template:
+Subject: ${currentTemplate.subject}
+Body: ${currentTemplate.body}
+
+User request: ${prompt}
+
+Please refine this email template based on the user's request. Maintain all variable placeholders and ensure the email will work well when personalized.`;
+
+      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+        { role: 'system', content: systemPrompt }
+      ];
+
+      // Add context if provided
+      if (context && context.length > 0) {
+        context.forEach(msg => {
+          messages.push({
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content
+          });
+        });
+      }
+
+      messages.push({ role: 'user', content: userPrompt });
+
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages,
+        temperature: 0.7,
+        max_tokens: 1000,
+        response_format: { type: 'json_object' },
+      });
+
+      const result = response.choices[0]?.message?.content;
+      if (!result) {
+        throw new Error('No response from AI');
+      }
+
+      const parsed = JSON.parse(result) as { 
+        subject: string; 
+        body: string; 
+        explanation: string 
+      };
+
+      return parsed;
+    } catch (error) {
+      console.error('Error refining template:', error);
+      throw new Error('Failed to refine template with AI');
+    }
   }
 }

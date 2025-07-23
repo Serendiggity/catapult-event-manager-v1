@@ -8,7 +8,7 @@ import { Users, Plus, Calendar, ArrowLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-interface LeadGroup {
+interface CampaignGroup {
   id: string;
   eventId: string;
   name: string;
@@ -22,9 +22,9 @@ interface LeadGroup {
   };
 }
 
-export function AllLeadGroupsPage() {
+export function AllCampaignGroupsPage() {
   const navigate = useNavigate();
-  const [groups, setGroups] = useState<LeadGroup[]>([]);
+  const [groups, setGroups] = useState<CampaignGroup[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<string>('all');
@@ -45,17 +45,17 @@ export function AllLeadGroupsPage() {
       const eventsArray = Array.isArray(eventsData) ? eventsData : [];
       setEvents(eventsArray);
 
-      // Fetch lead groups for all events
+      // Fetch campaign groups for all events
       const groupsPromises = eventsArray.map(async (event: any) => {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/lead-groups/event/${event.id}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/campaign-groups/event/${event.id}`
         );
         if (!response.ok) return [];
         const data = await response.json();
         // Handle both direct array and object with groups property
         const groups = data.groups || data;
         const groupsArray = Array.isArray(groups) ? groups : [];
-        return groupsArray.map((group: LeadGroup) => ({
+        return groupsArray.map((group: CampaignGroup) => ({
           ...group,
           event: {
             id: event.id,
@@ -84,7 +84,7 @@ export function AllLeadGroupsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner size="lg" text="Loading lead groups..." />
+          <LoadingSpinner size="lg" text="Loading campaign groups..." />
         </div>
       </div>
     );
@@ -100,7 +100,7 @@ export function AllLeadGroupsPage() {
           className="mb-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Leads
+          Back to leads
         </Button>
       </div>
 
@@ -108,14 +108,14 @@ export function AllLeadGroupsPage() {
       <div className="mb-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Lead Groups</h1>
-            <p className="text-gray-600">Organize your leads across all events</p>
+            <h1 className="text-3xl font-bold mb-2">Campaign groups</h1>
+            <p className="text-gray-600">Track and manage leads across all your events</p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">{filteredGroups.length}</div>
-            <div className="text-sm text-gray-600">Total Groups</div>
+            <div className="text-sm text-gray-600">Total groups</div>
             <div className="text-xl font-semibold mt-2">{totalLeads}</div>
-            <div className="text-sm text-gray-600">Total Leads</div>
+            <div className="text-sm text-gray-600">Total leads</div>
           </div>
         </div>
       </div>
@@ -123,14 +123,14 @@ export function AllLeadGroupsPage() {
       {/* Filter by Event */}
       <Card className="p-4 mb-6">
         <div className="flex items-center gap-4">
-          <Label className="text-sm font-medium">Filter by Event:</Label>
+          <Label className="text-sm font-medium">Filter by event:</Label>
           <Select value={selectedEventId} onValueChange={setSelectedEventId}>
             <SelectTrigger className="w-[300px]">
               <Calendar className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Select an event" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Events</SelectItem>
+              <SelectItem value="all">All events</SelectItem>
               {events.map((event) => (
                 <SelectItem key={event.id} value={event.id}>
                   {event.title} - {new Date(event.date).toLocaleDateString()}
@@ -141,21 +141,21 @@ export function AllLeadGroupsPage() {
         </div>
       </Card>
 
-      {/* Lead Groups Grid */}
+      {/* Campaign Groups Grid */}
       {filteredGroups.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Lead Groups Found</h3>
+            <h3 className="text-lg font-semibold mb-2">No campaign groups found</h3>
             <p className="text-gray-600 mb-4">
               {selectedEventId === 'all' 
-                ? "No lead groups have been created yet." 
-                : "No lead groups for the selected event."}
+                ? "No campaign groups have been created yet." 
+                : "No campaign groups for the selected event."}
             </p>
             {selectedEventId !== 'all' && (
-              <Button onClick={() => navigate(`/events/${selectedEventId}/lead-groups`)}>
+              <Button onClick={() => navigate(`/events/${selectedEventId}/campaign-groups`)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Create Lead Group
+                Create Campaign Group
               </Button>
             )}
           </CardContent>
@@ -166,7 +166,7 @@ export function AllLeadGroupsPage() {
             <Card 
               key={group.id} 
               className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => navigate(`/events/${group.eventId}/lead-groups`)}
+              onClick={() => navigate(`/events/${group.eventId}/campaign-groups`)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">

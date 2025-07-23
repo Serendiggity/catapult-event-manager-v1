@@ -14,7 +14,8 @@ import {
   Users,
   Download
 } from 'lucide-react';
-import type { EmailCampaign, EmailDraft, Contact } from '@catapult-event-manager/shared';
+import { DraftEditModal } from './DraftEditModal';
+import type { EmailCampaign, EmailDraft, Contact } from '@new-era-event-manager/shared';
 
 interface CampaignDetailsProps {
   campaign: EmailCampaign;
@@ -91,6 +92,21 @@ export function CampaignDetails({ campaign, onBack }: CampaignDetailsProps) {
       await fetchDrafts();
     } catch (error) {
       console.error('Error updating draft status:', error);
+    }
+  };
+
+  const handleUpdateDraftContent = async (draftId: string, updates: { subject: string; body: string }) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/drafts/${draftId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) throw new Error('Failed to update draft');
+      await fetchDrafts();
+    } catch (error) {
+      console.error('Error updating draft:', error);
+      throw error;
     }
   };
 
@@ -357,37 +373,15 @@ export function CampaignDetails({ campaign, onBack }: CampaignDetailsProps) {
         </CardContent>
       </Card>
 
-      {selectedDraft && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <CardHeader>
-              <CardTitle>Email Preview</CardTitle>
-              <CardDescription>
-                {contacts.get(selectedDraft.contactId)?.email}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Subject:</p>
-                  <p className="font-medium">{selectedDraft.subject}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Body:</p>
-                  <pre className="whitespace-pre-wrap font-sans text-sm bg-muted p-4 rounded-md">
-                    {selectedDraft.body}
-                  </pre>
-                </div>
-              </div>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <Button onClick={() => setSelectedDraft(null)} className="w-full">
-                Close Preview
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
+      <DraftEditModal
+        draft={selectedDraft}
+        contact={selectedDraft ? contacts.get(selectedDraft.contactId) : undefined}
+        isOpen={!!selectedDraft}
+        onClose={() => setSelectedDraft(null)}
+        onSave={handleUpdateDraftContent}
+        onStatusChange={handleUpdateDraftStatus}
+        onSend={handleSendDraft}
+      />
     </div>
   );
 }

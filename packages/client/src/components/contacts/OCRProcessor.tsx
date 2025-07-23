@@ -4,6 +4,7 @@ import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Alert, AlertDescription } from '../ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 interface OCRProcessorProps {
   imageData: string;
@@ -19,6 +20,7 @@ interface ProcessingStep {
 }
 
 export function OCRProcessor({ imageData, eventId, onComplete, onError }: OCRProcessorProps) {
+  const { toast } = useToast();
   const [steps, setSteps] = useState<ProcessingStep[]>([
     { name: 'Extracting text from image', status: 'pending' },
     { name: 'Parsing contact information', status: 'pending' },
@@ -83,6 +85,11 @@ export function OCRProcessor({ imageData, eventId, onComplete, onError }: OCRPro
       // Step 3: Contact saved
       setCurrentStep(2);
       updateStep(2, { status: 'complete' });
+      
+      toast({
+        title: "Lead created successfully",
+        description: "The business card has been processed and the lead has been added.",
+      });
       
       // Complete the process
       setTimeout(() => {

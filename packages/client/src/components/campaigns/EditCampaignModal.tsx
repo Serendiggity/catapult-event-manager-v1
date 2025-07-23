@@ -7,10 +7,10 @@ import { Textarea } from '../ui/textarea';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Info, Sparkles } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
-import type { EmailCampaign, LeadGroup } from '@catapult-event-manager/shared';
+import type { EmailCampaign, CampaignGroup } from '@new-era-event-manager/shared';
 
 interface CampaignWithGroups extends EmailCampaign {
-  leadGroups: LeadGroup[];
+  campaignGroups: CampaignGroup[];
 }
 
 interface EditCampaignModalProps {
@@ -25,16 +25,16 @@ export function EditCampaignModal({ campaign, isOpen, onClose, onSuccess }: Edit
   const [subject, setSubject] = useState(campaign.subject);
   const [templateBody, setTemplateBody] = useState(campaign.templateBody);
   const [variables, setVariables] = useState<string[]>(campaign.variables);
-  const [leadGroups, setLeadGroups] = useState<LeadGroup[]>([]);
+  const [campaignGroups, setCampaignGroups] = useState<CampaignGroup[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>(
-    campaign.leadGroups.map(g => g.id)
+    campaign.campaignGroups.map(g => g.id)
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      fetchLeadGroups();
+      fetchCampaignGroups();
     }
   }, [isOpen]);
 
@@ -42,14 +42,14 @@ export function EditCampaignModal({ campaign, isOpen, onClose, onSuccess }: Edit
     extractVariables();
   }, [templateBody]);
 
-  const fetchLeadGroups = async () => {
+  const fetchCampaignGroups = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lead-groups/event/${campaign.eventId}`);
-      if (!response.ok) throw new Error('Failed to fetch lead groups');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/campaign-groups/event/${campaign.eventId}`);
+      if (!response.ok) throw new Error('Failed to fetch campaign groups');
       const data = await response.json();
-      setLeadGroups(data);
+      setCampaignGroups(data);
     } catch (error) {
-      console.error('Error fetching lead groups:', error);
+      console.error('Error fetching campaign groups:', error);
     }
   };
 
@@ -87,7 +87,7 @@ export function EditCampaignModal({ campaign, isOpen, onClose, onSuccess }: Edit
           subject,
           templateBody,
           variables,
-          leadGroupIds: selectedGroupIds,
+          campaignGroupIds: selectedGroupIds,
         }),
       });
 
@@ -196,12 +196,12 @@ Best regards,
             )}
 
             <div>
-              <Label>Select Lead Groups</Label>
+              <Label>Select Campaign Groups</Label>
               <div className="space-y-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                {leadGroups.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No lead groups available</p>
+                {campaignGroups.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No campaign groups available</p>
                 ) : (
-                  leadGroups.map((group) => (
+                  campaignGroups.map((group) => (
                     <label
                       key={group.id}
                       className="flex items-center space-x-2 cursor-pointer"

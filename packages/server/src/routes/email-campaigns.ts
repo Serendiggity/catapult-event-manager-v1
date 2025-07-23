@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { eq, and, inArray } from 'drizzle-orm';
+import { eq, and, inArray, desc } from 'drizzle-orm';
 import { getDb } from '../db/connection';
-import { emailCampaigns, campaignGroups, emailDrafts, leadGroups, contactsToLeadGroups, contacts } from '../db/schema';
-import type { EmailCampaign, NewEmailCampaign, CampaignGroup, NewCampaignGroup } from '../db/schema';
+import { emailCampaigns, campaignGroupAssignments, emailDrafts, campaignGroups, contactsToCampaignGroups, contacts, emailDraftVersions } from '../db/schema';
+import type { EmailCampaign, NewEmailCampaign, CampaignGroupAssignment, NewCampaignGroupAssignment } from '../db/schema';
 import { EmailGenerator } from '../services/email-generation/email-generator';
 import { EmailSender } from '../services/email/email-sender';
 
@@ -26,6 +26,24 @@ function getEmailSender(): EmailSender {
   return emailSender;
 }
 
+// Get all campaigns (across all events)
+router.get('/campaigns', async (req, res) => {
+  try {
+    const campaigns = await getDb().query.emailCampaigns.findMany({
+      orderBy: (campaigns, { desc }) => [desc(campaigns.createdAt)],
+    });
+
+    res.json({
+      success: true,
+      data: campaigns,
+      message: 'Campaigns retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Error fetching all campaigns:', error);
+    res.status(500).json({ error: 'Failed to fetch campaigns' });
+  }
+});
+
 // Get all email campaigns for an event
 router.get('/events/:eventId/campaigns', async (req, res) => {
   try {
@@ -36,27 +54,14 @@ router.get('/events/:eventId/campaigns', async (req, res) => {
       orderBy: (campaigns, { desc }) => [desc(campaigns.createdAt)],
     });
 
-    // Get lead groups for each campaign
-    const campaignsWithGroups = await Promise.all(
-      campaigns.map(async (campaign) => {
-        const groups = await getDb()
-          .select({
-            leadGroup: leadGroups,
-          })
-          .from(campaignGroups)
-          .innerJoin(leadGroups, eq(leadGroups.id, campaignGroups.leadGroupId))
-          .where(eq(campaignGroups.campaignId, campaign.id));
-
-        return {
-          ...campaign,
-          leadGroups: groups.map(g => g.leadGroup),
-        };
-      })
-    );
-
-    res.json(campaignsWithGroups);
+    // Return campaigns directly without groups for now
+    res.json({
+      success: true,
+      campaigns: campaigns,
+      message: 'Campaigns retrieved successfully'
+    });
   } catch (error) {
-    console.error('Error fetching campaigns:', error);
+    console.error('Error fetching campaigns for event:', error);
     res.status(500).json({ error: 'Failed to fetch campaigns' });
   }
 });
@@ -74,18 +79,18 @@ router.get('/campaigns/:id', async (req, res) => {
       return res.status(404).json({ error: 'Campaign not found' });
     }
 
-    // Get lead groups for the campaign
+    // Get campaign groups for the campaign
     const groups = await getDb()
       .select({
-        leadGroup: leadGroups,
+        campaignGroup: campaignGroups,
       })
-      .from(campaignGroups)
-      .innerJoin(leadGroups, eq(leadGroups.id, campaignGroups.leadGroupId))
-      .where(eq(campaignGroups.campaignId, campaign.id));
+      .from(campaignGroupAssignments)
+      .innerJoin(campaignGroups, eq(campaignGroups.id, campaignGroupAssignments.campaignGroupId))
+      .where(eq(campaignGroupAssignments.campaignId, campaign.id));
 
     res.json({
       ...campaign,
-      leadGroups: groups.map(g => g.leadGroup),
+      campaignGroups: groups.map(g => g.campaignGroup),
     });
   } catch (error) {
     console.error('Error fetching campaign:', error);
@@ -96,7 +101,7 @@ router.get('/campaigns/:id', async (req, res) => {
 // Create a new campaign
 router.post('/campaigns', async (req, res) => {
   try {
-    const { eventId, name, subject, templateBody, variables, leadGroupIds } = req.body;
+    const { eventId, name, subject, templateBody, variables, senderVariables, campaignGroupIds, aiChatHistory } = req.body;
 
     // Create the campaign
     const [campaign] = await getDb().insert(emailCampaigns).values({
@@ -105,14 +110,17 @@ router.post('/campaigns', async (req, res) => {
       subject,
       templateBody,
       variables: variables || [],
+      enabledVariables: variables || [], // By default, all detected variables are enabled
+      senderVariables: senderVariables || {},
+      aiChatHistory: aiChatHistory || [],
     }).returning();
 
-    // Associate lead groups
-    if (leadGroupIds && leadGroupIds.length > 0) {
-      await getDb().insert(campaignGroups).values(
-        leadGroupIds.map((leadGroupId: string) => ({
+    // Associate campaign groups
+    if (campaignGroupIds && campaignGroupIds.length > 0) {
+      await getDb().insert(campaignGroupAssignments).values(
+        campaignGroupIds.map((campaignGroupId: string) => ({
           campaignId: campaign.id,
-          leadGroupId,
+          campaignGroupId,
         }))
       );
     }
@@ -128,7 +136,7 @@ router.post('/campaigns', async (req, res) => {
 router.put('/campaigns/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, subject, templateBody, variables, leadGroupIds } = req.body;
+    const { name, subject, templateBody, variables, campaignGroupIds } = req.body;
 
     // Update the campaign
     const [updatedCampaign] = await getDb()
@@ -147,17 +155,17 @@ router.put('/campaigns/:id', async (req, res) => {
       return res.status(404).json({ error: 'Campaign not found' });
     }
 
-    // Update lead group associations if provided
-    if (leadGroupIds !== undefined) {
+    // Update campaign group associations if provided
+    if (campaignGroupIds !== undefined) {
       // Remove existing associations
-      await getDb().delete(campaignGroups).where(eq(campaignGroups.campaignId, id));
+      await getDb().delete(campaignGroupAssignments).where(eq(campaignGroupAssignments.campaignId, id));
 
       // Add new associations
-      if (leadGroupIds.length > 0) {
-        await getDb().insert(campaignGroups).values(
-          leadGroupIds.map((leadGroupId: string) => ({
+      if (campaignGroupIds.length > 0) {
+        await getDb().insert(campaignGroupAssignments).values(
+          campaignGroupIds.map((campaignGroupId: string) => ({
             campaignId: id,
-            leadGroupId,
+            campaignGroupId,
           }))
         );
       }
@@ -229,6 +237,32 @@ router.post('/campaigns/extract-variables', async (req, res) => {
   }
 });
 
+// Refine template with AI based on user prompt
+router.post('/campaigns/refine-template', async (req, res) => {
+  try {
+    const { prompt, currentTemplate, enabledVariables, context, enabledSenderVariables } = req.body;
+
+    try {
+      getEmailGenerator(); // Test if we can initialize
+    } catch (error) {
+      return res.status(503).json({ error: 'AI service is not available. Please configure OPENAI_API_KEY.' });
+    }
+
+    const result = await getEmailGenerator().refineTemplate(
+      prompt,
+      currentTemplate,
+      enabledVariables,
+      context,
+      enabledSenderVariables
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error refining template:', error);
+    res.status(500).json({ error: 'Failed to refine template' });
+  }
+});
+
 // Generate drafts for a campaign
 router.post('/campaigns/:id/generate-drafts', async (req, res) => {
   try {
@@ -285,6 +319,116 @@ router.post('/campaigns/:id/preview-draft', async (req, res) => {
   }
 });
 
+// Create quick campaign (direct email without groups)
+router.post('/campaigns/quick', async (req, res) => {
+  try {
+    const { eventId, name, subject, templateBody, contactIds, sendImmediately } = req.body;
+    
+    if (!eventId || !subject || !templateBody || !contactIds || contactIds.length === 0) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: eventId, subject, templateBody, and contactIds are required' 
+      });
+    }
+
+    const db = getDb();
+    
+    // Create the campaign
+    const [campaign] = await db.insert(emailCampaigns).values({
+      eventId,
+      name: name || `Quick email - ${new Date().toLocaleString()}`,
+      subject,
+      templateBody,
+      status: sendImmediately ? 'sending' : 'draft',
+      recipientCount: contactIds.length,
+      aiProvider: 'none',
+      enableLeadVariables: true,
+      enableEventVariables: true,
+      enableSenderVariables: true,
+      useSenderVariables: false,
+      sendTime: sendImmediately ? new Date() : null,
+    }).returning();
+
+    // Generate and send drafts if immediate send is requested
+    if (sendImmediately) {
+      try {
+        const emailService = getEmailSender();
+        
+        // Create drafts for each contact
+        const draftPromises = contactIds.map(async (contactId: string) => {
+          // Get contact details
+          const contact = await db.query.contacts.findFirst({
+            where: eq(contacts.id, contactId)
+          });
+          
+          if (!contact) return null;
+          
+          // Simple variable replacement
+          let personalizedBody = templateBody;
+          personalizedBody = personalizedBody.replace(/\{firstName\}/g, contact.firstName || '');
+          personalizedBody = personalizedBody.replace(/\{lastName\}/g, contact.lastName || '');
+          personalizedBody = personalizedBody.replace(/\{company\}/g, contact.company || '');
+          
+          // Create draft
+          const [draft] = await db.insert(emailDrafts).values({
+            campaignId: campaign.id,
+            contactId,
+            subject,
+            body: personalizedBody,
+            status: 'approved',
+            approvedAt: new Date(),
+          }).returning();
+          
+          return draft;
+        });
+        
+        const drafts = (await Promise.all(draftPromises)).filter(Boolean);
+        
+        // Send emails
+        const sendPromises = drafts.map(async (draft) => {
+          if (!draft) return;
+          
+          const contact = await db.query.contacts.findFirst({
+            where: eq(contacts.id, draft.contactId)
+          });
+          
+          if (contact?.email) {
+            await emailService.sendEmail({
+              to: contact.email,
+              subject: draft.subject,
+              body: draft.body,
+              campaignId: campaign.id,
+              draftId: draft.id,
+            });
+            
+            // Update draft status
+            await db.update(emailDrafts)
+              .set({ status: 'sent', sentAt: new Date() })
+              .where(eq(emailDrafts.id, draft.id));
+          }
+        });
+        
+        await Promise.all(sendPromises);
+        
+        // Update campaign status
+        await db.update(emailCampaigns)
+          .set({ status: 'sent', completedAt: new Date() })
+          .where(eq(emailCampaigns.id, campaign.id));
+      } catch (error) {
+        console.error('Error sending emails:', error);
+        // Update campaign status to failed
+        await db.update(emailCampaigns)
+          .set({ status: 'failed' })
+          .where(eq(emailCampaigns.id, campaign.id));
+      }
+    }
+    
+    res.json({ id: campaign.id, success: true });
+  } catch (error) {
+    console.error('Error creating quick campaign:', error);
+    res.status(500).json({ error: 'Failed to create campaign' });
+  }
+});
+
 // Update draft status
 router.put('/drafts/:id/status', async (req, res) => {
   try {
@@ -317,6 +461,81 @@ router.put('/drafts/:id/status', async (req, res) => {
   } catch (error) {
     console.error('Error updating draft status:', error);
     res.status(500).json({ error: 'Failed to update draft status' });
+  }
+});
+
+// Update draft content
+router.put('/drafts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { subject, body, changeDescription } = req.body;
+
+    if (!subject || !body) {
+      return res.status(400).json({ error: 'Subject and body are required' });
+    }
+
+    // Get the current draft first
+    const currentDraft = await getDb().query.emailDrafts.findFirst({
+      where: eq(emailDrafts.id, id),
+    });
+
+    if (!currentDraft) {
+      return res.status(404).json({ error: 'Draft not found' });
+    }
+
+    // Get the latest version number
+    const latestVersion = await getDb().query.emailDraftVersions.findFirst({
+      where: eq(emailDraftVersions.draftId, id),
+      orderBy: [desc(emailDraftVersions.versionNumber)],
+    });
+
+    const nextVersionNumber = (latestVersion?.versionNumber || 0) + 1;
+
+    // Save the current version before updating
+    await getDb().insert(emailDraftVersions).values({
+      draftId: id,
+      versionNumber: nextVersionNumber,
+      subject: currentDraft.subject,
+      body: currentDraft.body,
+      variables: [], // TODO: Extract variables from the draft
+      editedBy: 'user',
+      changeDescription: changeDescription || 'Manual edit',
+    });
+
+    // Update the draft
+    const [updatedDraft] = await getDb()
+      .update(emailDrafts)
+      .set({ 
+        subject, 
+        body,
+        // Reset approval status when content is edited
+        status: 'draft',
+        approvedAt: null
+      })
+      .where(eq(emailDrafts.id, id))
+      .returning();
+
+    res.json(updatedDraft);
+  } catch (error) {
+    console.error('Error updating draft:', error);
+    res.status(500).json({ error: 'Failed to update draft' });
+  }
+});
+
+// Get draft version history
+router.get('/drafts/:id/versions', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const versions = await getDb().query.emailDraftVersions.findMany({
+      where: eq(emailDraftVersions.draftId, id),
+      orderBy: [desc(emailDraftVersions.versionNumber)],
+    });
+
+    res.json({ versions });
+  } catch (error) {
+    console.error('Error fetching draft versions:', error);
+    res.status(500).json({ error: 'Failed to fetch draft versions' });
   }
 });
 

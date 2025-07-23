@@ -1,5 +1,8 @@
 // API configuration with automatic retry and error handling
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (window.location.hostname === 'catapult-event-manager-client.onrender.com' 
+    ? 'https://catapult-event-manager-server.onrender.com' 
+    : 'http://localhost:3001');
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 

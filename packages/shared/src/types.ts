@@ -83,14 +83,27 @@ export interface Contact {
   phone: string | null;
   company: string | null;
   title: string | null;
+  address: string | null;
   website: string | null;
   notes: string | null;
+  imageUrl: string | null;
   tags: string[] | null;
   source: 'manual' | 'ocr' | 'csv' | 'api';
   ocrData: any | null;
+  ocrConfidence: number | null;
   needsReview: boolean;
   overallConfidence: number | null;
-  fieldConfidenceScores: any | null;
+  fieldConfidenceScores: {
+    firstName?: number;
+    lastName?: number;
+    email?: number;
+    phone?: number;
+    company?: number;
+    title?: number;
+    address?: number;
+    website?: number;
+    notes?: number;
+  } | null;
   createdAt: Date;
   updatedAt: Date;
 }

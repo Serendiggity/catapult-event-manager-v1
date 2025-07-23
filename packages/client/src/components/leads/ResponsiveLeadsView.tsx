@@ -156,7 +156,7 @@ export function ResponsiveLeadsView({
 
         {/* Filters */}
         <div className="flex gap-2">
-          <Select value={filterBy} onValueChange={setFilterBy}>
+          <Select value={filterBy} onValueChange={(value) => setFilterBy(value as 'all' | 'verified' | 'unverified')}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -167,7 +167,7 @@ export function ResponsiveLeadsView({
             </SelectContent>
           </Select>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
+          <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'name' | 'date' | 'company')}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>

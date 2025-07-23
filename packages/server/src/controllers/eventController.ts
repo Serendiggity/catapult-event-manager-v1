@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { eq } from 'drizzle-orm';
 import { getDb } from '../db/connection';
 import { events } from '../db/schema/events';
-import { ApiResponse, Event } from '@event-manager/shared';
+import { ApiResponse, Event } from '@new-era-event-manager/shared';
 
 export const eventController = {
   // Get all events

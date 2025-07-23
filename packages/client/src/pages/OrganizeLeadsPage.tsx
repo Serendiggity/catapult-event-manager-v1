@@ -16,7 +16,7 @@ interface Lead {
   jobTitle?: string;
 }
 
-interface LeadGroup {
+interface LocalLeadGroup {
   id: string;
   name: string;
   description: string | null;
@@ -30,7 +30,7 @@ export function OrganizeLeadsPage() {
   const { toast } = useToast();
   
   const [eventTitle, setEventTitle] = useState<string>('');
-  const [groups, setGroups] = useState<LeadGroup[]>([]);
+  const [groups, setGroups] = useState<LocalLeadGroup[]>([]);
   const [unassignedLeads, setUnassignedLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -108,7 +108,7 @@ export function OrganizeLeadsPage() {
     }
   };
 
-  const handleGroupsChange = (newGroups: LeadGroup[], newUnassigned: Lead[]) => {
+  const handleGroupsChange = (newGroups: LocalLeadGroup[], newUnassigned: Lead[]) => {
     setGroups(newGroups);
     setUnassignedLeads(newUnassigned);
     setHasChanges(true);

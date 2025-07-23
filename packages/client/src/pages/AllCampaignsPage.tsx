@@ -8,7 +8,7 @@ import { Mail, Plus, Calendar, ArrowLeft, Send, Edit, FileText, Clock } from 'lu
 import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { CreateCampaignModalGlobal } from '@/components/campaigns/CreateCampaignModalGlobal';
-import type { EmailCampaign, LeadGroup } from '@new-era-event-manager/shared';
+import type { EmailCampaign } from '@new-era-event-manager/shared';
 
 interface CampaignWithEvent extends EmailCampaign {
   event?: {

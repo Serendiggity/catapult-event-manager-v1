@@ -9,17 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import type { Contact } from '@new-era-event-manager/shared';
 
-interface ContactWithConfidence extends Contact {
-  fieldConfidenceScores?: {
-    firstName?: number;
-    lastName?: number;
-    email?: number;
-    phone?: number;
-    company?: number;
-    title?: number;
-    address?: number;
-  };
-}
+type ContactWithConfidence = Contact;
 
 export function ContactDetailsPage() {
   const { id } = useParams<{ id: string }>();

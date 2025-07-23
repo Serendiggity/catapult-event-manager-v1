@@ -5,7 +5,9 @@ ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- Add completedAt field to email_campaigns table
 ALTER TABLE email_campaigns
-ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP;
+ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP,
+ADD COLUMN IF NOT EXISTS recipient_count INTEGER DEFAULT 0,
+ADD COLUMN IF NOT EXISTS ai_provider TEXT DEFAULT 'none';
 
 -- Update status enum to include 'sending' and 'failed'
 -- First, we need to create a new enum type with all values

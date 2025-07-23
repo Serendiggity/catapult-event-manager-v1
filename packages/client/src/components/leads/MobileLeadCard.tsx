@@ -42,7 +42,7 @@ export function MobileLeadCard({
 }: MobileLeadCardProps) {
   const initials = lead.firstName && lead.lastName
     ? `${lead.firstName[0]}${lead.lastName[0]}`.toUpperCase()
-    : lead.email[0].toUpperCase();
+    : lead.email?.[0]?.toUpperCase() || '?';
 
   return (
     <Card className={cn(

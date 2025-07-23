@@ -317,11 +317,12 @@ export async function getAvailableContacts(req: Request, res: Response) {
       const contactIdsInGroup = contactsInGroup.map(c => c.contactId);
       
       if (contactIdsInGroup.length > 0) {
-        availableContacts = await baseQuery
+        availableContacts = await db
+          .select()
+          .from(contacts)
           .where(and(
             eq(contacts.eventId, eventId),
-            sql`${contacts.id} NOT IN (${contactIdsInGroup.map(() => '?').join(', ')})`,
-            ...contactIdsInGroup
+            sql`${contacts.id} NOT IN (${sql.join(contactIdsInGroup.map(id => sql`${id}`), sql`, `)})`
           ))
           .orderBy(contacts.createdAt);
       } else {

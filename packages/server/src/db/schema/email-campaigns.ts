@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
 import { campaignGroups } from './campaign-groups';
 import { events } from './events';
 
@@ -13,6 +13,8 @@ export const emailCampaigns = pgTable('email_campaigns', {
   senderVariables: jsonb('sender_variables').$type<Record<string, string>>().default({}).notNull(), // Sender information variables
   aiChatHistory: jsonb('ai_chat_history').$type<Array<{role: string; content: string; timestamp: string}>>().default([]), // Chat history with AI
   status: text('status', { enum: ['draft', 'generating', 'ready', 'sending', 'sent', 'failed'] }).default('draft').notNull(),
+  recipientCount: integer('recipient_count').default(0).notNull(),
+  aiProvider: text('ai_provider').default('none'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   completedAt: timestamp('completed_at'),

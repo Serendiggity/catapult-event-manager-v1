@@ -96,7 +96,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
           }}
           onBlur={() => handleBlur('title')}
           className={errors.title && touched.title ? 'border-destructive' : ''}
-          aria-invalid={errors.title && touched.title}
+          aria-invalid={!!(errors.title && touched.title)}
           aria-describedby={errors.title && touched.title ? 'title-error' : undefined}
         />
         {errors.title && touched.title && (
@@ -139,7 +139,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
           }}
           onBlur={() => handleBlur('date')}
           className={errors.date && touched.date ? 'border-destructive' : ''}
-          aria-invalid={errors.date && touched.date}
+          aria-invalid={!!(errors.date && touched.date)}
           aria-describedby={errors.date && touched.date ? 'date-error' : undefined}
         />
         {errors.date && touched.date && (
@@ -164,7 +164,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
           onBlur={() => handleBlur('capacity')}
           min="1"
           className={errors.capacity && touched.capacity ? 'border-destructive' : ''}
-          aria-invalid={errors.capacity && touched.capacity}
+          aria-invalid={!!(errors.capacity && touched.capacity)}
           aria-describedby={errors.capacity && touched.capacity ? 'capacity-error' : undefined}
         />
         {errors.capacity && touched.capacity && (

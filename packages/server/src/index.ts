@@ -9,6 +9,7 @@ import contactsRouter from './routes/contacts';
 import campaignGroupsRouter from './routes/campaignGroups';
 import emailCampaignsRouter from './routes/email-campaigns';
 import adminRouter from './routes/admin';
+import adminCreateTablesRouter from './routes/admin-create-tables';
 import { initializeDatabase } from './db/connection';
 
 const app = express();
@@ -87,6 +88,7 @@ app.use('/api/contacts', contactsRouter);
 app.use('/api/campaign-groups', campaignGroupsRouter);
 app.use('/api', emailCampaignsRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/admin', adminCreateTablesRouter);
 
 // Global error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

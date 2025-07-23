@@ -6,7 +6,7 @@ services:
     branch: master
     rootDir: .
     buildCommand: npm install --workspaces --include-workspace-root && npm run build:server
-    startCommand: node packages/server/dist/index.js
+    startCommand: npm run migrate && node packages/server/dist/index.js
     envVars:
       - key: NODE_ENV
         value: production

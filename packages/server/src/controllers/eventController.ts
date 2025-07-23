@@ -18,9 +18,17 @@ export const eventController = {
       });
     } catch (error) {
       console.error('Error fetching events:', error);
+      
+      // More detailed error response
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const isDbError = errorMessage.includes('Database not initialized') || 
+                       errorMessage.includes('connection') ||
+                       errorMessage.includes('ECONNREFUSED');
+      
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch events'
+        error: isDbError ? 'Database connection error' : 'Failed to fetch events',
+        message: process.env.NODE_ENV === 'development' ? errorMessage : undefined
       });
     }
   },

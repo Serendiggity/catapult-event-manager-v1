@@ -392,18 +392,10 @@ router.post('/campaigns/quick', async (req, res) => {
           });
           
           if (contact?.email) {
-            await emailService.sendEmail({
-              to: contact.email,
-              subject: draft.subject,
-              body: draft.body,
-              campaignId: campaign.id,
-              draftId: draft.id,
-            });
+            // Send the draft using the sendDraft method
+            await emailService.sendDraft(draft.id);
             
-            // Update draft status
-            await db.update(emailDrafts)
-              .set({ status: 'sent', sentAt: new Date() })
-              .where(eq(emailDrafts.id, draft.id));
+            // Draft status is updated by sendDraft method
           }
         });
         

@@ -12,9 +12,10 @@ export const emailCampaigns = pgTable('email_campaigns', {
   enabledVariables: jsonb('enabled_variables').$type<string[]>().default([]).notNull(), // Variables that AI should use for personalization
   senderVariables: jsonb('sender_variables').$type<Record<string, string>>().default({}).notNull(), // Sender information variables
   aiChatHistory: jsonb('ai_chat_history').$type<Array<{role: string; content: string; timestamp: string}>>().default([]), // Chat history with AI
-  status: text('status', { enum: ['draft', 'generating', 'ready', 'sent'] }).default('draft').notNull(),
+  status: text('status', { enum: ['draft', 'generating', 'ready', 'sending', 'sent', 'failed'] }).default('draft').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
 });
 
 // Junction table for many-to-many relationship between campaigns and campaign groups

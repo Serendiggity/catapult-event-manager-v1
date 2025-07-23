@@ -11,6 +11,8 @@ export const contacts = pgTable('contacts', {
   company: text('company'),
   title: text('title'),
   address: text('address'),
+  website: text('website'),
+  notes: text('notes'),
   imageUrl: text('image_url'),
   ocrConfidence: decimal('ocr_confidence', { precision: 3, scale: 2 }),
   needsReview: boolean('needs_review').default(false).notNull(),
@@ -23,6 +25,8 @@ export const contacts = pgTable('contacts', {
     company?: number;
     title?: number;
     address?: number;
+    website?: number;
+    notes?: number;
   }>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

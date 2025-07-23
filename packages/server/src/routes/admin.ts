@@ -180,4 +180,47 @@ router.get('/db-status', async (req, res) => {
   }
 });
 
+// Test contacts endpoint
+router.get('/test-contacts', async (req, res) => {
+  if (!process.env.DATABASE_URL) {
+    return res.status(500).json({ error: 'DATABASE_URL not configured' });
+  }
+
+  const client = postgres(process.env.DATABASE_URL, { max: 1 });
+  
+  try {
+    // Check contacts table structure
+    const columns = await client`
+      SELECT column_name, data_type, is_nullable
+      FROM information_schema.columns 
+      WHERE table_name = 'contacts' 
+      AND table_schema = 'public'
+      ORDER BY ordinal_position
+    `;
+    
+    // Try to query contacts
+    let contactsResult;
+    let contactsError;
+    try {
+      contactsResult = await client`SELECT * FROM contacts LIMIT 5`;
+    } catch (e: any) {
+      contactsError = e.message;
+    }
+    
+    await client.end();
+    
+    return res.json({
+      tableStructure: columns,
+      sampleData: contactsResult,
+      error: contactsError
+    });
+    
+  } catch (error: any) {
+    await client.end();
+    return res.status(500).json({
+      error: error.message
+    });
+  }
+});
+
 export default router;

@@ -33,7 +33,7 @@ export function ContactDetailsPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/contacts/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts/${id}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -68,7 +68,7 @@ export function ContactDetailsPage() {
       setError(null);
       setSaveSuccess(false);
       
-      const response = await fetch(`/api/contacts/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

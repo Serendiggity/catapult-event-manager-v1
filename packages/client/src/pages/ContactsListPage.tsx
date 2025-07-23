@@ -101,7 +101,7 @@ export function ContactsListPage() {
         queryParams.append('status', statusFilter);
       }
       
-      const response = await fetch(`/api/contacts?${queryParams}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts?${queryParams}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch contacts');

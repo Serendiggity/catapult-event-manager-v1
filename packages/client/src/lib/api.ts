@@ -1,8 +1,26 @@
 // API configuration with automatic retry and error handling
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === 'catapult-event-manager-client.onrender.com' 
-    ? 'https://catapult-event-manager-server.onrender.com' 
-    : 'http://localhost:3001');
+const getApiUrl = () => {
+  // Log for debugging
+  console.log('Environment VITE_API_URL:', import.meta.env.VITE_API_URL);
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current origin:', window.location.origin);
+  
+  // Check environment variable first
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // Production fallbacks based on hostname
+  if (window.location.hostname.includes('onrender.com')) {
+    return 'https://catapult-event-manager-server.onrender.com';
+  }
+  
+  // Local development
+  return 'http://localhost:3001';
+};
+
+const API_BASE_URL = getApiUrl();
+console.log('Using API URL:', API_BASE_URL);
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
@@ -28,12 +46,15 @@ async function delay(ms: number): Promise<void> {
 
 async function checkServerHealth(): Promise<boolean> {
   try {
+    console.log('Checking server health at:', `${API_BASE_URL}/api/health`);
     const response = await fetch(`${API_BASE_URL}/api/health`, {
       method: 'GET',
       signal: AbortSignal.timeout(5000) // 5 second timeout
     });
+    console.log('Health check response:', response.status, response.ok);
     return response.ok;
-  } catch {
+  } catch (error) {
+    console.error('Health check failed:', error);
     return false;
   }
 }
@@ -59,10 +80,12 @@ export async function apiRequest<T = any>(
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
+      console.log(`API Request (attempt ${attempt + 1}):`, url);
       const response = await fetch(url, defaultOptions);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('API response not OK:', response.status, errorData);
         throw new ApiError(
           response.status,
           errorData.error || `HTTP ${response.status}: ${response.statusText}`,
@@ -76,6 +99,7 @@ export async function apiRequest<T = any>(
       
     } catch (error) {
       lastError = error as Error;
+      console.error(`API request error (attempt ${attempt + 1}):`, error);
       
       // Don't retry on client errors (4xx)
       if (error instanceof ApiError && error.status >= 400 && error.status < 500) {

@@ -39,6 +39,8 @@ interface Lead {
 interface LeadGroup {
   id: string;
   name: string;
+  description?: string | null;
+  color?: string;
   leads: Lead[];
 }
 

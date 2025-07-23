@@ -39,9 +39,11 @@ export class EmailGenerator {
       const db = getDb();
       
       // Get campaign details
-      const campaign = await db.query.emailCampaigns.findFirst({
-        where: eq(emailCampaigns.id, campaignId),
-      });
+      const [campaign] = await db
+        .select()
+        .from(emailCampaigns)
+        .where(eq(emailCampaigns.id, campaignId))
+        .limit(1);
       
       if (!campaign) {
         throw new Error('Campaign not found');
@@ -54,9 +56,11 @@ export class EmailGenerator {
         .where(eq(emailCampaigns.id, campaignId));
 
       // Get event details
-      const event = await db.query.events.findFirst({
-        where: eq(events.id, campaign.eventId),
-      });
+      const [event] = await db
+        .select()
+        .from(events)
+        .where(eq(events.id, campaign.eventId))
+        .limit(1);
 
       // Get all campaign groups for this campaign
       const groups = await db
@@ -264,23 +268,29 @@ Return only the JSON with no additional text.`;
     const db = getDb();
     
     // Get campaign details
-    const campaign = await db.query.emailCampaigns.findFirst({
-      where: eq(emailCampaigns.id, campaignId),
-    });
+    const [campaign] = await db
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.id, campaignId))
+      .limit(1);
     
     if (!campaign) {
       throw new Error('Campaign not found');
     }
 
     // Get event details
-    const event = await db.query.events.findFirst({
-      where: eq(events.id, campaign.eventId),
-    });
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, campaign.eventId))
+      .limit(1);
 
     // Get contact details
-    const contact = await db.query.contacts.findFirst({
-      where: eq(contacts.id, contactId),
-    });
+    const [contact] = await db
+      .select()
+      .from(contacts)
+      .where(eq(contacts.id, contactId))
+      .limit(1);
 
     if (!contact) {
       throw new Error('Contact not found');

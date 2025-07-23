@@ -95,7 +95,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
             <div className="flex flex-wrap gap-2 mt-2">
               {data.message.enabledVariables.map(varName => (
                 <Badge key={varName} variant="secondary">
-                  {{varName}}
+                  {`{{${varName}}}`}
                 </Badge>
               ))}
             </div>

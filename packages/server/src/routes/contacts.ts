@@ -29,9 +29,11 @@ router.get('/:id', async (req, res) => {
     const { contacts } = await import('../db/schema');
     const { eq } = await import('drizzle-orm');
     
-    const contact = await getDb().query.contacts.findFirst({
-      where: eq(contacts.id, id),
-    });
+    const [contact] = await getDb()
+      .select()
+      .from(contacts)
+      .where(eq(contacts.id, id))
+      .limit(1);
     
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });

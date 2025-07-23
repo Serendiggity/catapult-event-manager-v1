@@ -48,27 +48,33 @@ export class EmailSender {
       const db = getDb();
       
       // Get draft with contact info
-      const draft = await db.query.emailDrafts.findFirst({
-        where: eq(emailDrafts.id, draftId),
-      });
+      const [draft] = await db
+        .select()
+        .from(emailDrafts)
+        .where(eq(emailDrafts.id, draftId))
+        .limit(1);
 
       if (!draft) {
         return { success: false, error: 'Draft not found' };
       }
 
       // Get contact details
-      const contact = await db.query.contacts.findFirst({
-        where: eq(contacts.id, draft.contactId),
-      });
+      const [contact] = await db
+        .select()
+        .from(contacts)
+        .where(eq(contacts.id, draft.contactId))
+        .limit(1);
 
       if (!contact || !contact.email) {
         return { success: false, error: 'Contact not found or has no email' };
       }
 
       // Get campaign for sender info
-      const campaign = await db.query.emailCampaigns.findFirst({
-        where: eq(emailCampaigns.id, draft.campaignId),
-      });
+      const [campaign] = await db
+        .select()
+        .from(emailCampaigns)
+        .where(eq(emailCampaigns.id, draft.campaignId))
+        .limit(1);
 
       if (!campaign) {
         return { success: false, error: 'Campaign not found' };
@@ -112,21 +118,23 @@ export class EmailSender {
 
     if (draftIds && draftIds.length > 0) {
       // Send specific drafts
-      draftsToSend = await db.query.emailDrafts.findMany({
-        where: and(
+      draftsToSend = await db
+        .select()
+        .from(emailDrafts)
+        .where(and(
           eq(emailDrafts.campaignId, campaignId),
           eq(emailDrafts.status, 'approved'),
           inArray(emailDrafts.id, draftIds)
-        ),
-      });
+        ));
     } else {
       // Send all approved drafts
-      draftsToSend = await db.query.emailDrafts.findMany({
-        where: and(
+      draftsToSend = await db
+        .select()
+        .from(emailDrafts)
+        .where(and(
           eq(emailDrafts.campaignId, campaignId),
           eq(emailDrafts.status, 'approved')
-        ),
-      });
+        ));
     }
 
     const results = {
@@ -154,12 +162,13 @@ export class EmailSender {
     }
 
     // Update campaign status if all approved drafts have been sent
-    const remainingDrafts = await db.query.emailDrafts.findMany({
-      where: and(
+    const remainingDrafts = await db
+      .select()
+      .from(emailDrafts)
+      .where(and(
         eq(emailDrafts.campaignId, campaignId),
         eq(emailDrafts.status, 'approved')
-      ),
-    });
+      ));
 
     if (remainingDrafts.length === 0) {
       await db

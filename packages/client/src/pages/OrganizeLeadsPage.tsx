@@ -19,8 +19,8 @@ interface Lead {
 interface LocalLeadGroup {
   id: string;
   name: string;
-  description: string | null;
-  color: string;
+  description?: string | null;
+  color?: string;
   leads: Lead[];
 }
 

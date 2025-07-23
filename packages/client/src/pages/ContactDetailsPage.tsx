@@ -110,10 +110,10 @@ export function ContactDetailsPage() {
     setError(null);
   };
 
-  const getConfidenceBadge = (field: keyof ContactWithConfidence['fieldConfidenceScores'], value?: string | null) => {
+  const getConfidenceBadge = (field: string, value?: string | null) => {
     if (!contact?.fieldConfidenceScores || !value) return null;
     
-    const confidence = contact.fieldConfidenceScores[field];
+    const confidence = (contact.fieldConfidenceScores as any)[field];
     if (confidence === undefined) return null;
     
     const percentage = Math.round(confidence * 100);
@@ -385,7 +385,7 @@ export function ContactDetailsPage() {
             )}
             {contact.ocrConfidence && (
               <p className="text-sm text-gray-600">
-                Overall OCR Confidence: {Math.round(parseFloat(contact.ocrConfidence) * 100)}%
+                Overall OCR Confidence: {Math.round(contact.ocrConfidence * 100)}%
               </p>
             )}
             <p className="text-sm text-gray-600">

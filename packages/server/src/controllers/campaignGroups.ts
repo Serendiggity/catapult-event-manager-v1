@@ -317,7 +317,7 @@ export async function getAvailableContacts(req: Request, res: Response) {
       const contactIdsInGroup = contactsInGroup.map(c => c.contactId);
       
       if (contactIdsInGroup.length > 0) {
-        availableContacts = await db
+        availableContacts = await getDb()
           .select()
           .from(contacts)
           .where(and(

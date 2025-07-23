@@ -29,9 +29,10 @@ function getEmailSender(): EmailSender {
 // Get all campaigns (across all events)
 router.get('/campaigns', async (req, res) => {
   try {
-    const campaigns = await getDb().query.emailCampaigns.findMany({
-      orderBy: (campaigns, { desc }) => [desc(campaigns.createdAt)],
-    });
+    const campaigns = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .orderBy(desc(emailCampaigns.createdAt));
 
     res.json({
       success: true,
@@ -49,10 +50,11 @@ router.get('/events/:eventId/campaigns', async (req, res) => {
   try {
     const { eventId } = req.params;
     
-    const campaigns = await getDb().query.emailCampaigns.findMany({
-      where: eq(emailCampaigns.eventId, eventId),
-      orderBy: (campaigns, { desc }) => [desc(campaigns.createdAt)],
-    });
+    const campaigns = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.eventId, eventId))
+      .orderBy(desc(emailCampaigns.createdAt));
 
     // Return campaigns directly without groups for now
     res.json({
@@ -71,9 +73,11 @@ router.get('/campaigns/:id', async (req, res) => {
   try {
     const { id } = req.params;
     
-    const campaign = await getDb().query.emailCampaigns.findFirst({
-      where: eq(emailCampaigns.id, id),
-    });
+    const [campaign] = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.id, id))
+      .limit(1);
 
     if (!campaign) {
       return res.status(404).json({ error: 'Campaign not found' });
@@ -204,10 +208,11 @@ router.get('/campaigns/:id/drafts', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const drafts = await getDb().query.emailDrafts.findMany({
-      where: eq(emailDrafts.campaignId, id),
-      orderBy: (drafts, { desc }) => [desc(drafts.generatedAt)],
-    });
+    const drafts = await getDb()
+      .select()
+      .from(emailDrafts)
+      .where(eq(emailDrafts.campaignId, id))
+      .orderBy(desc(emailDrafts.generatedAt));
 
     res.json(drafts);
   } catch (error) {
@@ -269,9 +274,11 @@ router.post('/campaigns/:id/generate-drafts', async (req, res) => {
     const { id } = req.params;
 
     // Check if campaign exists
-    const campaign = await getDb().query.emailCampaigns.findFirst({
-      where: eq(emailCampaigns.id, id),
-    });
+    const [campaign] = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.id, id))
+      .limit(1);
 
     if (!campaign) {
       return res.status(404).json({ error: 'Campaign not found' });
@@ -341,11 +348,8 @@ router.post('/campaigns/quick', async (req, res) => {
       status: sendImmediately ? 'sending' : 'draft',
       recipientCount: contactIds.length,
       aiProvider: 'none',
-      enableLeadVariables: true,
-      enableEventVariables: true,
-      enableSenderVariables: true,
-      useSenderVariables: false,
-      sendTime: sendImmediately ? new Date() : null,
+      enabledVariables: [],
+      variables: [],
     }).returning();
 
     // Generate and send drafts if immediate send is requested
@@ -356,9 +360,11 @@ router.post('/campaigns/quick', async (req, res) => {
         // Create drafts for each contact
         const draftPromises = contactIds.map(async (contactId: string) => {
           // Get contact details
-          const contact = await db.query.contacts.findFirst({
-            where: eq(contacts.id, contactId)
-          });
+          const [contact] = await db
+            .select()
+            .from(contacts)
+            .where(eq(contacts.id, contactId))
+            .limit(1);
           
           if (!contact) return null;
           
@@ -387,9 +393,11 @@ router.post('/campaigns/quick', async (req, res) => {
         const sendPromises = drafts.map(async (draft) => {
           if (!draft) return;
           
-          const contact = await db.query.contacts.findFirst({
-            where: eq(contacts.id, draft.contactId)
-          });
+          const [contact] = await db
+            .select()
+            .from(contacts)
+            .where(eq(contacts.id, draft.contactId))
+            .limit(1);
           
           if (contact?.email) {
             // Send the draft using the sendDraft method
@@ -467,19 +475,23 @@ router.put('/drafts/:id', async (req, res) => {
     }
 
     // Get the current draft first
-    const currentDraft = await getDb().query.emailDrafts.findFirst({
-      where: eq(emailDrafts.id, id),
-    });
+    const [currentDraft] = await getDb()
+      .select()
+      .from(emailDrafts)
+      .where(eq(emailDrafts.id, id))
+      .limit(1);
 
     if (!currentDraft) {
       return res.status(404).json({ error: 'Draft not found' });
     }
 
     // Get the latest version number
-    const latestVersion = await getDb().query.emailDraftVersions.findFirst({
-      where: eq(emailDraftVersions.draftId, id),
-      orderBy: [desc(emailDraftVersions.versionNumber)],
-    });
+    const [latestVersion] = await getDb()
+      .select()
+      .from(emailDraftVersions)
+      .where(eq(emailDraftVersions.draftId, id))
+      .orderBy(desc(emailDraftVersions.versionNumber))
+      .limit(1);
 
     const nextVersionNumber = (latestVersion?.versionNumber || 0) + 1;
 
@@ -519,10 +531,11 @@ router.get('/drafts/:id/versions', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const versions = await getDb().query.emailDraftVersions.findMany({
-      where: eq(emailDraftVersions.draftId, id),
-      orderBy: [desc(emailDraftVersions.versionNumber)],
-    });
+    const versions = await getDb()
+      .select()
+      .from(emailDraftVersions)
+      .where(eq(emailDraftVersions.draftId, id))
+      .orderBy(desc(emailDraftVersions.versionNumber));
 
     res.json({ versions });
   } catch (error) {
@@ -537,9 +550,11 @@ router.get('/campaigns/:id/export-csv', async (req, res) => {
     const { id } = req.params;
     
     // Get campaign details
-    const campaign = await getDb().query.emailCampaigns.findFirst({
-      where: eq(emailCampaigns.id, id),
-    });
+    const [campaign] = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.id, id))
+      .limit(1);
     
     if (!campaign) {
       return res.status(404).json({ error: 'Campaign not found' });
@@ -619,9 +634,11 @@ router.post('/drafts/:id/send', async (req, res) => {
     const { id } = req.params;
     
     // Verify draft exists
-    const draft = await getDb().query.emailDrafts.findFirst({
-      where: eq(emailDrafts.id, id),
-    });
+    const [draft] = await getDb()
+      .select()
+      .from(emailDrafts)
+      .where(eq(emailDrafts.id, id))
+      .limit(1);
     
     if (!draft) {
       return res.status(404).json({ error: 'Draft not found' });
@@ -663,9 +680,11 @@ router.post('/campaigns/:id/send', async (req, res) => {
     const { draftIds } = req.body; // Optional: specific draft IDs to send
     
     // Verify campaign exists
-    const campaign = await getDb().query.emailCampaigns.findFirst({
-      where: eq(emailCampaigns.id, id),
-    });
+    const [campaign] = await getDb()
+      .select()
+      .from(emailCampaigns)
+      .where(eq(emailCampaigns.id, id))
+      .limit(1);
     
     if (!campaign) {
       return res.status(404).json({ error: 'Campaign not found' });

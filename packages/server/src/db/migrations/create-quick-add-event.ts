@@ -1,7 +1,6 @@
 import { getDb } from '../connection';
 import { events } from '../schema';
 import { eq } from 'drizzle-orm';
-import { v4 as uuidv4 } from 'uuid';
 
 // Use a deterministic UUID for the quick add event so it's consistent
 // This is a v5 namespace UUID generated from the string "quick-add-leads-default"
@@ -12,9 +11,11 @@ export async function createQuickAddEvent() {
   
   try {
     // Check if the quick add event already exists
-    const existingEvent = await db.query.events.findFirst({
-      where: eq(events.id, QUICK_ADD_EVENT_ID)
-    });
+    const [existingEvent] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, QUICK_ADD_EVENT_ID))
+      .limit(1);
 
     if (!existingEvent) {
       // Create the quick add event

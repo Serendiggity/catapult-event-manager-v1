@@ -1,11 +1,11 @@
 export interface Event {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   date: Date;
-  location: string;
-  capacity: number;
-  attendees: string[];
+  location: string | null;
+  capacity: number | null;
+  attendees?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

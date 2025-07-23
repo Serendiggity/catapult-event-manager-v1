@@ -46,7 +46,7 @@ export function CampaignDetails({ campaign, onBack }: CampaignDetailsProps) {
         const contactResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/contacts/${contactId}`);
         if (contactResponse.ok) {
           const contact = await contactResponse.json();
-          setContacts(prev => new Map(prev).set(contactId, contact));
+          setContacts(prev => new Map(prev).set(contactId as string, contact));
         }
       }
     } catch (error) {

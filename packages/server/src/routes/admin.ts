@@ -26,6 +26,18 @@ router.post('/run-migrations-once', async (req, res) => {
   
   const results: any[] = [];
   
+  // Helper function to check if table exists
+  const tableExists = async (tableName: string) => {
+    const result = await client`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = ${tableName}
+      ) as exists
+    `;
+    return result[0].exists;
+  };
+  
   try {
     // Check existing migrations
     try {
@@ -43,17 +55,34 @@ router.post('/run-migrations-once', async (req, res) => {
       results.push({ step: 'check_migrations', status: 'no_existing' });
     }
     
-    // Run Drizzle migrations
-    try {
-      await migrate(db, { 
-        migrationsFolder: path.join(process.cwd(), 'packages/server/drizzle') 
-      });
-      results.push({ step: 'drizzle_migrations', status: 'success' });
-    } catch (error: any) {
-      if (error.code === '42P07' || error.message?.includes('already exists')) {
-        results.push({ step: 'drizzle_migrations', status: 'already_exists' });
-      } else {
-        throw error;
+    // Check which tables already exist
+    const tables = ['events', 'contacts', 'event_campaigns', 'campaign_groups', 'campaigns'];
+    const existingTables: string[] = [];
+    
+    for (const table of tables) {
+      if (await tableExists(table)) {
+        existingTables.push(table);
+      }
+    }
+    
+    results.push({ step: 'check_tables', existing: existingTables, missing: tables.filter(t => !existingTables.includes(t)) });
+    
+    // If all tables exist, skip Drizzle migration
+    if (existingTables.length === tables.length) {
+      results.push({ step: 'drizzle_migrations', status: 'skipped', reason: 'all_tables_exist' });
+    } else {
+      // Run Drizzle migrations only if some tables are missing
+      try {
+        await migrate(db, { 
+          migrationsFolder: path.join(process.cwd(), 'packages/server/drizzle') 
+        });
+        results.push({ step: 'drizzle_migrations', status: 'success' });
+      } catch (error: any) {
+        if (error.code === '42P07' || error.message?.includes('already exists')) {
+          results.push({ step: 'drizzle_migrations', status: 'partial_exists', message: error.message });
+        } else {
+          results.push({ step: 'drizzle_migrations', status: 'error', message: error.message });
+        }
       }
     }
     
@@ -101,6 +130,52 @@ router.post('/run-migrations-once', async (req, res) => {
       success: false,
       error: error.message,
       results
+    });
+  }
+});
+
+// Check database status
+router.get('/db-status', async (req, res) => {
+  if (!process.env.DATABASE_URL) {
+    return res.status(500).json({ error: 'DATABASE_URL not configured' });
+  }
+
+  const client = postgres(process.env.DATABASE_URL, { max: 1 });
+  
+  try {
+    // Get all tables in public schema
+    const tables = await client`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name
+    `;
+    
+    // Test if we can query the events table
+    let eventCount = 0;
+    let canQueryEvents = false;
+    try {
+      const result = await client`SELECT COUNT(*) as count FROM events`;
+      eventCount = parseInt(result[0].count);
+      canQueryEvents = true;
+    } catch (e) {
+      // Table doesn't exist or can't be queried
+    }
+    
+    await client.end();
+    
+    return res.json({
+      connected: true,
+      tables: tables.map(t => t.table_name),
+      canQueryEvents,
+      eventCount
+    });
+    
+  } catch (error: any) {
+    await client.end();
+    return res.status(500).json({
+      connected: false,
+      error: error.message
     });
   }
 });

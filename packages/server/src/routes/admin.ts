@@ -3,13 +3,9 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 
 const router = express.Router();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // One-time migration endpoint (remove after use)
 router.post('/run-migrations-once', async (req, res) => {
@@ -50,7 +46,7 @@ router.post('/run-migrations-once', async (req, res) => {
     // Run Drizzle migrations
     try {
       await migrate(db, { 
-        migrationsFolder: path.join(__dirname, '../../drizzle') 
+        migrationsFolder: path.join(process.cwd(), 'packages/server/drizzle') 
       });
       results.push({ step: 'drizzle_migrations', status: 'success' });
     } catch (error: any) {
@@ -72,7 +68,7 @@ router.post('/run-migrations-once', async (req, res) => {
     
     for (const migration of additionalMigrations) {
       try {
-        const migrationPath = path.join(__dirname, '../db/migrations', migration);
+        const migrationPath = path.join(process.cwd(), 'packages/server/src/db/migrations', migration);
         const sql = await fs.readFile(migrationPath, 'utf8');
         
         await client.unsafe(sql);

@@ -40,7 +40,7 @@ export function DashboardPage() {
       setLoading(true);
       
       // Fetch events
-      const eventsResponse = await api.getEvents();
+      const eventsResponse = await api.get('/api/events');
       const events = eventsResponse.data || [];
       const now = new Date();
       const upcomingEvents = events.filter((e: any) => new Date(e.date) > now);

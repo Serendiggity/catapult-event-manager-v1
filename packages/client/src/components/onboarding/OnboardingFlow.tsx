@@ -30,8 +30,8 @@ export interface OnboardingStep {
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to New Era! 🚀',
-    description: 'Turn business cards into meaningful connections. Let\'s get you started with a quick tour.',
+    title: 'Welcome to New Era Events Manager',
+    description: 'Transform your business networking with our comprehensive event and lead management platform. Let\'s take a quick tour to help you get started.',
     position: 'center',
   },
   {
@@ -71,8 +71,8 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     id: 'complete',
-    title: 'You\'re All Set! 🎉',
-    description: 'You\'ve learned the basics. Explore more features or start managing your leads.',
+    title: 'You\'re All Set!',
+    description: 'You\'ve learned the basics of New Era Events Manager. Start organizing your events and managing your professional network effectively.',
     position: 'center',
   }
 ];

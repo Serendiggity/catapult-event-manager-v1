@@ -47,8 +47,8 @@ export function Header() {
       <div className="max-w-[1400px] mx-auto px-10">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="text-2xl font-bold tracking-tight">
-            New Era
+          <Link to="/" className="flex items-center">
+            <img src="/logo.png" alt="New Era" className="h-10 w-auto" />
           </Link>
           
           {/* Desktop Navigation */}

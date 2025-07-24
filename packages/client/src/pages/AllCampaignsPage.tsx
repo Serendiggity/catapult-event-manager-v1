@@ -138,21 +138,25 @@ export function AllCampaignsPage() {
 
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">Email campaigns</h1>
-            <p className="text-gray-600">Manage all your email campaigns across events</p>
+            <p className="text-gray-600 text-sm sm:text-base">Manage all your email campaigns across events</p>
           </div>
-          <div className="flex items-start gap-4">
-            <div className="text-right">
-              <div className="text-2xl font-bold">{filteredCampaigns.length}</div>
-              <div className="text-sm text-gray-600">Total campaigns</div>
-              <div className="text-xl font-semibold mt-2">
-                {filteredCampaigns.filter(c => c.status === 'sent').length}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div className="flex gap-6 sm:gap-4">
+              <div className="text-left sm:text-right">
+                <div className="text-2xl font-bold">{filteredCampaigns.length}</div>
+                <div className="text-sm text-gray-600 whitespace-nowrap">Total campaigns</div>
               </div>
-              <div className="text-sm text-gray-600">Sent</div>
+              <div className="text-left sm:text-right">
+                <div className="text-2xl font-bold">
+                  {filteredCampaigns.filter(c => c.status === 'sent').length}
+                </div>
+                <div className="text-sm text-gray-600">Sent</div>
+              </div>
             </div>
-            <Button onClick={() => setShowCreateModal(true)}>
+            <Button onClick={() => setShowCreateModal(true)} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Create campaign
             </Button>

@@ -132,15 +132,15 @@ export function ContactsPage() {
             </p>
           </div>
           
-          <div className="flex justify-center gap-4">
-            <Button onClick={handleSendEmail} variant="default" size="lg">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Button onClick={handleSendEmail} variant="default" size="lg" className="w-full sm:w-auto">
               <Send className="h-4 w-4 mr-2" />
-              Send Email Now
+              Send Email
             </Button>
-            <Button onClick={handleViewContact} variant="outline">
+            <Button onClick={handleViewContact} variant="outline" className="w-full sm:w-auto">
               View Lead
             </Button>
-            <Button onClick={handleReset} variant="secondary">
+            <Button onClick={handleReset} variant="secondary" className="w-full sm:w-auto">
               Add Another
             </Button>
           </div>

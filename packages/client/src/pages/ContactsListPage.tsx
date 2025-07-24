@@ -354,14 +354,14 @@ export function ContactsListPage() {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-3 sm:p-6">
       {/* Header */}
-      <div className="mb-6 flex justify-between items-start">
-        <div>
+      <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="w-full sm:w-auto">
           <h1 className="text-3xl font-bold mb-2">Leads</h1>
-          <p className="text-gray-600">Manage all your event leads in one place</p>
+          <p className="text-gray-600 text-sm sm:text-base">Manage all your event leads in one place</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button 
             onClick={() => navigate('/campaign-groups')}
             variant="outline"
@@ -383,13 +383,13 @@ export function ContactsListPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search: name, email, company, or job (e.g., 'realtor', 'engineer')..."
+                placeholder="Search Lead Database..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
               💡 Try natural language: "real estate" finds realtors, agents, brokers
             </p>
           </div>

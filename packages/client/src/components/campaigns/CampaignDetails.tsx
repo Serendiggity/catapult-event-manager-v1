@@ -227,13 +227,14 @@ export function CampaignDetails({ campaign, onBack }: CampaignDetailsProps) {
           <h2 className="text-2xl font-bold">{campaign.name}</h2>
           <p className="text-muted-foreground">Subject: {campaign.subject}</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={onBack} variant="outline">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={onBack} variant="outline" className="w-full sm:w-auto">
             Back to Campaigns
           </Button>
           <Button 
             onClick={handleGenerateDrafts} 
             disabled={isGenerating || campaign.status === 'generating'}
+            className="w-full sm:w-auto"
           >
             {isGenerating ? (
               <>
@@ -282,14 +283,14 @@ export function CampaignDetails({ campaign, onBack }: CampaignDetailsProps) {
                 Review and approve email drafts before sending
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               {drafts.filter(d => d.status === 'approved').length > 0 && (
                 <>
-                  <Button onClick={handleSendAllApproved} size="sm">
+                  <Button onClick={handleSendAllApproved} size="sm" className="w-full sm:w-auto">
                     <Send className="h-4 w-4 mr-2" />
                     Send All ({drafts.filter(d => d.status === 'approved').length} approved)
                   </Button>
-                  <Button onClick={handleExportCSV} variant="outline" size="sm">
+                  <Button onClick={handleExportCSV} variant="outline" size="sm" className="w-full sm:w-auto">
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>

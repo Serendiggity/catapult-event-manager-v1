@@ -231,7 +231,9 @@ export function OnboardingFlow({ onComplete, className }: OnboardingFlowProps) {
                 {step.action ? (
                   <Button
                     size="sm"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       step.action!.onClick();
                       handleNext();
                     }}
@@ -241,7 +243,11 @@ export function OnboardingFlow({ onComplete, className }: OnboardingFlowProps) {
                 ) : (
                   <Button
                     size="sm"
-                    onClick={handleNext}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleNext();
+                    }}
                   >
                     {currentStep === ONBOARDING_STEPS.length - 1 ? 'Get Started' : 'Next'}
                     <ChevronRight className="h-4 w-4 ml-1" />

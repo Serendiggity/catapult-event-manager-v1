@@ -11,6 +11,7 @@ export interface ParsedContactData {
   phone: ContactField;
   company: ContactField;
   title: ContactField;
+  industry?: ContactField;
   address?: ContactField;
 }
 
@@ -25,6 +26,8 @@ export const CONFIDENCE_THRESHOLD = 0.7;
 
 export const AI_PARSING_PROMPT = `You are an expert at parsing business card text extracted via OCR. Your task is to intelligently categorize the raw text into structured contact fields.
 
+IMPORTANT: When detecting industry, use contextual clues from the company name, job title, and any other information. Choose from standard industry categories like: Technology, Healthcare, Finance, Real Estate, Education, Manufacturing, Retail, Consulting, Legal, Marketing, Media, Non-profit, Government, Hospitality, Construction, Transportation, Energy, Agriculture, etc.
+
 Given the raw OCR text from a business card, extract and categorize the information into the following fields:
 - firstName: The person's first name
 - lastName: The person's last name  
@@ -32,6 +35,7 @@ Given the raw OCR text from a business card, extract and categorize the informat
 - phone: Phone number (any format)
 - company: Company or organization name
 - title: Job title or position
+- industry: Industry or sector (e.g., Technology, Healthcare, Finance, Real Estate, Education, Manufacturing, Retail, Consulting, etc.)
 - address: Physical address (if present)
 
 For each field, provide:
@@ -55,6 +59,7 @@ Return the response in this exact JSON format:
     "phone": { "value": "string or null", "confidence": 0.0-1.0, "needsReview": boolean },
     "company": { "value": "string or null", "confidence": 0.0-1.0, "needsReview": boolean },
     "title": { "value": "string or null", "confidence": 0.0-1.0, "needsReview": boolean },
+    "industry": { "value": "string or null", "confidence": 0.0-1.0, "needsReview": boolean },
     "address": { "value": "string or null", "confidence": 0.0-1.0, "needsReview": boolean }
   },
   "rawText": "the original OCR text",

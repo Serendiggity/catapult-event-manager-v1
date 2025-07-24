@@ -4,6 +4,8 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { INDUSTRIES } from '@new-era-event-manager/shared/src/constants/industries';
 
 interface FieldConfidence {
   firstName?: number;
@@ -12,6 +14,7 @@ interface FieldConfidence {
   phone?: number;
   company?: number;
   title?: number;
+  industry?: number;
   address?: number;
 }
 
@@ -23,6 +26,7 @@ interface Contact {
   phone: string | null;
   company: string | null;
   title: string | null;
+  industry: string | null;
   address: string | null;
   imageUrl: string | null;
   needsReview: boolean;
@@ -45,6 +49,7 @@ export function ReviewModal({ contact, isOpen, onClose, onSave }: ReviewModalPro
     phone: contact.phone || '',
     company: contact.company || '',
     title: contact.title || '',
+    industry: contact.industry || '',
     address: contact.address || ''
   });
   const [saving, setSaving] = useState(false);
@@ -59,6 +64,7 @@ export function ReviewModal({ contact, isOpen, onClose, onSave }: ReviewModalPro
         phone: contact.phone || '',
         company: contact.company || '',
         title: contact.title || '',
+        industry: contact.industry || '',
         address: contact.address || ''
       });
       setError(null);
@@ -255,6 +261,36 @@ export function ReviewModal({ contact, isOpen, onClose, onSave }: ReviewModalPro
                 onChange={(e) => handleInputChange('title', e.target.value)}
                 className={isLowConfidence('title') ? 'border-orange-400' : ''}
               />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label htmlFor="industry">Industry</Label>
+                {isLowConfidence('industry') && (
+                  <Badge variant="outline" className="text-xs">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    {Math.round(getFieldConfidence('industry') * 100)}% confidence
+                  </Badge>
+                )}
+              </div>
+              <Select 
+                value={formData.industry} 
+                onValueChange={(value) => handleInputChange('industry', value)}
+              >
+                <SelectTrigger 
+                  id="industry"
+                  className={isLowConfidence('industry') ? 'border-orange-400' : ''}
+                >
+                  <SelectValue placeholder="Select an industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  {INDUSTRIES.map((industry) => (
+                    <SelectItem key={industry} value={industry}>
+                      {industry}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

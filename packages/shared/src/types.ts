@@ -83,6 +83,7 @@ export interface Contact {
   phone: string | null;
   company: string | null;
   title: string | null;
+  industry: string | null;
   address: string | null;
   website: string | null;
   notes: string | null;
@@ -100,6 +101,7 @@ export interface Contact {
     phone?: number;
     company?: number;
     title?: number;
+    industry?: number;
     address?: number;
     website?: number;
     notes?: number;

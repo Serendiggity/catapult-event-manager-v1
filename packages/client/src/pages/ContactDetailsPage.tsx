@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { INDUSTRIES } from '@new-era-event-manager/shared/src/constants/industries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import type { Contact } from '@new-era-event-manager/shared';
@@ -51,6 +53,7 @@ export function ContactDetailsPage() {
         phone: data.phone || '',
         company: data.company || '',
         title: data.title || '',
+        industry: data.industry || '',
         address: data.address || ''
       });
     } catch (err) {
@@ -103,6 +106,7 @@ export function ContactDetailsPage() {
         phone: contact.phone || '',
         company: contact.company || '',
         title: contact.title || '',
+        industry: contact.industry || '',
         address: contact.address || ''
       });
     }
@@ -348,6 +352,32 @@ export function ContactDetailsPage() {
                   <div className="flex items-center">
                     <p className="text-lg">{contact.title || '-'}</p>
                     {getConfidenceBadge('title', contact.title)}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="industry">Industry</Label>
+                {editing ? (
+                  <Select 
+                    value={editedContact.industry || ''} 
+                    onValueChange={(value) => setEditedContact({ ...editedContact, industry: value })}
+                  >
+                    <SelectTrigger id="industry">
+                      <SelectValue placeholder="Select an industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDUSTRIES.map((industry) => (
+                        <SelectItem key={industry} value={industry}>
+                          {industry}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="flex items-center">
+                    <p className="text-lg">{contact.industry || '-'}</p>
+                    {getConfidenceBadge('industry', contact.industry)}
                   </div>
                 )}
               </div>

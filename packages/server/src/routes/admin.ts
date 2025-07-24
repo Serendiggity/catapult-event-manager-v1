@@ -2,10 +2,55 @@ import express from 'express';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
+import { sql } from 'drizzle-orm';
 import path from 'path';
 import fs from 'fs/promises';
 
 const router = express.Router();
+
+// Add industry field migration
+router.post('/add-industry-field', async (req, res) => {
+  try {
+    const token = req.headers['x-migration-token'];
+    if (token !== 'catapult-migration-2025') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!process.env.DATABASE_URL) {
+      return res.status(500).json({ error: 'DATABASE_URL not configured' });
+    }
+
+    const client = postgres(process.env.DATABASE_URL, { max: 1 });
+    const db = drizzle(client);
+    
+    // Add industry column
+    await db.execute(sql`ALTER TABLE contacts ADD COLUMN IF NOT EXISTS industry text`);
+    
+    // Update field confidence scores
+    await db.execute(sql`
+      UPDATE contacts 
+      SET field_confidence_scores = jsonb_set(
+        COALESCE(field_confidence_scores, '{}')::jsonb,
+        '{industry}',
+        '0'::jsonb
+      )
+      WHERE field_confidence_scores IS NOT NULL
+    `);
+    
+    await client.end();
+    
+    res.json({ 
+      success: true, 
+      message: 'Industry field added successfully'
+    });
+  } catch (error) {
+    console.error('Migration error:', error);
+    res.status(500).json({ 
+      error: 'Migration failed', 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    });
+  }
+});
 
 // One-time migration endpoint (remove after use)
 router.post('/run-migrations-once', async (req, res) => {
@@ -92,7 +137,8 @@ router.post('/run-migrations-once', async (req, res) => {
       'add-campaign-ai-fields.sql',
       'add-sender-variables.sql',
       'add-missing-fields.sql',
-      'rename-lead-groups-to-campaign-groups.sql'
+      'rename-lead-groups-to-campaign-groups.sql',
+      'add-industry-field.sql'
     ];
     
     for (const migration of additionalMigrations) {

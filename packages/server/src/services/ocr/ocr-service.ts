@@ -156,6 +156,7 @@ export class OCRService {
         phone: parsedData.phone.confidence,
         company: parsedData.company.confidence,
         title: parsedData.title.confidence,
+        industry: parsedData.industry?.confidence,
         address: parsedData.address?.confidence
       }
     };

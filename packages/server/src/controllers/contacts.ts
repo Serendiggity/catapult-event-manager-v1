@@ -53,6 +53,7 @@ export async function createContactFromOCR(
       phone: dbData.phone,
       company: dbData.company,
       title: dbData.title,
+      industry: parsedData.parsedData.industry?.value || null,
       address: parsedData.parsedData.address?.value || null,
       imageUrl: imageUrl || null,
       ocrConfidence: parsedData.overallConfidence.toString(),

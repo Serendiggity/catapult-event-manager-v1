@@ -416,6 +416,7 @@ export function ContactsListPage() {
               <SelectItem value="email">Email</SelectItem>
               <SelectItem value="company">Company</SelectItem>
               <SelectItem value="title">Title</SelectItem>
+              <SelectItem value="industry">Industry</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -507,6 +508,17 @@ export function ContactsListPage() {
                     )}
                   </button>
                 </th>
+                <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
+                  <button
+                    className="flex items-center gap-1 hover:text-muted-foreground transition-colors"
+                    onClick={() => handleSort('industry')}
+                  >
+                    Industry
+                    {sortBy === 'industry' && (
+                      sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
+                </th>
                 <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">Event</th>
                 <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">Status</th>
                 <th className="p-4 text-xs font-medium text-foreground uppercase tracking-wider">
@@ -550,6 +562,9 @@ export function ContactsListPage() {
                   </td>
                   <td className="p-4 text-muted-foreground">
                     {toSentenceCase(contact.company)}
+                  </td>
+                  <td className="p-4 text-muted-foreground">
+                    {contact.industry || '-'}
                   </td>
                   <td className="p-4">
                     <span className="text-sm text-muted-foreground">

@@ -1,0 +1,30 @@
+export const INDUSTRIES = [
+  'Technology',
+  'Healthcare',
+  'Finance',
+  'Real Estate',
+  'Education',
+  'Manufacturing',
+  'Retail',
+  'Consulting',
+  'Legal',
+  'Marketing',
+  'Media',
+  'Non-profit',
+  'Government',
+  'Hospitality',
+  'Construction',
+  'Transportation',
+  'Energy',
+  'Agriculture',
+  'Insurance',
+  'Telecommunications',
+  'Pharmaceuticals',
+  'Automotive',
+  'Food & Beverage',
+  'Entertainment',
+  'Sports & Recreation',
+  'Other'
+] as const;
+
+export type Industry = typeof INDUSTRIES[number];

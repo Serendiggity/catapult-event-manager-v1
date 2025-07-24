@@ -10,6 +10,7 @@ export const contacts = pgTable('contacts', {
   phone: text('phone'),
   company: text('company'),
   title: text('title'),
+  industry: text('industry'),
   address: text('address'),
   website: text('website'),
   notes: text('notes'),
@@ -24,6 +25,7 @@ export const contacts = pgTable('contacts', {
     phone?: number;
     company?: number;
     title?: number;
+    industry?: number;
     address?: number;
     website?: number;
     notes?: number;

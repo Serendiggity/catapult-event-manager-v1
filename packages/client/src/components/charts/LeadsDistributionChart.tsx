@@ -121,15 +121,17 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                         >
                           <tspan
                             x={viewBox.cx}
-                            y={viewBox.cy - 5}
-                            className="fill-foreground text-2xl font-bold"
+                            y={viewBox.cy - 10}
+                            className="fill-foreground text-3xl font-bold"
+                            textAnchor="middle"
                           >
                             {totalLeads}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
-                            y={viewBox.cy + 15}
-                            className="fill-muted-foreground text-xs"
+                            y={viewBox.cy + 10}
+                            className="fill-muted-foreground text-sm"
+                            textAnchor="middle"
                           >
                             Total Leads
                           </tspan>

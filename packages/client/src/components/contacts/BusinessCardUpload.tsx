@@ -18,9 +18,10 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: facingMode
+    width: { ideal: 1920 },
+    height: { ideal: 1080 },
+    facingMode: facingMode,
+    aspectRatio: 16/9
   };
 
   const capture = useCallback(() => {
@@ -66,6 +67,9 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Upload Business Card</CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">
+          For best results: Use good lighting, avoid shadows, and ensure text is clear and readable
+        </p>
       </CardHeader>
       <CardContent>
         {mode === 'select' && (
@@ -96,7 +100,6 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handleFileUpload}
               className="hidden"
             />
@@ -110,6 +113,7 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
                 ref={webcamRef}
                 audio={false}
                 screenshotFormat="image/jpeg"
+                screenshotQuality={0.95}
                 videoConstraints={videoConstraints}
                 className="w-full"
               />

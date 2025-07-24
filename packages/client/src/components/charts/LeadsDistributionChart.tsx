@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Label, Pie, PieChart, ResponsiveContainer, Tooltip, Cell, Sector } from "recharts"
+import { Label, Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from "recharts"
 
 import {
   Card,
@@ -32,8 +32,6 @@ const COLORS = [
 ];
 
 export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
-  const [activeIndex, setActiveIndex] = React.useState(0);
-
   const totalLeads = React.useMemo(
     () => data.reduce((sum, event) => sum + event.leads, 0),
     [data]
@@ -52,8 +50,6 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
       </Card>
     )
   }
-
-  const activeEvent = data[activeIndex];
 
   return (
     <Card className="w-full max-w-md">
@@ -92,17 +88,7 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                 stroke="#ffffff"
               >
                 {data.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={COLORS[index % COLORS.length]}
-                    style={{ 
-                      cursor: 'pointer',
-                      filter: activeIndex === index ? 'brightness(1.1)' : 'brightness(1)',
-                      transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
-                      transformOrigin: 'center'
-                    }}
-                    onMouseEnter={() => setActiveIndex(index)}
-                  />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
                 <Label
                   position="center"
@@ -117,17 +103,17 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                       >
                         <tspan
                           x="50%"
-                          dy="-0.4em"
-                          style={{ fontSize: '28px', fontWeight: 'bold' }}
+                          dy="-0.2em"
+                          style={{ fontSize: '24px', fontWeight: 'bold' }}
                         >
-                          {activeEvent?.leads || totalLeads}
+                          {totalLeads}
                         </tspan>
                         <tspan
                           x="50%"
-                          dy="1.4em"
+                          dy="1.5em"
                           style={{ fontSize: '14px', opacity: 0.7 }}
                         >
-                          {activeEvent?.eventName || 'Total Leads'}
+                          Total Leads
                         </tspan>
                       </text>
                     )
@@ -138,23 +124,13 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
           </ResponsiveContainer>
         </div>
         
-        {/* Interactive Legend */}
+        {/* Legend */}
         <div className="mt-4 grid grid-cols-2 gap-2">
           {data.map((event, index) => (
-            <div 
-              key={event.eventId} 
-              className={`flex items-center gap-2 text-sm cursor-pointer transition-opacity ${
-                activeIndex === index ? 'opacity-100' : 'opacity-60 hover:opacity-80'
-              }`}
-              onMouseEnter={() => setActiveIndex(index)}
-              onClick={() => setActiveIndex(index)}
-            >
+            <div key={event.eventId} className="flex items-center gap-2 text-sm">
               <div
-                className="h-3 w-3 rounded-sm shrink-0 transition-transform"
-                style={{ 
-                  backgroundColor: COLORS[index % COLORS.length],
-                  transform: activeIndex === index ? 'scale(1.2)' : 'scale(1)'
-                }}
+                className="h-3 w-3 rounded-sm shrink-0"
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
               />
               <span className="truncate text-xs">{event.eventName} ({event.leads})</span>
             </div>

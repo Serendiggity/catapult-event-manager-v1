@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Label, Pie, PieChart, Sector } from "recharts"
-import { PieSectorDataItem } from "recharts/types/polar/Pie"
+import type { PieSectorDataItem } from "recharts/types/polar/Pie"
 
 import {
   Card,
@@ -9,8 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import type { ChartConfig } from "@/components/ui/chart"
 import {
-  ChartConfig,
   ChartContainer,
   ChartStyle,
   ChartTooltip,
@@ -134,20 +134,6 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
               nameKey="eventName"
               innerRadius={60}
               strokeWidth={5}
-              activeIndex={activeIndex}
-              activeShape={({
-                outerRadius = 0,
-                ...props
-              }: PieSectorDataItem) => (
-                <g>
-                  <Sector {...props} outerRadius={outerRadius + 10} />
-                  <Sector
-                    {...props}
-                    outerRadius={outerRadius + 25}
-                    innerRadius={outerRadius + 12}
-                  />
-                </g>
-              )}
             >
               <Label
                 content={({ viewBox }) => {

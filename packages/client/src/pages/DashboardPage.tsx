@@ -104,14 +104,14 @@ export function DashboardPage() {
   };
 
   const StatCard = ({ title, value, icon: Icon, subtitle, onClick }: any) => (
-    <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full" onClick={onClick}>
-      <CardHeader className="flex flex-col items-center text-center space-y-2 p-4">
-        <Icon className="h-8 w-8 text-muted-foreground" />
-        <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="text-center pb-4 pt-0">
-        <div className="text-2xl sm:text-3xl font-bold">{value}</div>
-        {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col" onClick={onClick}>
+      <CardContent className="flex-1 flex flex-col items-center justify-center text-center p-4 space-y-2">
+        <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground">{title}</p>
+          <div className="text-2xl sm:text-3xl font-bold">{value}</div>
+          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
       </CardContent>
     </Card>
   );

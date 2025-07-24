@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: catapult-new-era-events-api
+    name: catapult-event-manager-server
     runtime: node
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master
@@ -13,14 +13,14 @@ services:
       - key: PORT
         generateValue: true
       - key: CORS_ORIGIN
-        value: https://catapult-new-era-events.onrender.com
-        previewValue: https://catapult-new-era-events-preview.onrender.com
+        value: https://catapult-event-manager-client.onrender.com
+        previewValue: https://catapult-event-manager-client-preview.onrender.com
       - key: NODE_VERSION
         value: 20.11.1
     healthCheckPath: /health
 
   - type: web
-    name: catapult-new-era-events
+    name: catapult-event-manager-client
     runtime: static
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master
@@ -35,8 +35,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: VITE_API_URL
-        value: https://catapult-new-era-events-api.onrender.com
-        previewValue: https://catapult-new-era-events-api-preview.onrender.com
+        value: https://catapult-event-manager-server.onrender.com
+        previewValue: https://catapult-event-manager-server-preview.onrender.com
       - key: NODE_VERSION
         value: 20.11.1
     headers:

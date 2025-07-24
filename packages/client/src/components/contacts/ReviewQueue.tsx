@@ -12,6 +12,7 @@ interface FieldConfidence {
   phone?: number;
   company?: number;
   title?: number;
+  industry?: number;
   address?: number;
 }
 
@@ -23,6 +24,7 @@ interface Contact {
   phone: string | null;
   company: string | null;
   title: string | null;
+  industry: string | null;
   address: string | null;
   imageUrl: string | null;
   needsReview: boolean;
@@ -103,6 +105,7 @@ export function ReviewQueue({ eventId }: ReviewQueueProps) {
     if (scores.phone && scores.phone < 0.7) fields.push('phone');
     if (scores.company && scores.company < 0.7) fields.push('company');
     if (scores.title && scores.title < 0.7) fields.push('title');
+    if (scores.industry && scores.industry < 0.7) fields.push('industry');
     if (scores.address && scores.address < 0.7) fields.push('address');
     
     return fields;
@@ -116,6 +119,7 @@ export function ReviewQueue({ eventId }: ReviewQueueProps) {
       phone: 'Phone',
       company: 'Company',
       title: 'Title',
+      industry: 'Industry',
       address: 'Address'
     };
     return fieldNames[field] || field;

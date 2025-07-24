@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Label, Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from "recharts"
+import { Label, Pie, PieChart, ResponsiveContainer, Tooltip, Cell, Sector } from "recharts"
 
 import {
   Card,
@@ -8,12 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { ChartConfig } from "@/components/ui/chart"
-import {
-  ChartContainer,
-  ChartStyle,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
 
 interface EventData {
   eventId: string;
@@ -27,35 +21,18 @@ interface LeadsDistributionChartProps {
 }
 
 const COLORS = [
-  'hsl(220, 70%, 50%)',
-  'hsl(160, 60%, 45%)', 
-  'hsl(30, 80%, 55%)',
-  'hsl(280, 65%, 60%)',
-  'hsl(340, 75%, 55%)',
-  'hsl(200, 70%, 45%)',
-  'hsl(120, 60%, 40%)',
-  'hsl(60, 70%, 50%)',
+  '#3b82f6', // blue
+  '#10b981', // emerald
+  '#f59e0b', // amber
+  '#8b5cf6', // violet
+  '#ef4444', // red
+  '#06b6d4', // cyan
+  '#84cc16', // lime
+  '#f97316', // orange
 ];
 
 export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
-  const id = "leads-distribution"
-
-  // Generate chart config from data
-  const chartConfig = React.useMemo(() => {
-    const config: ChartConfig = {
-      leads: {
-        label: "Leads",
-      },
-    }
-    
-    data.forEach((event) => {
-      config[event.eventId] = {
-        label: event.eventName,
-      }
-    })
-    
-    return config
-  }, [data])
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
   const totalLeads = React.useMemo(
     () => data.reduce((sum, event) => sum + event.leads, 0),
@@ -76,6 +53,8 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
     )
   }
 
+  const activeEvent = data[activeIndex];
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="pb-4">
@@ -87,8 +66,19 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
-                cursor={false}
-                content={<ChartTooltipContent />}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-white p-2 shadow-sm">
+                        <p className="text-sm font-medium">{payload[0].name}</p>
+                        <p className="text-sm text-gray-600">
+                          {payload[0].value} leads
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
               <Pie
                 data={data}
@@ -96,13 +86,23 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                 nameKey="eventName"
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
+                innerRadius={60}
                 outerRadius={80}
                 strokeWidth={2}
                 stroke="#ffffff"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]}
+                    style={{ 
+                      cursor: 'pointer',
+                      filter: activeIndex === index ? 'brightness(1.1)' : 'brightness(1)',
+                      transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
+                      transformOrigin: 'center'
+                    }}
+                    onMouseEnter={() => setActiveIndex(index)}
+                  />
                 ))}
                 <Label
                   position="center"
@@ -117,17 +117,17 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                       >
                         <tspan
                           x="50%"
-                          dy="-0.2em"
-                          style={{ fontSize: '24px', fontWeight: 'bold' }}
+                          dy="-0.4em"
+                          style={{ fontSize: '28px', fontWeight: 'bold' }}
                         >
-                          {totalLeads}
+                          {activeEvent?.leads || totalLeads}
                         </tspan>
                         <tspan
                           x="50%"
-                          dy="1.5em"
+                          dy="1.4em"
                           style={{ fontSize: '14px', opacity: 0.7 }}
                         >
-                          Total Leads
+                          {activeEvent?.eventName || 'Total Leads'}
                         </tspan>
                       </text>
                     )
@@ -138,13 +138,23 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
           </ResponsiveContainer>
         </div>
         
-        {/* Legend */}
+        {/* Interactive Legend */}
         <div className="mt-4 grid grid-cols-2 gap-2">
           {data.map((event, index) => (
-            <div key={event.eventId} className="flex items-center gap-2 text-sm">
+            <div 
+              key={event.eventId} 
+              className={`flex items-center gap-2 text-sm cursor-pointer transition-opacity ${
+                activeIndex === index ? 'opacity-100' : 'opacity-60 hover:opacity-80'
+              }`}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => setActiveIndex(index)}
+            >
               <div
-                className="h-3 w-3 rounded-sm shrink-0"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                className="h-3 w-3 rounded-sm shrink-0 transition-transform"
+                style={{ 
+                  backgroundColor: COLORS[index % COLORS.length],
+                  transform: activeIndex === index ? 'scale(1.2)' : 'scale(1)'
+                }}
               />
               <span className="truncate text-xs">{event.eventName} ({event.leads})</span>
             </div>

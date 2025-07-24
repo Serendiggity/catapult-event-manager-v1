@@ -105,7 +105,7 @@ export function DashboardPage() {
 
   const StatCard = ({ title, value, icon: Icon, subtitle, onClick }: any) => (
     <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col" onClick={onClick}>
-      <CardContent className="flex-1 flex flex-col items-center justify-center text-center p-4 space-y-2">
+      <CardContent className="flex-1 flex flex-col items-center justify-center text-center p-4 space-y-2 lg:py-4 py-6">
         <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
@@ -173,7 +173,7 @@ export function DashboardPage() {
 
       {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 items-stretch">
-        <div className="aspect-square h-full">
+        <div className="h-full lg:dashboard-stat-rect">
           <StatCard
             title="Total Events"
             value={stats.totalEvents}
@@ -183,7 +183,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square h-full">
+        <div className="h-full lg:dashboard-stat-rect">
           <StatCard
             title="Total Leads"
             value={stats.totalLeads}
@@ -193,7 +193,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square h-full">
+        <div className="h-full lg:dashboard-stat-rect">
           <StatCard
             title="Needs Review"
             value={stats.pendingReview}
@@ -203,7 +203,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square h-full">
+        <div className="h-full lg:dashboard-stat-rect">
           <StatCard
             title="Campaigns"
             value={stats.totalCampaigns}

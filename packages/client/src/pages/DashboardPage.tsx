@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Users, Mail, TrendingUp, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatDistanceToNow } from 'date-fns';
-import { LeadsDistributionChart } from '@/components/charts/LeadsDistributionChart';
+// import { LeadsDistributionChart } from '@/components/charts/LeadsDistributionChart';
 
 interface DashboardStats {
   totalEvents: number;
@@ -206,12 +206,12 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Charts Section */}
-      {stats.eventLeadData.length > 0 && (
+      {/* Charts Section - Temporarily disabled */}
+      {/* {stats.eventLeadData.length > 0 && (
         <div className="mb-8">
           <LeadsDistributionChart data={stats.eventLeadData} />
         </div>
-      )}
+      )} */}
 
       {/* Recent Activity & Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

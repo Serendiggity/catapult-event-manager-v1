@@ -22,5 +22,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      external: [],
+    },
+  },
+  optimizeDeps: {
+    include: ['react-is'],
   },
 })

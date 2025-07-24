@@ -81,7 +81,7 @@ export function DashboardPage() {
           eventId,
           eventName: data.eventName,
           leads: data.leads,
-          fill: `var(--chart-${(index % 5) + 1})`
+          fill: '' // Will be handled by the chart component
         }));
       
       // Calculate stats

@@ -77,18 +77,13 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
   }
 
   return (
-    <Card data-chart={id} className="w-full max-w-md">
-      <ChartStyle id={id} config={chartConfig} />
+    <Card className="w-full max-w-md">
       <CardHeader className="pb-4">
         <CardTitle>Lead Distribution</CardTitle>
         <CardDescription>{data.length} events</CardDescription>
       </CardHeader>
       <CardContent className="pb-6">
-        <ChartContainer
-          id={id}
-          config={chartConfig}
-          className="mx-auto aspect-square w-full max-h-[250px]"
-        >
+        <div className="mx-auto aspect-square w-full max-h-[250px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
@@ -104,46 +99,44 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                 innerRadius={50}
                 outerRadius={80}
                 strokeWidth={2}
-                stroke="hsl(var(--background))"
+                stroke="#ffffff"
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
                 <Label
-                  content={({ viewBox }: any) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
+                  position="center"
+                  content={() => {
+                    return (
+                      <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="fill-current"
+                      >
+                        <tspan
+                          x="50%"
+                          dy="-0.2em"
+                          style={{ fontSize: '24px', fontWeight: 'bold' }}
                         >
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy - 10}
-                            className="fill-foreground text-3xl font-bold"
-                            textAnchor="middle"
-                          >
-                            {totalLeads}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy + 10}
-                            className="fill-muted-foreground text-sm"
-                            textAnchor="middle"
-                          >
-                            Total Leads
-                          </tspan>
-                        </text>
-                      )
-                    }
+                          {totalLeads}
+                        </tspan>
+                        <tspan
+                          x="50%"
+                          dy="1.5em"
+                          style={{ fontSize: '14px', opacity: 0.7 }}
+                        >
+                          Total Leads
+                        </tspan>
+                      </text>
+                    )
                   }}
                 />
               </Pie>
             </PieChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
         
         {/* Legend */}
         <div className="mt-4 grid grid-cols-2 gap-2">

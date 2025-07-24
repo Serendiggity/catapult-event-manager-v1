@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: catapult-event-manager-server
+    name: new-era-events-server
     runtime: node
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master
@@ -20,7 +20,7 @@ services:
     healthCheckPath: /health
 
   - type: web
-    name: catapult-event-manager-client
+    name: catapult-new-era-events
     runtime: static
     repo: https://github.com/Serendiggity/catapult-event-manager-v1
     branch: master

@@ -54,12 +54,12 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-2 sm:pb-4">
         <CardTitle>Lead Distribution</CardTitle>
         <CardDescription>{data.length} events</CardDescription>
       </CardHeader>
-      <CardContent className="pb-6">
-        <div className="mx-auto aspect-square w-full max-h-[250px]">
+      <CardContent className="pb-4 sm:pb-6 pt-0">
+        <div className="mx-auto aspect-square w-full max-h-[300px] sm:max-h-[250px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
@@ -83,8 +83,8 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                 nameKey="eventName"
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={80}
+                innerRadius={65}
+                outerRadius={90}
                 strokeWidth={2}
                 stroke="#ffffff"
               >
@@ -126,20 +126,20 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
         </div>
         
         {/* Legend - Show only top 5 + Others in legend */}
-        <div className="mt-4 space-y-1">
+        <div className="mt-2 sm:mt-4 space-y-0.5 sm:space-y-1">
           {data.slice(0, 6).map((event, index) => (
-            <div key={event.eventId} className="flex items-center gap-2 text-sm">
+            <div key={event.eventId} className="flex items-center gap-1.5 sm:gap-2 text-sm">
               <div
-                className="h-2.5 w-2.5 rounded-sm shrink-0"
+                className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-sm shrink-0"
                 style={{ backgroundColor: event.eventId === 'others' ? '#6b7280' : COLORS[index % COLORS.length] }}
               />
               <span className="truncate text-xs text-muted-foreground">
-                {event.eventName} ({event.leads} leads)
+                {event.eventName} ({event.leads})
               </span>
             </div>
           ))}
           {data.length > 6 && (
-            <p className="text-xs text-muted-foreground italic mt-2">
+            <p className="text-xs text-muted-foreground italic mt-1 sm:mt-2">
               Showing top events only
             </p>
           )}

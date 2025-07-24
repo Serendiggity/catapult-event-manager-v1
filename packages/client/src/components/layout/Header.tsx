@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Users, Mail, Zap, Menu, X } from 'lucide-react';
+import { Calendar, Users, Mail, Zap, Menu, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { QUICK_ADD_EVENT_ID } from '@/constants/quick-add';
 
@@ -37,7 +37,8 @@ export function Header() {
   };
   
   const navLinks = [
-    { to: '/', label: 'Events', icon: Calendar, active: isActive('/events') || location.pathname === '/' },
+    { to: '/', label: 'Dashboard', icon: LayoutDashboard, active: location.pathname === '/' },
+    { to: '/events', label: 'Events', icon: Calendar, active: isActive('/events') },
     { to: '/contacts', label: 'Leads', icon: Users, active: isActive('/contacts') || isActive('/campaign-groups') },
     { to: '/campaigns', label: 'Campaigns', icon: Mail, active: isActive('/campaigns') }
   ];

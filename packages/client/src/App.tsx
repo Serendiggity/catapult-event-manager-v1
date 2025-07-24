@@ -19,6 +19,7 @@ import { CampaignDetailsPage } from '@/pages/CampaignDetailsPage'
 import { CampaignWizard } from '@/components/campaigns/CampaignWizard'
 import { QuickEmailPage } from '@/pages/QuickEmailPage'
 import { NavbarDemoPage } from '@/pages/NavbarDemoPage'
+import { DashboardPage } from '@/pages/DashboardPage'
 
 function App() {
   console.log('App component rendering');
@@ -28,7 +29,7 @@ function App() {
         <OnboardingProvider>
           <Layout>
             <Routes>
-            <Route path="/" element={<EventsPage />} />
+            <Route path="/" element={<DashboardPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/events/new" element={<EventCreatePage />} />
             <Route path="/events/:id" element={<EventDetailsPage />} />

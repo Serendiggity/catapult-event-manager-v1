@@ -35,6 +35,13 @@
     --input: #E8E8E8;
     --ring: #2B2B2B;
     --radius: 0.75rem;
+    
+    /* Chart colors */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 
   .dark {
@@ -65,6 +72,13 @@
     --border: #2A2A2A;
     --input: #2A2A2A;
     --ring: #F8F7F4;
+    
+    /* Chart colors - Dark mode */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 

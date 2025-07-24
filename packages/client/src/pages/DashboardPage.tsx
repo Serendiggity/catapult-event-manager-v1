@@ -81,12 +81,29 @@ export function DashboardPage() {
       // Convert to array format for chart
       const eventLeadData = Array.from(eventLeadMap.entries())
         .filter(([_, data]) => data.leads > 0) // Only show events with leads
+        .sort((a, b) => b[1].leads - a[1].leads) // Sort by lead count descending
+        .slice(0, 8) // Limit to top 8 events
         .map(([eventId, data], index) => ({
           eventId,
           eventName: data.eventName,
           leads: data.leads,
           fill: '' // Will be handled by the chart component
         }));
+      
+      // Add "Others" category if there are more events
+      const remainingEvents = Array.from(eventLeadMap.entries())
+        .filter(([_, data]) => data.leads > 0)
+        .slice(8);
+      
+      if (remainingEvents.length > 0) {
+        const othersLeads = remainingEvents.reduce((sum, [_, data]) => sum + data.leads, 0);
+        eventLeadData.push({
+          eventId: 'others',
+          eventName: `Others (${remainingEvents.length} events)`,
+          leads: othersLeads,
+          fill: ''
+        });
+      }
       
       // Calculate date-based metrics
       const sevenDaysAgo = new Date();

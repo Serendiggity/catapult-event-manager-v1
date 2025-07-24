@@ -29,6 +29,7 @@ const COLORS = [
   '#06b6d4', // cyan
   '#84cc16', // lime
   '#f97316', // orange
+  '#6b7280', // gray for "Others"
 ];
 
 export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
@@ -124,17 +125,24 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
           </ResponsiveContainer>
         </div>
         
-        {/* Legend */}
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {data.map((event, index) => (
+        {/* Legend - Show only top 5 + Others in legend */}
+        <div className="mt-4 space-y-1">
+          {data.slice(0, 6).map((event, index) => (
             <div key={event.eventId} className="flex items-center gap-2 text-sm">
               <div
-                className="h-3 w-3 rounded-sm shrink-0"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                className="h-2.5 w-2.5 rounded-sm shrink-0"
+                style={{ backgroundColor: event.eventId === 'others' ? '#6b7280' : COLORS[index % COLORS.length] }}
               />
-              <span className="truncate text-xs">{event.eventName} ({event.leads})</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {event.eventName} ({event.leads} leads)
+              </span>
             </div>
           ))}
+          {data.length > 6 && (
+            <p className="text-xs text-muted-foreground italic mt-2">
+              Showing top events only
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Users, Mail, TrendingUp, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { Calendar, Users, Mail, TrendingUp, Clock, CheckCircle, AlertCircle, Plus, UserPlus, Timer } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatDistanceToNow } from 'date-fns';
 import { LeadsDistributionChart } from '@/components/charts/LeadsDistributionChart';
@@ -16,6 +16,8 @@ interface DashboardStats {
   totalCampaigns: number;
   activeCampaigns: number;
   recentActivity: any[];
+  newLeadsWeek: number;
+  agingLeads: number;
   eventLeadData: Array<{
     eventId: string;
     eventName: string;
@@ -35,6 +37,8 @@ export function DashboardPage() {
     totalCampaigns: 0,
     activeCampaigns: 0,
     recentActivity: [],
+    newLeadsWeek: 0,
+    agingLeads: 0,
     eventLeadData: []
   });
   const [loading, setLoading] = useState(true);
@@ -84,6 +88,21 @@ export function DashboardPage() {
           fill: '' // Will be handled by the chart component
         }));
       
+      // Calculate date-based metrics
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const newLeadsWeek = contacts.filter((c: any) => 
+        new Date(c.createdAt) >= sevenDaysAgo
+      ).length;
+      
+      const agingLeads = contacts.filter((c: any) => 
+        new Date(c.createdAt) < thirtyDaysAgo && c.needsReview
+      ).length;
+      
       // Calculate stats
       setStats({
         totalEvents: events.length,
@@ -94,6 +113,8 @@ export function DashboardPage() {
         totalCampaigns: 0, // TODO: Fetch campaigns
         activeCampaigns: 0, // TODO: Fetch active campaigns
         recentActivity: [], // TODO: Implement activity tracking
+        newLeadsWeek,
+        agingLeads,
         eventLeadData
       });
     } catch (error) {
@@ -171,8 +192,8 @@ export function DashboardPage() {
         </Button>
       </div>
 
-      {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+      {/* Stats Grid - 2x3 on mobile, 6 columns on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
         <div className="aspect-square lg:aspect-auto">
           <StatCard
             title="Total Events"
@@ -190,6 +211,26 @@ export function DashboardPage() {
             icon={Users}
             subtitle={`${stats.verifiedLeads} verified`}
             onClick={() => navigate('/contacts')}
+          />
+        </div>
+        
+        <div className="aspect-square lg:aspect-auto">
+          <StatCard
+            title="New This Week"
+            value={stats.newLeadsWeek}
+            icon={UserPlus}
+            subtitle="Last 7 days"
+            onClick={() => navigate('/contacts')}
+          />
+        </div>
+        
+        <div className="aspect-square lg:aspect-auto">
+          <StatCard
+            title="Aging Leads"
+            value={stats.agingLeads}
+            icon={Timer}
+            subtitle="30+ days unreviewed"
+            onClick={() => navigate('/contacts?status=needs-review')}
           />
         </div>
         

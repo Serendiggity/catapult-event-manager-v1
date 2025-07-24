@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Users, Mail, TrendingUp, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatDistanceToNow } from 'date-fns';
+import { LeadsDistributionChart } from '@/components/charts/LeadsDistributionChart';
 
 interface DashboardStats {
   totalEvents: number;
@@ -15,6 +16,12 @@ interface DashboardStats {
   totalCampaigns: number;
   activeCampaigns: number;
   recentActivity: any[];
+  eventLeadData: Array<{
+    eventId: string;
+    eventName: string;
+    leads: number;
+    fill: string;
+  }>;
 }
 
 export function DashboardPage() {
@@ -27,7 +34,8 @@ export function DashboardPage() {
     pendingReview: 0,
     totalCampaigns: 0,
     activeCampaigns: 0,
-    recentActivity: []
+    recentActivity: [],
+    eventLeadData: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -50,6 +58,32 @@ export function DashboardPage() {
       const contactsData = await contactsResponse.json();
       const contacts = contactsData.contacts || [];
       
+      // Build event lead data
+      const eventLeadMap = new Map<string, { eventName: string; leads: number }>();
+      
+      // Initialize with all events
+      events.forEach((event: any) => {
+        eventLeadMap.set(event.id, { eventName: event.title, leads: 0 });
+      });
+      
+      // Count leads per event
+      contacts.forEach((contact: any) => {
+        if (contact.eventId && eventLeadMap.has(contact.eventId)) {
+          const current = eventLeadMap.get(contact.eventId)!;
+          current.leads += 1;
+        }
+      });
+      
+      // Convert to array format for chart
+      const eventLeadData = Array.from(eventLeadMap.entries())
+        .filter(([_, data]) => data.leads > 0) // Only show events with leads
+        .map(([eventId, data], index) => ({
+          eventId,
+          eventName: data.eventName,
+          leads: data.leads,
+          fill: `var(--chart-${(index % 5) + 1})`
+        }));
+      
       // Calculate stats
       setStats({
         totalEvents: events.length,
@@ -59,7 +93,8 @@ export function DashboardPage() {
         pendingReview: contacts.filter((c: any) => c.needsReview).length,
         totalCampaigns: 0, // TODO: Fetch campaigns
         activeCampaigns: 0, // TODO: Fetch active campaigns
-        recentActivity: [] // TODO: Implement activity tracking
+        recentActivity: [], // TODO: Implement activity tracking
+        eventLeadData
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -170,6 +205,13 @@ export function DashboardPage() {
           onClick={() => navigate('/campaigns')}
         />
       </div>
+
+      {/* Charts Section */}
+      {stats.eventLeadData.length > 0 && (
+        <div className="mb-8">
+          <LeadsDistributionChart data={stats.eventLeadData} />
+        </div>
+      )}
 
       {/* Recent Activity & Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

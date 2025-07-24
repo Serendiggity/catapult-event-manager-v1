@@ -172,8 +172,8 @@ export function DashboardPage() {
       </div>
 
       {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <div className="aspect-square">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 items-stretch">
+        <div className="aspect-square h-full">
           <StatCard
             title="Total Events"
             value={stats.totalEvents}
@@ -183,7 +183,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square">
+        <div className="aspect-square h-full">
           <StatCard
             title="Total Leads"
             value={stats.totalLeads}
@@ -193,7 +193,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square">
+        <div className="aspect-square h-full">
           <StatCard
             title="Needs Review"
             value={stats.pendingReview}
@@ -203,7 +203,7 @@ export function DashboardPage() {
           />
         </div>
         
-        <div className="aspect-square">
+        <div className="aspect-square h-full">
           <StatCard
             title="Campaigns"
             value={stats.totalCampaigns}

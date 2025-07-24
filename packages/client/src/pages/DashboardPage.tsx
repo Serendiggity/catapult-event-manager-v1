@@ -104,13 +104,13 @@ export function DashboardPage() {
   };
 
   const StatCard = ({ title, value, icon: Icon, subtitle, onClick }: any) => (
-    <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={onClick}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full" onClick={onClick}>
+      <CardHeader className="flex flex-col items-center text-center space-y-2 p-4">
+        <Icon className="h-8 w-8 text-muted-foreground" />
+        <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+      <CardContent className="text-center pb-4 pt-0">
+        <div className="text-2xl sm:text-3xl font-bold">{value}</div>
         {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
       </CardContent>
     </Card>
@@ -171,39 +171,47 @@ export function DashboardPage() {
         </Button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard
-          title="Total Events"
-          value={stats.totalEvents}
-          icon={Calendar}
-          subtitle={`${stats.upcomingEvents} upcoming`}
-          onClick={() => navigate('/events')}
-        />
+      {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="aspect-square">
+          <StatCard
+            title="Total Events"
+            value={stats.totalEvents}
+            icon={Calendar}
+            subtitle={`${stats.upcomingEvents} upcoming`}
+            onClick={() => navigate('/events')}
+          />
+        </div>
         
-        <StatCard
-          title="Total Leads"
-          value={stats.totalLeads}
-          icon={Users}
-          subtitle={`${stats.verifiedLeads} verified`}
-          onClick={() => navigate('/contacts')}
-        />
+        <div className="aspect-square">
+          <StatCard
+            title="Total Leads"
+            value={stats.totalLeads}
+            icon={Users}
+            subtitle={`${stats.verifiedLeads} verified`}
+            onClick={() => navigate('/contacts')}
+          />
+        </div>
         
-        <StatCard
-          title="Needs Review"
-          value={stats.pendingReview}
-          icon={AlertCircle}
-          subtitle="Pending verification"
-          onClick={() => navigate('/contacts?status=needs-review')}
-        />
+        <div className="aspect-square">
+          <StatCard
+            title="Needs Review"
+            value={stats.pendingReview}
+            icon={AlertCircle}
+            subtitle="Pending verification"
+            onClick={() => navigate('/contacts?status=needs-review')}
+          />
+        </div>
         
-        <StatCard
-          title="Campaigns"
-          value={stats.totalCampaigns}
-          icon={Mail}
-          subtitle={`${stats.activeCampaigns} active`}
-          onClick={() => navigate('/campaigns')}
-        />
+        <div className="aspect-square">
+          <StatCard
+            title="Campaigns"
+            value={stats.totalCampaigns}
+            icon={Mail}
+            subtitle={`${stats.activeCampaigns} active`}
+            onClick={() => navigate('/campaigns')}
+          />
+        </div>
       </div>
 
       {/* Charts and Activity Section */}

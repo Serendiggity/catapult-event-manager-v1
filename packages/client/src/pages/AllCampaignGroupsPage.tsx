@@ -106,38 +106,56 @@ export function AllCampaignGroupsPage() {
 
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">Campaign groups</h1>
             <p className="text-gray-600">Track and manage leads across all your events</p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold">{filteredGroups.length}</div>
-            <div className="text-sm text-gray-600">Total groups</div>
-            <div className="text-xl font-semibold mt-2">{totalLeads}</div>
-            <div className="text-sm text-gray-600">Total leads</div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="text-right">
+              <div className="text-2xl font-bold">{filteredGroups.length}</div>
+              <div className="text-sm text-gray-600">Total groups</div>
+              <div className="text-xl font-semibold mt-2">{totalLeads}</div>
+              <div className="text-sm text-gray-600">Total leads</div>
+            </div>
+            {selectedEventId !== 'all' && (
+              <Button 
+                onClick={() => navigate(`/events/${selectedEventId}/campaign-groups`)}
+                className="bg-primary hover:bg-primary/90"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Campaign Group
+              </Button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Filter by Event */}
       <Card className="p-4 mb-6">
-        <div className="flex items-center gap-4">
-          <Label className="text-sm font-medium">Filter by event:</Label>
-          <Select value={selectedEventId} onValueChange={setSelectedEventId}>
-            <SelectTrigger className="w-[300px]">
-              <Calendar className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Select an event" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All events</SelectItem>
-              {events.map((event) => (
-                <SelectItem key={event.id} value={event.id}>
-                  {event.title} - {new Date(event.date).toLocaleDateString()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
+            <Label className="text-sm font-medium">Filter by event:</Label>
+            <Select value={selectedEventId} onValueChange={setSelectedEventId}>
+              <SelectTrigger className="w-[300px]">
+                <Calendar className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Select an event" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All events</SelectItem>
+                {events.map((event) => (
+                  <SelectItem key={event.id} value={event.id}>
+                    {event.title} - {new Date(event.date).toLocaleDateString()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedEventId === 'all' && (
+            <p className="text-sm text-muted-foreground">
+              Select an event to create a new campaign group
+            </p>
+          )}
         </div>
       </Card>
 

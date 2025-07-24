@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Label, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
+import { Label, Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from "recharts"
 
 import {
   Card,
@@ -14,13 +14,6 @@ import {
   ChartStyle,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 interface EventData {
   eventId: string;
@@ -33,14 +26,19 @@ interface LeadsDistributionChartProps {
   data: EventData[];
 }
 
+const COLORS = [
+  'hsl(220, 70%, 50%)',
+  'hsl(160, 60%, 45%)', 
+  'hsl(30, 80%, 55%)',
+  'hsl(280, 65%, 60%)',
+  'hsl(340, 75%, 55%)',
+  'hsl(200, 70%, 45%)',
+  'hsl(120, 60%, 40%)',
+  'hsl(60, 70%, 50%)',
+];
+
 export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
   const id = "leads-distribution"
-  const [activeEvent, setActiveEvent] = React.useState(data[0]?.eventId || '')
-
-  const activeIndex = React.useMemo(
-    () => data.findIndex((item) => item.eventId === activeEvent),
-    [activeEvent, data]
-  )
 
   // Generate chart config from data
   const chartConfig = React.useMemo(() => {
@@ -50,10 +48,9 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
       },
     }
     
-    data.forEach((event, index) => {
+    data.forEach((event) => {
       config[event.eventId] = {
         label: event.eventName,
-        color: `hsl(var(--chart-${(index % 5) + 1}))`,
       }
     })
     
@@ -67,80 +64,54 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
 
   if (data.length === 0) {
     return (
-      <Card>
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Lead Distribution by Event</CardTitle>
+          <CardTitle>Lead Distribution</CardTitle>
           <CardDescription>No events with leads found</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
-          <p className="text-muted-foreground">Create events and add leads to see distribution</p>
+        <CardContent className="flex items-center justify-center h-[200px]">
+          <p className="text-muted-foreground text-sm">Create events and add leads to see distribution</p>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card data-chart={id} className="flex flex-col">
+    <Card data-chart={id} className="w-full max-w-md">
       <ChartStyle id={id} config={chartConfig} />
-      <CardHeader className="flex-row items-start space-y-0 pb-0">
-        <div className="grid gap-1">
-          <CardTitle>Lead Distribution by Event</CardTitle>
-          <CardDescription>Total: {totalLeads} leads across {data.length} events</CardDescription>
-        </div>
-        <Select value={activeEvent} onValueChange={setActiveEvent}>
-          <SelectTrigger
-            className="ml-auto h-7 w-[180px] rounded-lg pl-2.5"
-            aria-label="Select an event"
-          >
-            <SelectValue placeholder="Select event" />
-          </SelectTrigger>
-          <SelectContent align="end" className="rounded-xl">
-            {data.map((event, index) => (
-              <SelectItem
-                key={event.eventId}
-                value={event.eventId}
-                className="rounded-lg [&_span]:flex"
-              >
-                <div className="flex items-center gap-2 text-xs">
-                  <span
-                    className="flex h-3 w-3 shrink-0 rounded-sm"
-                    style={{
-                      backgroundColor: `hsl(var(--chart-${(index % 5) + 1}))`,
-                    }}
-                  />
-                  <span className="truncate max-w-[150px]">{event.eventName}</span>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <CardHeader className="pb-4">
+        <CardTitle>Lead Distribution</CardTitle>
+        <CardDescription>{data.length} events</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-1 justify-center pb-0">
+      <CardContent className="pb-6">
         <ChartContainer
           id={id}
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[300px]"
+          className="mx-auto aspect-square w-full max-h-[250px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
                 cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+                content={<ChartTooltipContent />}
               />
               <Pie
                 data={data}
                 dataKey="leads"
                 nameKey="eventName"
-                innerRadius={60}
-                strokeWidth={5}
-                fill="#8884d8"
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={80}
+                strokeWidth={2}
+                stroke="hsl(var(--background))"
               >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
                 <Label
                   content={({ viewBox }: any) => {
                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      const selectedEvent = data[activeIndex]
-                      const percentage = ((selectedEvent?.leads || 0) / totalLeads * 100).toFixed(1)
-                      
                       return (
                         <text
                           x={viewBox.cx}
@@ -150,17 +121,17 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                         >
                           <tspan
                             x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-foreground text-3xl font-bold"
+                            y={viewBox.cy - 5}
+                            className="fill-foreground text-2xl font-bold"
                           >
-                            {selectedEvent?.leads.toLocaleString() || 0}
+                            {totalLeads}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 24}
-                            className="fill-muted-foreground"
+                            y={viewBox.cy + 15}
+                            className="fill-muted-foreground text-xs"
                           >
-                            Leads ({percentage}%)
+                            Total Leads
                           </tspan>
                         </text>
                       )
@@ -171,6 +142,19 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
             </PieChart>
           </ResponsiveContainer>
         </ChartContainer>
+        
+        {/* Legend */}
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {data.map((event, index) => (
+            <div key={event.eventId} className="flex items-center gap-2 text-sm">
+              <div
+                className="h-3 w-3 rounded-sm shrink-0"
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="truncate text-xs">{event.eventName} ({event.leads})</span>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   )

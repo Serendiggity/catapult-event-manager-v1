@@ -206,38 +206,17 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Charts Section */}
-      {stats.eventLeadData.length > 0 && (
-        <div className="mb-8">
-          <LeadsDistributionChart data={stats.eventLeadData} />
-        </div>
-      )}
-
-      {/* Recent Activity & Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {stats.recentActivity.length > 0 ? (
-              <div className="space-y-4">
-                {/* Activity items would go here */}
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-center py-8">
-                No recent activity to display
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Quick Insights */}
-        <Card>
+      {/* Charts and Activity Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Lead Distribution Chart */}
+        {stats.eventLeadData.length > 0 && (
+          <div className="lg:col-span-1">
+            <LeadsDistributionChart data={stats.eventLeadData} />
+          </div>
+        )}
+        
+        {/* Quick Insights - Adjust span based on chart presence */}
+        <Card className={stats.eventLeadData.length > 0 ? "lg:col-span-2" : "lg:col-span-3"}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
@@ -285,6 +264,27 @@ export function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Recent Activity
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {stats.recentActivity.length > 0 ? (
+            <div className="space-y-4">
+              {/* Activity items would go here */}
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-center py-8">
+              No recent activity to display
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

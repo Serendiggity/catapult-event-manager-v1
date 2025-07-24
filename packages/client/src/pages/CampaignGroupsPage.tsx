@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CampaignGroupsList } from '../components/campaignGroups/CampaignGroupsList';
 import { Button } from '../components/ui/button';
-import { ArrowLeft, Mail, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Mail, ChevronRight, Plus } from 'lucide-react';
+import { CampaignGroupForm } from '../components/campaignGroups/CampaignGroupForm';
 
 export function CampaignGroupsPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [eventTitle, setEventTitle] = useState<string>('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
     if (eventId) {
@@ -44,7 +46,7 @@ export function CampaignGroupsPage() {
         <span className="text-gray-900">Campaign Groups</span>
       </nav>
 
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <Button
           variant="ghost"
           onClick={() => navigate(`/events/${eventId}`)}
@@ -52,15 +54,38 @@ export function CampaignGroupsPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Event
         </Button>
-        <Button
-          onClick={() => navigate(`/events/${eventId}/campaigns`)}
-        >
-          <Mail className="h-4 w-4 mr-2" />
-          Email Campaigns
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button
+            onClick={() => setShowCreateForm(true)}
+            className="bg-primary hover:bg-primary/90 w-full sm:w-auto order-1 sm:order-2"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Create Group
+          </Button>
+          <Button
+            onClick={() => navigate(`/events/${eventId}/campaigns`)}
+            variant="outline"
+            className="w-full sm:w-auto order-2 sm:order-1"
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Email Campaigns
+          </Button>
+        </div>
       </div>
 
       <CampaignGroupsList eventId={eventId} />
+      
+      {showCreateForm && (
+        <CampaignGroupForm
+          eventId={eventId}
+          group={null}
+          onClose={() => {
+            setShowCreateForm(false);
+            // Force refresh of the list
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -102,17 +102,11 @@ export function CampaignGroupsList({ eventId }: CampaignGroupsListProps) {
   return (
     <>
       <div className="space-y-6" data-onboarding="campaign-groups-section">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold">Campaign Groups</h2>
-            <p className="text-gray-600 mt-1">
-              Organize your leads into groups for targeted campaigns
-            </p>
-          </div>
-          <Button onClick={handleCreateGroup} className="w-full sm:w-auto">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Group
-          </Button>
+        <div>
+          <h2 className="text-2xl font-bold">Campaign Groups</h2>
+          <p className="text-gray-600 mt-1">
+            Organize your leads into groups for targeted campaigns
+          </p>
         </div>
 
         {groups.length === 0 ? (

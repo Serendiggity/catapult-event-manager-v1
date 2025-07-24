@@ -74,11 +74,12 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
       <CardContent>
         {mode === 'select' && (
           <div className="space-y-4">
+            {/* Show single button on mobile, two buttons on desktop */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button
                 onClick={() => setMode('camera')}
                 variant="outline"
-                className="h-32 flex flex-col gap-2"
+                className="h-32 hidden md:flex flex-col gap-2"
                 disabled={isProcessing}
               >
                 <Camera className="h-8 w-8" />
@@ -88,11 +89,12 @@ export function BusinessCardUpload({ eventId, onImageCapture, isProcessing = fal
               <Button
                 onClick={() => fileInputRef.current?.click()}
                 variant="outline"
-                className="h-32 flex flex-col gap-2"
+                className="h-32 flex flex-col gap-2 md:col-span-1 col-span-2"
                 disabled={isProcessing}
               >
                 <Upload className="h-8 w-8" />
-                <span>Upload Image</span>
+                <span className="md:hidden">Upload or Take Photo</span>
+                <span className="hidden md:inline">Upload Image</span>
               </Button>
             </div>
             

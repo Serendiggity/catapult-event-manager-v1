@@ -22,15 +22,15 @@ interface LeadsDistributionChartProps {
 }
 
 const COLORS = [
+  'hsl(var(--chart-1))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
   'hsl(221, 83%, 53%)',  // blue
   'hsl(160, 84%, 39%)',  // emerald
   'hsl(38, 92%, 50%)',   // amber
-  'hsl(262, 83%, 58%)',  // violet
-  'hsl(0, 84%, 60%)',    // red
-  'hsl(189, 94%, 43%)',  // cyan
-  'hsl(84, 81%, 44%)',   // lime
-  'hsl(25, 95%, 53%)',   // orange
-  'hsl(220, 9%, 46%)',   // gray for "Others"
+  'hsl(var(--muted-foreground))',   // gray for "Others"
 ];
 
 export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
@@ -41,7 +41,7 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
 
   if (data.length === 0) {
     return (
-      <Card className="h-full border-0 shadow-sm">
+      <Card className="h-full border-0 shadow-sm dark:shadow-md dark:shadow-black/20">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Lead Distribution</CardTitle>
           <CardDescription>No events with leads found</CardDescription>
@@ -59,7 +59,7 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
   const topEventsPercentage = Math.round((topEventsTotal / totalLeads) * 100);
 
   return (
-    <Card className="h-full border-0 shadow-sm">
+    <Card className="h-full border-0 shadow-sm dark:shadow-md dark:shadow-black/20">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">Lead Distribution</CardTitle>
@@ -87,7 +87,7 @@ export function LeadsDistributionChart({ data }: LeadsDistributionChartProps) {
                   if (active && payload && payload.length) {
                     const percentage = ((payload[0].value as number / totalLeads) * 100).toFixed(1);
                     return (
-                      <div className="rounded-lg bg-background/95 backdrop-blur-sm p-3 shadow-lg border">
+                      <div className="rounded-lg bg-background p-3 shadow-lg border border-border dark:bg-card">
                         <p className="text-sm font-medium">{payload[0].name}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-lg font-semibold">{payload[0].value}</span>

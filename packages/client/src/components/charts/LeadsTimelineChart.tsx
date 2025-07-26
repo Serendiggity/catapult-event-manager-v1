@@ -31,12 +31,12 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
   const yAxisMax = Math.ceil(maxValue * 1.2); // Add 20% padding
   
   return (
-    <Card className="h-full border-0 shadow-sm">
+    <Card className="h-full border-0 shadow-sm dark:shadow-md dark:shadow-black/20">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">Lead Collection Trend</CardTitle>
           <div className={`flex items-center gap-1 text-sm font-medium ${
-            isGrowing ? 'text-green-600' : isStable ? 'text-gray-600' : 'text-red-600'
+            isGrowing ? 'text-green-600 dark:text-green-400' : isStable ? 'text-gray-600 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
           }`}>
             {isGrowing ? (
               <>
@@ -97,9 +97,9 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'hsl(var(--background))',
-                  border: 'none',
+                  border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                   padding: '8px 12px',
                 }}
                 itemStyle={{

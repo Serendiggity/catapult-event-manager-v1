@@ -76,43 +76,53 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
                   <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                vertical={false} 
+                stroke="hsl(var(--border))" 
+                opacity={0.3} 
+              />
               <XAxis
                 dataKey="month"
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
                 tickFormatter={(value) => value.slice(0, 3)}
-                style={{ fontSize: '11px' }}
-                stroke="hsl(var(--muted-foreground))"
+                style={{ 
+                  fontSize: '11px',
+                  fill: 'hsl(var(--muted-foreground))'
+                }}
               />
               <YAxis 
                 tickLine={false}
                 axisLine={false}
-                style={{ fontSize: '11px' }}
-                stroke="hsl(var(--muted-foreground))"
+                style={{ 
+                  fontSize: '11px',
+                  fill: 'hsl(var(--muted-foreground))'
+                }}
                 domain={[0, yAxisMax]}
                 ticks={[0, Math.floor(yAxisMax/3), Math.floor(yAxisMax*2/3), yAxisMax]}
               />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                  padding: '8px 12px',
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg bg-background p-3 shadow-lg border border-border dark:bg-card">
+                        <p className="text-sm font-medium">{label}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-lg font-semibold">{payload[0].value}</span>
+                          <span className="text-sm text-muted-foreground">leads</span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
-                itemStyle={{
-                  color: 'hsl(var(--foreground))',
-                  fontSize: '12px',
+                cursor={{ 
+                  stroke: 'hsl(var(--primary))', 
+                  strokeWidth: 1, 
+                  strokeOpacity: 0.2 
                 }}
-                labelStyle={{
-                  color: 'hsl(var(--muted-foreground))',
-                  fontSize: '11px',
-                  marginBottom: '4px',
-                }}
-                formatter={(value: number) => [`${value} leads`, '']}
-                cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeOpacity: 0.2 }}
               />
               <Area
                 type="monotone"
@@ -122,8 +132,17 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
                 fillOpacity={1}
                 fill="url(#colorLeads)"
                 animationDuration={1000}
-                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4, stroke: 'hsl(var(--background))' }}
-                activeDot={{ r: 6, stroke: 'hsl(var(--background))', strokeWidth: 2 }}
+                dot={{ 
+                  fill: 'hsl(var(--primary))', 
+                  strokeWidth: 2, 
+                  r: 4, 
+                  stroke: 'hsl(var(--background))' 
+                }}
+                activeDot={{ 
+                  r: 6, 
+                  stroke: 'hsl(var(--background))', 
+                  strokeWidth: 2 
+                }}
               />
             </AreaChart>
           </ResponsiveContainer>

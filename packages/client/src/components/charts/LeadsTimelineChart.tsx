@@ -17,9 +17,24 @@ interface LeadsTimelineChartProps {
 }
 
 export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
+  // Handle empty data
+  if (!data || data.length === 0) {
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-base font-medium">Monthly Leads</CardTitle>
+          <CardDescription className="text-xs">No data available</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[200px] flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">No lead data to display</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Calculate statistics
   const totalLeads = data.reduce((sum, item) => sum + item.leads, 0);
-  const averageLeads = Math.round(totalLeads / data.length);
+  const averageLeads = data.length > 0 ? Math.round(totalLeads / data.length) : 0;
   const lastMonth = data[data.length - 1]?.leads || 0;
   const previousMonth = data[data.length - 2]?.leads || 0;
   const growthPercentage = previousMonth > 0 
@@ -28,7 +43,7 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
   const isGrowing = Number(growthPercentage) > 0;
   
   // Find max for highlighting
-  const maxLeads = Math.max(...data.map(d => d.leads));
+  const maxLeads = Math.max(...data.map(d => d.leads), 0);
   
   return (
     <Card className="h-full">

@@ -65,6 +65,9 @@ export function DashboardPage() {
       
       // Fetch all contacts
       const contactsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/contacts`);
+      if (!contactsResponse.ok) {
+        throw new Error(`Failed to fetch contacts: ${contactsResponse.status}`);
+      }
       const contactsData = await contactsResponse.json();
       const contacts = contactsData.contacts || [];
       
@@ -130,23 +133,28 @@ export function DashboardPage() {
       const monthlyLeadsData = [];
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       
-      for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthName = monthNames[date.getMonth()];
-        const year = date.getFullYear();
-        
-        // Count leads created in this month
-        const monthLeads = contacts.filter((c: any) => {
-          const createdDate = new Date(c.createdAt);
-          return createdDate.getMonth() === date.getMonth() && 
-                 createdDate.getFullYear() === year;
-        }).length;
-        
-        monthlyLeadsData.push({
-          month: monthName,
-          leads: monthLeads
-        });
+      try {
+        for (let i = 5; i >= 0; i--) {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          const monthName = monthNames[date.getMonth()];
+          const year = date.getFullYear();
+          
+          // Count leads created in this month
+          const monthLeads = contacts.filter((c: any) => {
+            if (!c.createdAt) return false;
+            const createdDate = new Date(c.createdAt);
+            return createdDate.getMonth() === date.getMonth() && 
+                   createdDate.getFullYear() === year;
+          }).length;
+          
+          monthlyLeadsData.push({
+            month: monthName,
+            leads: monthLeads
+          });
+        }
+      } catch (err) {
+        console.error('Error calculating monthly leads:', err);
       }
       
       // Calculate stats
@@ -264,21 +272,23 @@ export function DashboardPage() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Lead Distribution Chart */}
-        {stats.eventLeadData.length > 0 && (
-          <div>
-            <LeadsDistributionChart data={stats.eventLeadData} />
-          </div>
-        )}
-        
-        {/* Monthly Leads Timeline Chart */}
-        {stats.monthlyLeadsData.length > 0 && (
-          <div>
-            <LeadsTimelineChart data={stats.monthlyLeadsData} />
-          </div>
-        )}
-      </div>
+      {(stats.eventLeadData.length > 0 || stats.monthlyLeadsData.length > 0) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Lead Distribution Chart */}
+          {stats.eventLeadData.length > 0 && (
+            <div>
+              <LeadsDistributionChart data={stats.eventLeadData} />
+            </div>
+          )}
+          
+          {/* Monthly Leads Timeline Chart */}
+          {stats.monthlyLeadsData.length > 0 && (
+            <div>
+              <LeadsTimelineChart data={stats.monthlyLeadsData} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Recent Activity */}
       <Card>

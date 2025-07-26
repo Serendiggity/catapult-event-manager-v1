@@ -1,5 +1,5 @@
 import { TrendingUp } from "lucide-react";
-import { CartesianGrid, LabelList, Line, LineChart, XAxis, Tooltip } from "recharts";
+import { CartesianGrid, LabelList, Line, LineChart, XAxis, Tooltip, ResponsiveContainer, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -8,11 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 
 interface LeadsTimelineChartProps {
   data: Array<{
@@ -20,13 +15,6 @@ interface LeadsTimelineChartProps {
     leads: number;
   }>;
 }
-
-const chartConfig = {
-  leads: {
-    label: "Business Card Leads",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig;
 
 export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
   // Calculate growth percentage
@@ -44,49 +32,61 @@ export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
         <CardDescription>Monthly lead collection over the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              top: 20,
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <Tooltip
-              cursor={false}
-              content={<ChartTooltipContent />}
-            />
-            <Line
-              dataKey="leads"
-              type="natural"
-              stroke="var(--color-leads)"
-              strokeWidth={2}
-              dot={{
-                fill: "var(--color-leads)",
-              }}
-              activeDot={{
-                r: 6,
+        <div className="h-[250px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={data}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 10,
               }}
             >
-              <LabelList
-                position="top"
-                offset={12}
-                className="fill-foreground"
-                fontSize={12}
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => value.slice(0, 3)}
+                style={{ fontSize: '12px' }}
               />
-            </Line>
-          </LineChart>
-        </ChartContainer>
+              <YAxis 
+                tickLine={false}
+                axisLine={false}
+                style={{ fontSize: '12px' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '6px',
+                }}
+                formatter={(value: number) => [`${value} leads`, 'Leads']}
+              />
+              <Line
+                dataKey="leads"
+                type="monotone"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                dot={{
+                  fill: "hsl(var(--primary))",
+                  r: 4,
+                }}
+                activeDot={{
+                  r: 6,
+                }}
+              >
+                <LabelList
+                  position="top"
+                  offset={12}
+                  style={{ fontSize: '12px', fill: 'hsl(var(--foreground))' }}
+                />
+              </Line>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">

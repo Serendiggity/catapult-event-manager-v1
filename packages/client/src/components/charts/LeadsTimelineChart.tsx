@@ -1,5 +1,5 @@
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis, Tooltip, ResponsiveContainer, YAxis } from "recharts";
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -17,154 +17,100 @@ interface LeadsTimelineChartProps {
 }
 
 export function LeadsTimelineChart({ data }: LeadsTimelineChartProps) {
-  // Calculate growth percentage
+  // Calculate statistics
+  const totalLeads = data.reduce((sum, item) => sum + item.leads, 0);
+  const averageLeads = Math.round(totalLeads / data.length);
   const lastMonth = data[data.length - 1]?.leads || 0;
   const previousMonth = data[data.length - 2]?.leads || 0;
   const growthPercentage = previousMonth > 0 
     ? ((lastMonth - previousMonth) / previousMonth * 100).toFixed(1)
     : 0;
   const isGrowing = Number(growthPercentage) > 0;
-  const isStable = Number(growthPercentage) === 0;
   
-  // Calculate max value for Y axis
-  const maxValue = Math.max(...data.map(d => d.leads));
-  const yAxisMax = Math.ceil(maxValue * 1.2); // Add 20% padding
+  // Find max for highlighting
+  const maxLeads = Math.max(...data.map(d => d.leads));
   
   return (
-    <Card className="h-full border-0 shadow-sm dark:shadow-md dark:shadow-black/20">
-      <CardHeader className="pb-2">
+    <Card className="h-full">
+      <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Lead Collection Trend</CardTitle>
-          <div className={`flex items-center gap-1 text-sm font-medium ${
-            isGrowing ? 'text-green-600 dark:text-green-400' : isStable ? 'text-gray-600 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
-          }`}>
-            {isGrowing ? (
-              <>
-                <TrendingUp className="h-4 w-4" />
-                <span>+{growthPercentage}%</span>
-              </>
-            ) : isStable ? (
-              <>
-                <Minus className="h-4 w-4" />
-                <span>0%</span>
-              </>
-            ) : (
-              <>
-                <TrendingDown className="h-4 w-4" />
-                <span>{growthPercentage}%</span>
-              </>
-            )}
+          <div>
+            <CardTitle className="text-base font-medium">Monthly Leads</CardTitle>
+            <CardDescription className="text-xs">Business cards scanned</CardDescription>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold">{totalLeads}</div>
+            <div className="text-xs text-muted-foreground">Total collected</div>
           </div>
         </div>
-        <CardDescription>Business cards scanned per month</CardDescription>
       </CardHeader>
-      <CardContent className="pt-4">
-        <div className="h-[220px] w-full">
+      <CardContent>
+        <div className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
+            <BarChart
               data={data}
-              margin={{
-                top: 10,
-                right: 10,
-                left: -20,
-                bottom: 0,
-              }}
+              margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
             >
-              <defs>
-                <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                vertical={false} 
-                stroke="hsl(var(--border))" 
-                opacity={0.3} 
-              />
               <XAxis
                 dataKey="month"
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
                 tickFormatter={(value) => value.slice(0, 3)}
-                style={{ 
-                  fontSize: '11px',
-                  fill: 'hsl(var(--muted-foreground))'
-                }}
+                className="text-xs"
               />
-              <YAxis 
+              <YAxis
                 tickLine={false}
                 axisLine={false}
-                style={{ 
-                  fontSize: '11px',
-                  fill: 'hsl(var(--muted-foreground))'
-                }}
-                domain={[0, yAxisMax]}
-                ticks={[0, Math.floor(yAxisMax/3), Math.floor(yAxisMax*2/3), yAxisMax]}
+                className="text-xs"
+                width={40}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="rounded-lg bg-background p-3 shadow-lg border border-border dark:bg-card">
-                        <p className="text-sm font-medium">{label}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-lg font-semibold">{payload[0].value}</span>
-                          <span className="text-sm text-muted-foreground">leads</span>
-                        </div>
+                      <div className="rounded-lg bg-background p-2 shadow-sm border">
+                        <p className="text-xs font-medium">{payload[0].payload.month}</p>
+                        <p className="text-sm font-bold">{payload[0].value} leads</p>
                       </div>
                     );
                   }
                   return null;
                 }}
-                cursor={{ 
-                  stroke: 'hsl(var(--primary))', 
-                  strokeWidth: 1, 
-                  strokeOpacity: 0.2 
-                }}
+                cursor={{ fill: 'transparent' }}
               />
-              <Area
-                type="monotone"
+              <Bar
                 dataKey="leads"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorLeads)"
-                animationDuration={1000}
-                dot={{ 
-                  fill: 'hsl(var(--primary))', 
-                  strokeWidth: 2, 
-                  r: 4, 
-                  stroke: 'hsl(var(--background))' 
-                }}
-                activeDot={{ 
-                  r: 6, 
-                  stroke: 'hsl(var(--background))', 
-                  strokeWidth: 2 
-                }}
-              />
-            </AreaChart>
+                radius={[4, 4, 0, 0]}
+              >
+                {data.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.leads === maxLeads ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground) / 0.3)'} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
-      <CardFooter className="pt-2 pb-4">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col">
-              <span className="text-2xl font-semibold">{data.reduce((sum, item) => sum + item.leads, 0)}</span>
-              <span className="text-xs text-muted-foreground">Total leads</span>
-            </div>
-            <div className="h-8 w-px bg-border" />
-            <div className="flex flex-col">
-              <span className="text-2xl font-semibold">{lastMonth}</span>
-              <span className="text-xs text-muted-foreground">This month</span>
-            </div>
+      <CardFooter className="flex-row items-center justify-between border-t pt-4">
+        <div className="flex items-center gap-4">
+          <div>
+            <p className="text-xs text-muted-foreground">Average</p>
+            <p className="text-sm font-medium">{averageLeads}/month</p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>Last 6 months</span>
+          <div className="h-8 w-px bg-border" />
+          <div>
+            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-sm font-medium">{lastMonth} leads</p>
           </div>
+        </div>
+        <div className={`flex items-center gap-1 text-sm ${
+          isGrowing ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+        }`}>
+          {isGrowing ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+          <span className="font-medium">{growthPercentage}%</span>
         </div>
       </CardFooter>
     </Card>

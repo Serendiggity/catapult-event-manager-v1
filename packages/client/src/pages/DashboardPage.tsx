@@ -6,6 +6,7 @@ import { Calendar, Users, Mail, TrendingUp, Clock, CheckCircle, AlertCircle, Plu
 import { api } from '@/lib/api';
 import { formatDistanceToNow } from 'date-fns';
 import { LeadsDistributionChart } from '@/components/charts/LeadsDistributionChart';
+import { LeadsTimelineChart } from '@/components/charts/LeadsTimelineChart';
 
 interface DashboardStats {
   totalEvents: number;
@@ -24,6 +25,10 @@ interface DashboardStats {
     leads: number;
     fill: string;
   }>;
+  monthlyLeadsData: Array<{
+    month: string;
+    leads: number;
+  }>;
 }
 
 export function DashboardPage() {
@@ -39,7 +44,8 @@ export function DashboardPage() {
     recentActivity: [],
     newLeadsWeek: 0,
     agingLeads: 0,
-    eventLeadData: []
+    eventLeadData: [],
+    monthlyLeadsData: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -120,6 +126,29 @@ export function DashboardPage() {
         new Date(c.createdAt) < thirtyDaysAgo && c.needsReview
       ).length;
       
+      // Calculate monthly leads data for the last 6 months
+      const monthlyLeadsData = [];
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const monthName = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        
+        // Count leads created in this month
+        const monthLeads = contacts.filter((c: any) => {
+          const createdDate = new Date(c.createdAt);
+          return createdDate.getMonth() === date.getMonth() && 
+                 createdDate.getFullYear() === year;
+        }).length;
+        
+        monthlyLeadsData.push({
+          month: monthName,
+          leads: monthLeads
+        });
+      }
+      
       // Calculate stats
       setStats({
         totalEvents: events.length,
@@ -132,7 +161,8 @@ export function DashboardPage() {
         recentActivity: [], // TODO: Implement activity tracking
         newLeadsWeek,
         agingLeads,
-        eventLeadData
+        eventLeadData,
+        monthlyLeadsData
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -272,63 +302,21 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Charts and Activity Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Lead Distribution Chart */}
         {stats.eventLeadData.length > 0 && (
-          <div className="lg:col-span-1">
+          <div>
             <LeadsDistributionChart data={stats.eventLeadData} />
           </div>
         )}
         
-        {/* Quick Insights - Adjust span based on chart presence */}
-        <Card className={stats.eventLeadData.length > 0 ? "lg:col-span-2" : "lg:col-span-3"}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Quick Insights
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {stats.pendingReview > 0 && (
-                <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-amber-600" />
-                  <div>
-                    <p className="font-medium">Review Required</p>
-                    <p className="text-sm text-muted-foreground">
-                      {stats.pendingReview} contacts need verification
-                    </p>
-                  </div>
-                </div>
-              )}
-              
-              {stats.upcomingEvents > 0 && (
-                <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <Calendar className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">Upcoming Events</p>
-                    <p className="text-sm text-muted-foreground">
-                      You have {stats.upcomingEvents} events scheduled
-                    </p>
-                  </div>
-                </div>
-              )}
-              
-              {stats.totalLeads > 0 && (
-                <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <div>
-                    <p className="font-medium">Lead Collection</p>
-                    <p className="text-sm text-muted-foreground">
-                      {Math.round((stats.verifiedLeads / stats.totalLeads) * 100)}% of leads verified
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Monthly Leads Timeline Chart */}
+        {stats.monthlyLeadsData.length > 0 && (
+          <div>
+            <LeadsTimelineChart data={stats.monthlyLeadsData} />
+          </div>
+        )}
       </div>
 
       {/* Recent Activity */}

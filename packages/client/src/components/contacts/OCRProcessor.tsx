@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Alert, AlertDescription } from '../ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { ManualContactForm } from './ManualContactForm';
 
 interface OCRProcessorProps {
   imageData: string;
@@ -28,6 +29,8 @@ export function OCRProcessor({ imageData, eventId, onComplete, onError }: OCRPro
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [lowConfidenceData, setLowConfidenceData] = useState<any>(null);
 
   useEffect(() => {
     processBusinessCard();
@@ -80,6 +83,27 @@ export function OCRProcessor({ imageData, eventId, onComplete, onError }: OCRPro
       }
 
       const result = await response.json();
+      
+      // Check if low confidence response
+      if (result.lowConfidence) {
+        updateStep(1, { status: 'complete' });
+        updateStep(2, { status: 'pending' });
+        
+        // Show manual form with pre-filled data
+        setLowConfidenceData({
+          parsedData: result.parsedData,
+          overallConfidence: result.overallConfidence
+        });
+        setShowManualForm(true);
+        
+        toast({
+          title: "Manual review required",
+          description: result.message,
+          variant: "default"
+        });
+        return;
+      }
+      
       updateStep(1, { status: 'complete' });
       
       // Step 3: Contact saved
@@ -116,6 +140,19 @@ export function OCRProcessor({ imageData, eventId, onComplete, onError }: OCRPro
         return <div className="h-5 w-5 rounded-full border-2 border-gray-300" />;
     }
   };
+
+  if (showManualForm && lowConfidenceData) {
+    return (
+      <ManualContactForm
+        eventId={eventId}
+        parsedData={lowConfidenceData.parsedData}
+        overallConfidence={lowConfidenceData.overallConfidence}
+        imageData={imageData}
+        onComplete={onComplete}
+        onError={onError}
+      />
+    );
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto">

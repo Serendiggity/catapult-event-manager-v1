@@ -41,6 +41,19 @@ export async function createContactFromOCR(
     // Parse the OCR text using AI
     const parsedData = await getOCRService().parseBusinessCardText(ocrText);
     
+    // Check if confidence is too low
+    const MINIMUM_CONFIDENCE_THRESHOLD = 0.5; // 50% minimum confidence
+    if (parsedData.overallConfidence < MINIMUM_CONFIDENCE_THRESHOLD) {
+      // Return parsed data without creating contact
+      return res.status(200).json({
+        success: false,
+        lowConfidence: true,
+        parsedData: parsedData.parsedData,
+        overallConfidence: parsedData.overallConfidence,
+        message: 'OCR confidence too low. Please review and enter manually.'
+      });
+    }
+    
     // Convert to database format
     const dbData = getOCRService().toDatabaseFormat(parsedData.parsedData);
     
@@ -125,10 +138,9 @@ export async function updateContactAfterReview(
     delete updates.createdAt;
     delete updates.rawOcrData;
     
-    // If all required fields are now filled with high confidence, remove needsReview flag
-    if (updates.firstName && updates.lastName && updates.email) {
-      updates.needsReview = false;
-    }
+    // Always mark as reviewed when manually updated, regardless of which fields are filled
+    // The user has manually reviewed and saved, so it's no longer "needs review"
+    updates.needsReview = false;
     
     // Update the contact
     const [updatedContact] = await getDb().update(contacts)

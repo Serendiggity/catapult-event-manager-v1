@@ -200,47 +200,8 @@ export function DashboardPage() {
         <p className="text-muted-foreground">Welcome back to New Era Events Manager</p>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Button
-          onClick={() => navigate('/events/new')}
-          className="h-16 text-left justify-start"
-          variant="outline"
-        >
-          <Plus className="h-5 w-5 mr-3" />
-          <div>
-            <div className="font-semibold">Create Event</div>
-            <div className="text-xs text-muted-foreground">Start organizing a new event</div>
-          </div>
-        </Button>
-        
-        <Button
-          onClick={() => navigate('/contacts')}
-          className="h-16 text-left justify-start"
-          variant="outline"
-        >
-          <Users className="h-5 w-5 mr-3" />
-          <div>
-            <div className="font-semibold">Add Leads</div>
-            <div className="text-xs text-muted-foreground">Import business cards</div>
-          </div>
-        </Button>
-        
-        <Button
-          onClick={() => navigate('/campaigns')}
-          className="h-16 text-left justify-start"
-          variant="outline"
-        >
-          <Mail className="h-5 w-5 mr-3" />
-          <div>
-            <div className="font-semibold">Send Campaign</div>
-            <div className="text-xs text-muted-foreground">Reach out to your leads</div>
-          </div>
-        </Button>
-      </div>
-
-      {/* Stats Grid - 2x3 on mobile, 6 columns on desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+      {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 items-stretch">
         <div className="aspect-square lg:aspect-auto">
           <StatCard
             title="Total Events"

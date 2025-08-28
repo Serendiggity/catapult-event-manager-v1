@@ -178,16 +178,43 @@ export function CreateCampaignModalEnhanced({ eventId, isOpen, onClose, onSucces
       
       const result = await response.json();
       
-      // Update template with AI suggestion
-      if (result.subject) setSubject(result.subject);
-      if (result.body) setTemplateBody(result.body);
+      // Track if template was actually updated
+      let wasUpdated = false;
       
-      // Add AI response to chat
-      setChatMessages(prev => [...prev, {
-        role: 'assistant',
-        content: result.explanation || 'I\'ve updated the template based on your request. Please review the changes.',
-        timestamp: new Date()
-      }]);
+      // Update template with AI suggestion
+      if (result.subject) {
+        setSubject(result.subject);
+        wasUpdated = true;
+      }
+      if (result.body) {
+        setTemplateBody(result.body);
+        wasUpdated = true;
+      }
+      
+      // Add AI response to chat with clear indication of what happened
+      if (wasUpdated) {
+        // Switch to template tab to show the changes
+        setActiveTab('template');
+        
+        setChatMessages(prev => [...prev, {
+          role: 'assistant',
+          content: '✅ Template updated successfully! I\'ve switched to the Template tab so you can see the changes.\n\n' + 
+                   (result.explanation || 'Your email template has been refined based on your request.'),
+          timestamp: new Date()
+        }]);
+        
+        // Also show a toast notification
+        toast({
+          title: "Template Updated",
+          description: "Your email template has been updated. Check the Template tab to review.",
+        });
+      } else {
+        setChatMessages(prev => [...prev, {
+          role: 'assistant',
+          content: result.explanation || 'I processed your request. Please try rephrasing if you need different changes.',
+          timestamp: new Date()
+        }]);
+      }
       
     } catch (error) {
       console.error('Error processing AI prompt:', error);

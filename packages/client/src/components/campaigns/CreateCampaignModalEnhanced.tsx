@@ -171,43 +171,47 @@ export function CreateCampaignModalEnhanced({ eventId, isOpen, onClose, onSucces
       });
 
       if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = { error: await response.text() };
-        }
-        console.error('API Error:', errorData);
-        throw new Error(errorData.message || errorData.error || `Failed to process prompt: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error(`Failed to process prompt: ${response.status} ${response.statusText}`);
       }
       
       const result = await response.json();
       
-      console.log('AI Refine Response:', {
-        hasSubject: !!result.subject,
-        hasBody: !!result.body,
-        hasExplanation: !!result.explanation,
-        subjectPreview: result.subject?.substring(0, 50),
-        bodyPreview: result.body?.substring(0, 50)
-      });
+      // Track if template was actually updated
+      let wasUpdated = false;
       
-      // Update template with AI suggestion only if we have valid content
-      if (result.subject && result.body) {
+      // Update template with AI suggestion
+      if (result.subject) {
         setSubject(result.subject);
+        wasUpdated = true;
+      }
+      if (result.body) {
         setTemplateBody(result.body);
+        wasUpdated = true;
+      }
+      
+      // Add AI response to chat with clear indication of what happened
+      if (wasUpdated) {
+        // Switch to template tab to show the changes
+        setActiveTab('template');
         
-        // Add success message to chat
         setChatMessages(prev => [...prev, {
           role: 'assistant',
-          content: result.explanation || 'I\'ve updated the template based on your request. Please review the changes in the Template tab.',
+          content: '✅ Template updated successfully! I\'ve switched to the Template tab so you can see the changes.\n\n' + 
+                   (result.explanation || 'Your email template has been refined based on your request.'),
           timestamp: new Date()
         }]);
+        
+        // Also show a toast notification
+        toast({
+          title: "Template Updated",
+          description: "Your email template has been updated. Check the Template tab to review.",
+        });
       } else {
-        // If we don't have subject/body, just show the explanation
-        console.warn('AI response missing subject or body, showing explanation only');
         setChatMessages(prev => [...prev, {
           role: 'assistant',
-          content: result.explanation || 'I processed your request but couldn\'t generate a new template. Please try rephrasing your prompt.',
+          content: result.explanation || 'I processed your request. Please try rephrasing if you need different changes.',
           timestamp: new Date()
         }]);
       }

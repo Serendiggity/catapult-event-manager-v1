@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
@@ -12,11 +11,8 @@ import { Switch } from '../ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
   Info, 
-  Sparkles, 
   Users, 
-  MessageSquare, 
   Send,
-  RefreshCw,
   Eye,
   Variable,
   Loader2
@@ -75,7 +71,6 @@ const defaultSenderVariables: SenderVariable[] = [
 ];
 
 export function CreateCampaignModalEnhanced({ eventId, isOpen, onClose, onSuccess }: CreateCampaignModalProps) {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const chatScrollRef = useRef<HTMLDivElement>(null);
   

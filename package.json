@@ -1,0 +1,37 @@
+{
+  "name": "new-era-event-manager",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "dev:all": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "install:all": "npm install --workspaces",
+    "build:shared": "npm run build --workspace=@new-era-event-manager/shared",
+    "build:server": "npm run build:shared && npm run build --workspace=@new-era-event-manager/server",
+    "build:client": "npm run build:shared && npm run build --workspace=@new-era-event-manager/client",
+    "start:server": "cd packages/server && npm start",
+    "start": "npm run start:server",
+    "install:ci": "npm ci --workspaces --include-workspace-root",
+    "migrate": "node run-migrations.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "New Era Event Manager - Monorepo",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "drizzle-orm": "^0.44.3",
+    "postgres": "^3.4.7"
+  }
+}

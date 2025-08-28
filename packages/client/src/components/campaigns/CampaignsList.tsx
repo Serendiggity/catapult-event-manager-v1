@@ -121,7 +121,7 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
                   <div className="flex items-center text-muted-foreground">
                     <Users className="h-4 w-4 mr-2" />
                     <span>
-                      {campaign.campaignGroups.length} group{campaign.campaignGroups.length !== 1 ? 's' : ''}
+                      {(campaign.campaignGroups || []).length} group{(campaign.campaignGroups || []).length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="flex items-center text-muted-foreground">
@@ -130,7 +130,7 @@ export function CampaignsList({ eventId }: CampaignsListProps) {
                       Created {new Date(campaign.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  {campaign.variables.length > 0 && (
+                  {campaign.variables && campaign.variables.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {campaign.variables.map((variable) => (
                         <span
